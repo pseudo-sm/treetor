@@ -397,7 +397,7 @@ def institution_list(request):
 
 @institute_login_required
 def institution_profile(request):
-    auth.sign_in_with_email_and_password("trident@gmail.com","password")
+
     uid = auth.current_user["localId"]
     institution = dict(db.child("users").child("institutes").child(uid).get().val())
     users = dict(db.child("users").child("teachers").get().val())

@@ -1,0 +1,351 @@
+'<div data-toggle="hidden"> \
+    <div class="card shadow animate-this animated fadeIn delay-2s"> \
+        <div id="accordion"> \
+
+            <div class="row"> \
+
+                <div class="col-4"> \
+                    <div class="card"> \
+                <div class="card-header" id="headingOne"> \
+                  <h5 class="mb-0"> \
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"> \
+                      Basic Info \
+                    </button> \
+                  </h5> \
+                </div> \
+              </div> \
+
+              <div class="card"> \
+                <div class="card-header" id="headingTwo">  \
+                  <h5 class="mb-0">  \
+                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo"> \
+                      Contact Info \
+                    </button> \
+                  </h5> \
+                </div> \
+              </div> \
+
+              <div class="card"> \
+                <div class="card-header" id="headingThree"> \
+                  <h5 class="mb-0"> \
+                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">  \
+                      Career Info \
+                    </button> \
+                  </h5> \
+                </div> \
+
+              </div> \
+                </div> \
+                <div class="col-8"> \
+                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion"> \
+                            <div class="card-body"> \
+                                <div class="px-3 pb-2 text-center"> \
+                                    <strong>Basic Info</strong> \
+                                    <!--onclick="editBasic(event);"-->
+                                    <button id="ecbasic"style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 20px" ><i id="basic" class="fas fa-pen"></i></button> \
+                                </div><hr/> \
+                                <table style="width: 70%"> \
+                                <tr style="height: 45px"> \
+                                    <td><b>Gender:</b></td> \
+                                    <td><data id="gender" class="rawdataBasic">{{gender}}</data> \
+                                    <div class="editBasic" style="display: none;margin-left: 30px"> \
+                                        <div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"> \
+                                          <div class="btn btn-secondary active"> \
+                                            <input type="radio" value="male" name="gender" id="Male" autocomplete="off" checked> Male \
+                                          </div> \
+                                          <div class="btn btn-secondary"> \
+                                            <input type="radio" name="gender" value="female" id="Female" autocomplete="off"> Female \
+                                          </div> \
+                                            <div class="btn btn-secondary"> \
+                                            <input type="radio" name="gender" value="other" id="Other" autocomplete="off"> Other \
+                                          </div> \
+                                            <button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button> \
+                                        </div> \
+                                    </div> \
+                                    </td> \
+                                </tr><br/> \
+                                <tr style="height: 45px"> \
+                                    <td ><b>Date of Birth:</b></td> \
+                                    <td id="dob"><data class="rawdataBasic">{{dob}}</data> \
+                                    <div class="editBasic" style="display: none;margin-left: 30px"> \
+                                        <div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"> \
+                                          <input class="text-center" name="dob" type="date" style="border-radius: 20px"> \
+                                            <button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button> \
+                                        </div> \
+                                    </div> \
+                                    </td> \
+                                </tr> \
+                                    <tr style="height: 45px"> \
+                                    <td><b>Languages:</b></td> \
+                                        <td id="languages"><data class="rawdataBasic" >{{languages}}</data> \
+                                    <div id="editBasic" class="editBasic" style="display: none;margin-left: 30px"> \
+                                        <div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"> \
+                                          <input type="text" name="languages" style="border-radius: 20px;padding: 5px"> \
+                                            <button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button> \
+                                        </div> \
+                                    </div> \
+                                        </td> \
+                                </tr> \
+                                </table> \
+                            </div> \
+                        </div> \
+                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion"> \
+                          <div class="card-body"> \
+                               <div class="px-3 pb-2 text-center"> \
+                                    <strong>Contact Info</strong><button id="eccont"style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 20px" onclick="editBasic(event);"><i id="contact" class="fas fa-pen"></i></button> \
+                                </div><hr/> \
+                                <table style="width: 70%"> \
+                                <tr style="height: 45px"> \
+                                    <td><b>Phone:</b></td> \
+                                    <td id="phone"><data class="rawdataCont">{{phone}}</data> \
+                                    <div class="editCont" style="display: none;margin-left: 30px"> \
+                                        <div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"> \
+                                          <input class="text-center" type="number" name="phone" style="border-radius: 20px"placeholder="Enter Your Phone no"> \
+                                            <button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button> \
+                                        </div> \
+                                    </div></td> \
+                                </tr><br/> \
+                                <tr style="height: 45px"> \
+                                    <td><b>Email:</b></td> \
+                                    <td id="email"><data class="rawdataCont">{{mail}}</data> \
+                                    <div class="editCont" style="display: none;margin-left: 30px"> \
+                                        <div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"> \
+                                          <input class="text-center" type="email" name="email" style="border-radius: 20px"placeholder="Enter mail address"> \
+                                            <button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button> \
+                                        </div> \
+                                    </div></td> \
+                                </tr> \
+                                    <tr style="height: 45px"> \
+                                    <td><b>Address:</b></td> \
+                                    <td id="address"><data class="rawdataCont">{{address}}</data> \
+                                    <div class="editCont" style="display: none;margin-left: 30px"> \
+                                        <div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"> \
+                                          <input class="text-center" type="text" name="address" style="border-radius: 20px" placeholder="Enter Address"> \
+                                            <button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button> \
+                                        </div> \
+                                    </div></td> \
+                                </tr> \
+                                    <tr style="height: 45px"> \
+                                    <td><b>Facebook:</b></td> \
+                                    <td id="facebook"><data class="rawdataCont">{{fb}}</data> \
+                                    <div class="editCont" style="display: none;margin-left: 30px"> \
+                                        <div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"> \
+                                          <input class="text-center" type="url" name="facebook" style="border-radius: 20px" placeholder="Facebook URL"> \
+                                            <button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button> \
+                                        </div> \
+                                    </div></td> \
+                                </tr> \
+                                </table> \
+                          </div> \
+                        </div> \
+                    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion"> \
+                          <div class="card-body"> \
+                              <div class="px-3 pb-2 text-center"> \
+                                    <strong>Career Info</strong><button id="ecper"style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 20px" onclick="editBasic(event);"><i id="career" class="fas fa-pen"></i></button> \
+                                </div><hr/> \
+                                <table style="width: 70%"> \
+                                <tr style="height: 45px"> \
+                                    <td><b>Experience:</b></td> \
+                                    <td id="exp"><data class="rawdataPer">{{exp}}</data> \
+                                    <div class="editPer" style="display: none;margin-left: 30px"> \
+                                        <div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"> \
+                                          <input class="text-center" type="text" name="exp" style="border-radius: 20px" placeholder="Enter hobbies"> \
+                                            <button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button> \
+                                        </div> \
+                                    </div></td> \
+                                </tr><br/> \
+                                <tr style="height: 45px"> \
+                                    <td><b>Qualification:</b></td> \
+                                    <td id="qualification"><data class="rawdataPer">{{qualification}}</data> \
+                                    <div class="editPer" style="display: none;margin-left: 30px"> \
+                                        <div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"> \
+                                          <input class="text-center" type="text" name="qualification" style="border-radius: 20px" placeholder="Enter Interests"> \
+                                            <button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button> \
+                                        </div> \
+                                    </div></td> \
+                                </tr> \
+                                    <tr style="height: 45px"> \
+                                    <td><b>Treetor Institutes:</b></td> \
+                                    <td id="treetor"><data class="rawdataPer">{{treetor}}</data> \
+                                    <div class="editPer" style="display: none;margin-left: 30px"> \
+                                        <div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"> \
+                                          <input class="text-center" type="text" name="treetor" style="border-radius: 20px" placeholder="Enter Your Sports Interests"> \
+                                            <button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button> \
+                                        </div> \
+                                    </div></td> \
+                                </tr> \
+                                    <tr style="height: 45px"> \
+                                    <td><b>Old Institutes:</b></td> \
+                                    <td id="ot"><data class="rawdataPer">{{ot}}</data> \
+                                    <div class="editPer" style="display: none;margin-left: 30px"> \
+                                        <div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"> \
+                                          <input class="text-center" type="text" name="ot" style="border-radius: 20px" placeholder="Enter Your Sports Interests"> \
+                                            <button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button> \
+                                        </div> \
+                                    </div></td> \
+                                </tr> \
+                                     \
+                                </table> \
+                          </div> \
+                        </div> \
+                </div> '
+                    <script>
+                    var boolbasic = false;
+                    var boolcontact = false;
+                    var boolcareer = false;
+
+                        $( "#ecbasic" ).click(function() {
+
+                            $(".rawdataBasic").toggle();
+                          $(".editBasic").toggle();
+                          if(boolbasic){
+                            var gender = $("input[name=gender]").val();
+                          var languages = $("input[name=languages]").val();
+                          var dob = $("input[name=dob]").val();
+                            $.ajax({
+                                   url: '/basic-update/',
+                                   data: {
+                                     'gender': gender,
+                                      'languages':languages,
+                                        'dob':dob
+                                    },
+                                   dataType: 'json',
+                                    success: function (content) {
+                                        $('#languages').html('<data class="rawdataBasic" >'+languages+'</data><div id="editBasic" class="editBasic" style="display: none;margin-left: 30px"><div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"><input type="text" name="languages" style="border-radius: 20px;padding: 5px"><button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button></div></div>');
+                                        $('#dob').html('<data class="rawdataBasic">'+dob+'</data><div class="editBasic" style="display: none;margin-left: 30px"><div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"><input class="text-center" name="dob" type="date" style="border-radius: 20px"><button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button></div></div>');
+                                        $('#gender').html('<data class="rawdataBasic" >'+gender+'</data>');
+
+                                        }
+
+
+                                  });
+
+                            $("#basic").removeClass("fa-check");
+                          $("#basic").addClass("fa-pen");
+                            boolbasic = false
+                          }
+                          else {
+                            var gender = $("#gender").text();
+                          var languages = $("#languages").text();
+                          var dob = $("#dob").text();
+                            $("#basic").removeClass("fa-pen");
+                            $("#basic").addClass("fa-check");
+                          $("input[name=languages]").val(languages);
+                          dob = dob.slice(0,4)+'-'+dob.slice(5,7)+'-'+dob.slice(8,10);
+                          $("input[name=languages]").val(languages);
+                          $("input[name=dob]").val(dob);
+                          if (gender != "Not Updated") {
+                          $('input:radio[name=gender][value='+gender+']').click();
+
+                          }
+                          boolbasic = true;
+                        }
+                        });
+
+                        $( "#ecper" ).click(function() {
+                            $(".rawdataPer").toggle();
+                          $(".editPer").toggle();
+                          if(boolcareer){
+
+                          var exp = $("input[name=exp]").val();
+                          var qualification = $("input[name=qualification]").val();
+                          var treetor = $("input[name=treetor]").val();
+                          var ot = $("input[name=ot]").val();
+
+                           $.ajax({
+                                   url: '/career-update/',
+                                   data: {
+                                     'exp': exp,
+                                      'qualification':qualification,
+                                        'treetor':treetor,
+                                         'ot':ot
+                                    },
+                                   dataType: 'json',
+                                    success: function (content) {
+                                        $('#exp').html('<data class="rawdataPer">'+exp+'</data><div class="editPer" style="display: none;margin-left: 30px"><div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"><input class="text-center" type="text" name="exp" style="border-radius: 20px" placeholder="Enter hobbies"><button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button></div></div');
+                                        $('#qualification').html('<data class="rawdataPer">'+qualification+'</data><div class="editPer" style="display: none;margin-left: 30px"><div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"><input class="text-center" type="text" name="qualification" style="border-radius: 20px" placeholder="Enter Interests"><button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button></div></div>');
+                                        $('#ot').html('<data class="rawdataPer">'+ot+'</data><div class="editPer" style="display: none;margin-left: 30px"><div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"><input class="text-center" type="text" name="ot" style="border-radius: 20px" placeholder="Enter Your Sports Interests"><button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button></div></div>');
+                                        $('#treetor').html('<data class="rawdataPer">'+treetor+'</data><div class="editPer" style="display: none;margin-left: 30px"><div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"><input class="text-center" type="text" name="treetor" style="border-radius: 20px" placeholder="Enter Your Sports Interests"><button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button></div></div>');
+                                        }
+                                  });
+                                   $("#career").removeClass("fa-check");
+                          $("#career").addClass("fa-pen");
+                            boolcareer = false;
+                           }
+                           else {
+                           var exp = $("#exp").text();
+                          var qualification = $("#qualification").text();
+                          var treetor = $("#treetor").text();
+                          var ot = $("#ot").text();
+                          $("input[name=exp]").val(exp);
+                          $("input[name=qualification]").val(qualification);
+                          $("input[name=treetor]").val(treetor);
+                          $("input[name=ot]").val(ot);
+                          $("#career").removeClass("fa-pen");
+                          $("#career").addClass("fa-check");
+                            boolcareer = true;
+                            }
+
+                         });
+
+                        $( "#eccont" ).click(function() {
+
+                        $(".rawdataCont").toggle();
+                          $(".editCont").toggle();
+
+                        if(boolcontact) {
+
+                            var phone = $("input[name=phone]").val();
+                          var email = $("input[name=email]").val();
+                          var address = $("input[name=address]").val();
+                          var facebook = $("input[name=facebook]").val();
+                          console.log(phone);
+                          console.log(email);
+                          console.log(address);
+                          console.log(facebook);
+
+                          $.ajax({
+                                   url: '/contact-update/',
+                                   data: {
+                                     'phone': phone,
+                                      'email':email,
+                                        'address':address,
+                                         'facebook':facebook
+                                    },
+                                   dataType: 'json',
+                                    success: function (content) {
+                                        $('#phone').html('<data class="rawdataCont">'+phone+'</data><div class="editCont" style="display: none;margin-left: 30px"><div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"><input class="text-center" type="number" name="phone" style="border-radius: 20px"placeholder="Enter Your Phone no"><button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button></div></div>');
+                                        $('#email').html('<data class="rawdataCont">'+email+'</data><div class="editCont" style="display: none;margin-left: 30px"><div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"><input class="text-center" type="email" name="email" style="border-radius: 20px"placeholder="Enter mail address"><button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button></div></div>');
+                                        $('#address').html('<data class="rawdataCont">'+address+'</data><div class="editCont" style="display: none;margin-left: 30px"><div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"><input class="text-center" type="text" name="address" style="border-radius: 20px" placeholder="Enter Address"><button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button></div></div>');
+                                        $('#facebook').html('<data class="rawdataCont">'+facebook+'</data><div class="editCont" style="display: none;margin-left: 30px"><div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"><input class="text-center" type="url" name="facebook" style="border-radius: 20px" placeholder="Facebook URL"><button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button></div></div>');
+                                        }
+                                  });
+                                   $("#contact").removeClass("fa-check");
+                          $("#contact").addClass("fa-pen");
+                          boolcontact = false;
+                          }
+                          else {
+                           var phone = $("#phone").text();
+                          var email = $("#email").text();
+                          var address = $("#address").text();
+                          var facebook = $("#facebook").text();
+                          console.log(phone);
+                          console.log(email);
+                          console.log(address);
+                          console.log(facebook);
+                         $("input[name=phone]").val(Number(phone));
+                          $("input[name=email]").val(email);
+                          $("input[name=address]").val(address);
+                          $("input[name=facebook]").val(facebook);
+                          $("#contact").removeClass("fa-pen");
+                          $("#contact").addClass("fa-check");
+                            boolcontact = true;
+                          }
+                        });
+                    </script>
+
+            </div>
+
+        </div>
+    </div>
+</div>'

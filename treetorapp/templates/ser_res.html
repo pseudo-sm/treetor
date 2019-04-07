@@ -226,7 +226,7 @@
                 <section id="sct_page_examples" class="slice" style="margin-top: -15%;background: transparent">
                     <div class="container">
                         <div class="row">
-                            {% ifequal empty 0 %}
+                            {% ifequal empty_results 0 %}
                              <h1 style="color: ghostwhite;text-shadow:1px 2px 1px green;margin-left: 15px">Institutions</h1>
                             {% for i in results %}
                             <div class="col-lg-12 mb-12 mb-lg-0">
@@ -242,7 +242,7 @@
                                                 <div class="col-1"></div>
                                                 <div class="col-5 py-5 pb-5">
                                                     <strong>Institution Name: </strong>{{i.name}}<br/>
-                                                    <strong>Courses: </strong>{{i.subjects}}<br/>
+                                                    <strong>Course: </strong>{{i.courses}}<br/>
                                                     <strong>Address: </strong>{{i.address}}<br/>
                                                     <!--<strong>Rating: </strong>{{i.rating}}<strong>/5</strong>-->
                                                 </div>
@@ -254,8 +254,43 @@
                             </div>
                             {% endfor %}
                             {% else %}
-                            <h2 style="color:white;"> Sorry !! No Result Found :(</h2>
+                            <!--<h2 style="color:white;"> Sorry !! No Result Found :(</h2>-->
                             {% endifequal %}
+                            </div>
+
+                        <div class="row">
+                            {% ifequal empty_courses 0 %}
+                             <h1 style="color: ghostwhite;text-shadow:1px 2px 1px green;margin-left: 15px">Courses</h1>
+                            {% for i in courses %}
+                            <div class="col-lg-12 mb-12 mb-lg-0">
+                                <div data-animate-hover="1" data-toggle="hidden">
+                                    <div class="card shadow animate-this">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-1"></div>
+                                                <div class="col-3 py-5 pb-5">
+                                                    <center><img alt="treetor" src="../static/images/enterprise.png" class="img-saturate" style="width: 100px;height: 100px; text-align: center;align-content: center"><br/><br/>
+                                                        <strong style="text-align: center">{{i.name}}</strong>   </center>
+                                                </div>
+                                                <div class="col-1"></div>
+                                                <div class="col-5 py-5 pb-5">
+                                                    <strong>Institution Name: </strong>{{i.name}}<br/>
+                                                    <strong>Course: </strong>{{i.course}}<br/>
+                                                    <strong>Address: </strong>{{i.address}}<br/>
+                                                    <!--<strong>Rating: </strong>{{i.rating}}<strong>/5</strong>-->
+                                                </div>
+                                                <div class="col-lg-2 col-sm-12 col-md-12 py-5"><center><button id="democlass" data-toggle="modal" data-target="#demoModal" class="btn btn-dark">Request Demo</button></center></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <!--<h2 style="color:white;"> Sorry !! No Result Found :(</h2>-->
+                            {% endifequal %}
+                            </div>
+
                             <!-- modal -->
 
                             <div class="modal fade" id="demoModal" role="dialog">
@@ -281,6 +316,10 @@
 
                                 </div>
                               </div>
+
+
+
+
                             <!--<h1 style="color: ghostwhite;text-shadow:1px 2px 1px green;margin-left: 15px">Tutors</h1>-->
 
                             <!--<div class="col-lg-12 mb-12 mb-lg-0">-->
@@ -312,7 +351,7 @@
                                 <!--</div>-->
                             <!--</div>-->
 
-                        </div>
+
                         
                         <div class="fluid-paragraph text-center mt-5" style="margin-bottom: 20px;">
                             <p><strong class="text-primary"><br/><br/>*Good to know!</strong> You have offers to unlock.Be the part of <b>TREETOR</b> and unlock them.<br/><br/><br/></p>

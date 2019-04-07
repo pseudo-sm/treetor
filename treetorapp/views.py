@@ -145,28 +145,34 @@ def submit(request):
 
 def search(request):
     search = request.GET.get("search")
-    print(search)
     data = dict(db.child("users").child("institutes").get().val())
     teachers = dict(db.child("users").child("teachers").get().val())
     results = []
     subjects = []
+    courses_send = []
     for institute in data:
         if difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["name"]).lower())).ratio() > 0.5 or difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["area"]).lower())).ratio() > 0.3 :
             results.append({"name":data[institute]["name"],"address":data[institute]["area"]})
         if search.lower() in str(data[institute]["name"]).lower() and {"name":data[institute]["name"],"address":data[institute]["area"]} not in results:
-            results.append({"name":data[institute]["name"],"address":data[institute]["area"]})
+            courses_res =  ",".join(list(data[institute]["courses"].keys()))
+            results.append({"name":data[institute]["name"],"address":data[institute]["area"],"courses":courses_res})
         if data[institute].get("courses"):
-            courses = list(data[institute]["courses"].keys())
-            courses_lower  = [x.lower() for x in courses]
-            if search.lower() in courses_lower:
-                subjects = ",".join(courses)
-                results.append({"name":data[institute]["name"],"address":data[institute]["area"],"subjects":subjects})
+            courses = data[institute]["courses"]
+            for course in courses:
 
-    if len(results) == 0:
-        empty=1
+                if difflib.SequenceMatcher(a=search.lower(),b = (course.lower())).ratio() > 0.3:
+                    courses_send.append({"name":data[institute]["name"],"address":data[institute]["area"],"course":course,"duration":data[institute]["courses"][course]["duration"]})
+
+    if len(results) ==  0:
+        empty_results=1
     else:
-        empty=0
-    return render(request,"ser_res.html",{"results":results,"empty":empty})
+        empty_results=0
+
+    if len(courses_send) ==  0:
+        empty_courses=1
+    else:
+        empty_courses=0
+    return render(request,"ser_res.html",{"results":results,"empty_results":empty_results,"courses":courses_send,"empty_courses":empty_courses})
 def institution_form(request):
 
     return render(request,"institution-form.html")

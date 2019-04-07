@@ -161,7 +161,7 @@ def search(request):
             for course in courses:
 
                 if difflib.SequenceMatcher(a=search.lower(),b = (course.lower())).ratio() > 0.3:
-                    courses_send.append({"name":data[institute]["name"],"address":data[institute]["area"],"course":course,"duration":data[institute]["courses"][course]["duration"]})
+                    courses_send.append({"name":data[institute]["name"],"address":data[institute]["area"],"course":course,"duration":data[institute]["courses"][course]["duration"],"off":data[institute]["courses"][course]["off"],"hours":data[institute]["courses"][course]["hours"],"price":data[institute]["courses"][course]["price"]})
 
     if len(results) ==  0:
         empty_results=1

@@ -139,7 +139,6 @@ def submit(request):
         teacher = teachers[i]
         db.child("enrollment").child(count).child("subject details").update({subject:0})
         db.child("enrollment").child(count).child("subject details").child(subject).update({"fee":fee,"capacity":cap,"teacher":teacher})
-    print(count)
     db.update({"count":count})
     return render(request,"enrollment_form.html",{"message":True})
 
@@ -189,7 +188,6 @@ def institution_submit(request):
     number_teachers = request.POST.get("no_teachers")
     type = request.POST.getlist("type[]")
     type = ",".join(type)
-    print(name,area,classes,year,number_students,number_teachers,type)
     auth.create_user_with_email_and_password(email,password)
     auth.sign_in_with_email_and_password(email,password)
     uid = auth.current_user["localId"]
@@ -233,7 +231,6 @@ def post_schedule(request):
     friday = request.POST.getlist("friday[]")
     saturday = request.POST.getlist("saturday[]")
     sunday = request.POST.getlist("sunday[]")
-    print(boards,subjects,monday,tuesday,wednessday,thursday,friday,saturday,sunday)
     return HttpResponseRedirect("/institution-dashboard/")
 
 @student_login_required
@@ -312,7 +309,6 @@ def teacher_profile(request):
             count+=1
     count = int(count*100/28)
     data = {"exp":exp,"qualification":qualification,"treetor":treetor,"address":address,"dob":dob,"mail":mail,"fb":fb,"gender":gender,"languages":languages,"name":name,"ot":ot,"phone":phone,"count":count}
-    print(data)
     return render(request,"teacher_profile.html",data)
 def basic_update(request):
 
@@ -322,7 +318,7 @@ def basic_update(request):
         user = "teachers"
     else:
         user = "students"
-    print(user)
+
     gender = request.GET.get("gender")
     dob = request.GET.get("dob")
     languages = request.GET.get("languages")
@@ -338,7 +334,6 @@ def career_update(request):
     ot = request.GET.get("ot")
     db.child("users").child("teachers").child(uid).update({"Experience":exp,"Qualification":qualification,"Treetor institutes":treetor,"old tuition":ot})
     all = True
-    print(exp,qualification,treetor,ot)
     return HttpResponse(json.dumps(all), content_type='application/json')
 def contact_update(request):
 
@@ -348,7 +343,7 @@ def contact_update(request):
         user = "teachers"
     else:
         user = "students"
-    print(user)
+
     phone = request.GET.get("phone")
     email = request.GET.get("email")
     address = request.GET.get("address")
@@ -387,7 +382,6 @@ def academic_update(request):
     ba = request.GET.get("ba")
 
     uid = auth.current_user["localId"]
-    print(school,std,subjects,tc,ot,per,wa,ba)
     db.child("users").child("students").child(uid).update({"school":school,"class":std,"subjects":subjects,"treetor center":tc,"old tuition":ot,"percentage":per,"weak at":wa,"best at":ba})
     all = True
     return HttpResponse(json.dumps(all), content_type='application/json')
@@ -419,6 +413,7 @@ def institution_profile(request):
     duration = []
     off = []
     hours = []
+    class_1 = []
     time = []
     price = []
     subjects = []
@@ -426,29 +421,29 @@ def institution_profile(request):
     pending_list = {}
     course_names = []
     all_teachers_inst = {}
-    # print(teachers_all["mxEAZomwlpZ0JPuL6jz8BNPp9kH3"]["name"])
     institution_data = {"name":name,"classes":classes,"area":area,"teachers":teachers,"students":students,"email":email,"type":type}
-    if institution.get("courses") is not None:
+    print(db.child("users").child("institutes").child(uid).child("courses").child("Test Offline").child("class").get().val())
+    if institution.get("courses",None) is not None:
+        print('below')
         courses = institution["courses"]
         for course in courses:
             duration.append(institution["courses"][course]["duration"])
             course_names.append(course)
             off.append(institution["courses"][course]["off"])
-            # time.append(institution["courses"][course]["time"])
             price.append(institution["courses"][course]["price"])
             all_subjects = list(institution["courses"][course]["subjects"].keys())
             subjects.append(",".join(all_subjects))
-    courses = zip(course_names,duration,off,time,price,subjects)
+    courses = zip(course_names,duration,off,class_1,price,subjects)
     if institution.get("pending") is not None:
         pl = list(institution["pending"].keys())
         pending = len(pl)
         for id in pl:
-            print(id)
             pending_list.update({id:teachers_all[id]["name"]})
     if institution.get("teachers") is not None:
         teacher_list = list(institution["teachers"].keys())
         for teacher in teacher_list :
             all_teachers_inst.update({teacher:teachers_all[teacher]["name"]})
+        print(courses)
         return render(request,"institution_profile.html",{"institution":institution_data,"courses":courses,"pending":pending,"pending_list":pending_list,"all_teachers":all_teachers_inst})
     else:
         return render(request,"institution_profile.html",{"institution":institution_data,"done":True})
@@ -481,7 +476,7 @@ def add_courses(request):
     time = request.GET.get("time")
     price = request.GET.get("price")
     subject = request.GET.get("subjects")
-    teachers = request.GET.get("teachers")
+    teachers = request.GET.get("teachers","not assigned")
     std = request.GET.get("class")
     subjects = []
     hours_list= []
@@ -504,14 +499,13 @@ def add_courses(request):
     for i in range(len(subj)):
         db.child("users").child("institutes").child(uid).child("courses").child(name).child("subjects").child(subjects[i]).update({"teacher":teachers_list[i],"hours":hours_list[i]})
     for i in range(len(class_list)):
-        db.child("users").child("institutes").child(uid).child("courses").child(name).child("class").update({class_list[i]:0})
+        db.child("users").child("institutes").child(uid).child("courses").child(name).child("class").update({"'"+str(class_list[i])+"'":0})
     all=True
     return HttpResponse(json.dumps(all),content_type='application/json')
 
 def add_teachers(request):
 
     teacher = request.GET.get("new_teacher")
-    print(teacher)
     all = True
     return HttpResponse(json.dumps(all),content_type='application/json')
 
@@ -545,7 +539,6 @@ def demo_request(request):
     timestamp = int(datetime.now().timestamp())
     date = str(datetime.fromtimestamp(timestamp).date())
     time = str(datetime.fromtimestamp(timestamp).time())
-    print(timestamp)
     timestamp = str(timestamp)
     db.child("Querries").child(timestamp).update({"date":date,"time":time,"name":name,"email":email,"wap":wap})
     all = True
@@ -561,8 +554,6 @@ def institution_details(request):
     for institute in institutes:
         if name == institutes[institute]["name"]:
             db.child("users").child("institutes").child(institute).child("pending").update({uid:0})
-            print(institute)
-    print(all)
     return HttpResponse(json.dumps(all),content_type='application/json')
 def accept_request(request):
 
@@ -577,7 +568,6 @@ def accept_request(request):
 def change_picture(request):
 
     image = request.POST.get("image")
-    print(request.POST)
     all = True
     return HttpResponseRedirect("/institution-profile/")
 

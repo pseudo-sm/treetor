@@ -169,7 +169,7 @@
 
              .flp input,
              .flp label {
-                 width: 400px;
+                 width: 90%;
                  display: block;
                  font: inherit;
                  font-size: 16px;
@@ -494,12 +494,12 @@
 
                         </figure>
                     </div>
-                    <div class="container pt-lg pb-xl-md position-relative zindex-100">
+                    <div class="container col-sm-10 col-md-5 col-lg-5 pt-lg pb-xl-md position-relative zindex-100">
 
                                     <center>
 
                                         <div class="login">
-                                            <h3 class="h31">Treetor</h3>
+                                            <h3 class="h31" style="margin-top:5%">Treetor</h3>
                                             <hr/>
                                             <form method="POST" action="{% url 'post_signup' %}" >
                                                 {%  csrf_token%}
@@ -529,7 +529,7 @@
                                                 </div>
                                                 <button class="signinBtn" type="submit">Sign Up</button>
                                             </form>
-                                            <a class="ancor a1"> Already a Member ?&nbsp; </a><a class="ancor" href="login.html" style="color: blue"><u> Sign In</u>  <a class="ancor a2"> &nbsp; here. </a></a><br/><br/><br/>
+                                            <a class="ancor a1" style="font-size:.8em"> Already a Member ?&nbsp; </a><a class="ancor" href="login.html" style="color: blue;font-size:.8em"><u> Sign In</u>  <a class="ancor a2" style="font-size:.8em"> &nbsp; here. </a></a><br/><br/><br/>
                                             <div id="cuboid">                           
                                             </div>
                                         </div>

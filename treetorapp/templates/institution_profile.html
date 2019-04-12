@@ -1,7 +1,6 @@
-<html> 
-    
+<html>
+
     <head>
-        
         <link rel="stylesheet" href="../static/css/bootstrap.min.css">
         <link rel="stylesheet" href="../static/css/atom-one-dark.css">
         <link rel="stylesheet" href="../static/css/theme.css">
@@ -125,6 +124,7 @@
                 margin-top: 10px;
             }
         </style>
+
             
     </head>
     
@@ -495,18 +495,18 @@
                                                                         <th align="center">Course Name</th>
                                                                         <th align="center">Duration</th>
                                                                         <th align="center">Weekly Off</th>
+                                                                        <th align="center">Classes</th>
                                                                         <th align="center">Monthly Fees</th>
                                                                         <th align="center">Subjects</th>
-                                                                        <th align="center">Classes</th>
                                                                     </tr>
-                                                                        {% for course_names,duration,off,time,price,subjects in courses %}
+                                                                        {% for course_names,duration,off,class_1,price,subjects in courses %}
                                                                          <tr>
                                                                             <td>{{course_names}}</td>
                                                                             <td>{{duration}}</td>
                                                                             <td>{{off}}</td>
+                                                                            <td>{{class_1}}</td>
                                                                             <td>{{price}}</td>
                                                                             <td>{{subjects}}</td>
-                                                                            <td>{{classes}}</td>
                                                                           </tr>
                                                                         {% endfor %}
 

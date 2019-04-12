@@ -422,31 +422,32 @@ def institution_profile(request):
     course_names = []
     all_teachers_inst = {}
     institution_data = {"name":name,"classes":classes,"area":area,"teachers":teachers,"students":students,"email":email,"type":type}
-    print(db.child("users").child("institutes").child(uid).child("courses").child("Test Offline").child("class").get().val())
-    if institution.get("courses",None) is not None:
+    if institution.get("courses") is not None:
         print('below')
         courses = institution["courses"]
         for course in courses:
             duration.append(institution["courses"][course]["duration"])
             course_names.append(course)
+            all_class =  list(institution["courses"][course]["class"].keys())
+            class_1.append(",".join(all_class))
             off.append(institution["courses"][course]["off"])
             price.append(institution["courses"][course]["price"])
             all_subjects = list(institution["courses"][course]["subjects"].keys())
             subjects.append(",".join(all_subjects))
-    courses = zip(course_names,duration,off,class_1,price,subjects)
+    courses_send = (zip(course_names,duration,off,class_1,price,subjects))
     if institution.get("pending") is not None:
         pl = list(institution["pending"].keys())
         pending = len(pl)
         for id in pl:
             pending_list.update({id:teachers_all[id]["name"]})
+
     if institution.get("teachers") is not None:
         teacher_list = list(institution["teachers"].keys())
         for teacher in teacher_list :
             all_teachers_inst.update({teacher:teachers_all[teacher]["name"]})
-        print(courses)
-        return render(request,"institution_profile.html",{"institution":institution_data,"courses":courses,"pending":pending,"pending_list":pending_list,"all_teachers":all_teachers_inst})
+        return render(request,"institution_profile.html",{"institution":institution_data,"pending":pending,"pending_list":pending_list,"all_teachers":all_teachers_inst,"courses":courses_send})
     else:
-        return render(request,"institution_profile.html",{"institution":institution_data,"done":True})
+        return render(request,"institution_profile.html",{"institution":institution_data,"done":True,"courses":courses_send})
 def make_teacher(request):
 
 

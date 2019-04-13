@@ -532,6 +532,7 @@ def comment_unit(request):
 
 def logout(request):
     auth.current_user = None
+    authe.logout()
     return HttpResponseRedirect('/signin/')
 def demo_request(request):
     name = request.GET.get("name")

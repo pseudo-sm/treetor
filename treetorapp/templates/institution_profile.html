@@ -752,6 +752,7 @@
                   Subject Name : <input type="text" class="form-control subject" id="new_subject">
                   Daily Hours : <input type="text" id="hours" class="form-control hours"><br>
                   Teacher : <select id="teacher" class="form-control teacher">
+                                <option value="unassigned">Unassigned</option>
                                 {% for id,name in all_teachers.items %}
                                 <option value={{id}}>{{name}}</option>
                                 {% endfor %}

@@ -182,14 +182,14 @@
                     <img alt="Image placeholder" src="../static/images/text.png" style="height: 50px;">
                 </a>
 
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-main-collapse" aria-controls="navbar-main-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                <button style="background: #28a745" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-main-collapse" aria-controls="navbar-main-collapse" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
                <div class="collapse navbar-collapse" id="navbar-main-collapse">
                     <ul class="navbar-nav align-items-lg-center ml-lg-auto">
                         <li class="nav-item mr-0">
-                                <a href="{% url 'logout' %}"  class="nav-link d-lg-none">LogOut</a>
+                                <a href="{% url 'logout' %}"  class="nav-link d-lg-none" style="color: red">LogOut</a>
                             <a class="btn btn-sm btn-white btn-circle btn-icon d-none d-lg-inline-flex" style="background-color:rgb(236, 236, 236);" href="{% url 'logout' %}">
                                 <span class="btn-inner--icon"><i class="fas fa-sign-out-alt fa-2x"></i></span>
                                 <span class="btn-inner--text" style="text-align: center;font-size: 20px">Log Out</span>

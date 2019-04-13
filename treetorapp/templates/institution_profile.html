@@ -862,7 +862,7 @@
         <script>
             $("#more").click(function() {
 
-                $(".coursedet").append('<div><div style="border:1px;border-color:rgb(255,0,0,0.3);border-style:solid;padding:5%;"><button class="fa fa-times cross" style="float:right;background-color:Transparent;outline:none;"></button><br>Subject Name : <input type="text" class="form-control subject" id="new_subject">Daily Hours : <input type="text" id="hours" class="form-control hours">Teacher : <select id="teacher" class="form-control teacher">{% for id,name in all_teachers.items %}<option value={{id}}>{{name}}</option>{% endfor %}</select></div><br></div>');
+                $(".coursedet").append('<div><div style="border:1px;border-color:rgb(255,0,0,0.3);border-style:solid;padding:5%;"><button class="fa fa-times cross" style="float:right;background-color:Transparent;outline:none;"></button><br>Subject Name : <input type="text" class="form-control subject" id="new_subject">Daily Hours : <input type="text" id="hours" class="form-control hours">Teacher : <select id="teacher" class="form-control teacher"><option>Unassigned</option>{% for id,name in all_teachers.items %}<option value={{id}}>{{name}}</option>{% endfor %}</select></div><br></div>');
 
                  $(".cross").click(function() {
                 console.log("clicked");

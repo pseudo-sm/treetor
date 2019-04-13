@@ -1,5 +1,7 @@
 from django.shortcuts import render,HttpResponse,HttpResponseRedirect
 from django.http import JsonResponse
+from requests.exceptions import HTTPError
+
 import json
 import pyrebase
 import difflib
@@ -99,17 +101,23 @@ def signin(request):
 def post_signin(request):
     email = request.POST.get("email")
     password = request.POST.get("password")
-    auth.sign_in_with_email_and_password(email,password)
+    try:
+        auth.sign_in_with_email_and_password(email,password)
+    except HTTPError:
+        return render(request,"login.html",{"fail":True})
     uid = auth.current_user["localId"]
     students = dict(db.child("users").child("students").get().val()).keys()
     institutes = dict(db.child("users").child("institutes").get().val()).keys()
     teachers = dict(db.child("users").child("teachers").get().val()).keys()
+
     if uid in students:
         return HttpResponseRedirect("/student-profile/")
     elif uid in institutes:
         return HttpResponseRedirect("/institution-profile/")
     else:
         return HttpResponseRedirect("/teacher-dashboard/")
+
+
 def submit(request):
 
 
@@ -151,16 +159,16 @@ def search(request):
     courses_send = []
     for institute in data:
         if difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["name"]).lower())).ratio() > 0.5 or difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["area"]).lower())).ratio() > 0.3 :
-            results.append({"name":data[institute]["name"],"address":data[institute]["area"]})
+            results.append({"name":data[institute]["name"],"address":data[institute]["area"],"id":institute})
         if search.lower() in str(data[institute]["name"]).lower() and {"name":data[institute]["name"],"address":data[institute]["area"]} not in results:
             courses_res =  ",".join(list(data[institute]["courses"].keys()))
-            results.append({"name":data[institute]["name"],"address":data[institute]["area"],"courses":courses_res})
+            results.append({"name":data[institute]["name"],"address":data[institute]["area"],"courses":courses_res,"id":institute})
         if data[institute].get("courses"):
             courses = data[institute]["courses"]
             for course in courses:
 
                 if difflib.SequenceMatcher(a=search.lower(),b = (course.lower())).ratio() > 0.3:
-                    courses_send.append({"name":data[institute]["name"],"address":data[institute]["area"],"course":course,"duration":data[institute]["courses"][course]["duration"],"off":data[institute]["courses"][course]["off"],"hours":data[institute]["courses"][course]["hours"],"price":data[institute]["courses"][course]["price"]})
+                    courses_send.append({"name":data[institute]["name"],"address":data[institute]["area"],"course":course,"duration":data[institute]["courses"][course]["duration"],"off":data[institute]["courses"][course]["off"],"hours":data[institute]["courses"][course]["hours"],"price":data[institute]["courses"][course]["price"],"id":institute})
 
     if len(results) ==  0:
         empty_results=1
@@ -447,7 +455,7 @@ def institution_profile(request):
             all_teachers_inst.update({teacher:teachers_all[teacher]["name"]})
         return render(request,"institution_profile.html",{"institution":institution_data,"pending":pending,"pending_list":pending_list,"all_teachers":all_teachers_inst,"courses":courses_send})
     else:
-        return render(request,"institution_profile.html",{"institution":institution_data,"done":True,"courses":courses_send})
+        return render(request,"institution_profile.html",{"institution":institution_data,"done":True,"courses":courses_send,"pending":pending,"pending_list":pending_list})
 def make_teacher(request):
 
 
@@ -532,7 +540,7 @@ def comment_unit(request):
 
 def logout(request):
     auth.current_user = None
-    authe.logout()
+    authe.logout(request)
     return HttpResponseRedirect('/signin/')
 def demo_request(request):
     name = request.GET.get("name")
@@ -593,3 +601,28 @@ def show_response(request):
     marks = db.child("marks").get().val()
 
     return HttpResponse("Marks : "+str(marks))
+
+
+def view_courses(request):
+
+    auth.sign_in_with_email_and_password("trident@gmail.com","password")
+    uid = auth.current_user["localId"]
+    course_name = []
+    classes = []
+    courses = dict(db.child("users").child("institutes").child(uid).child("courses").get().val())
+    for i in courses:
+        course_name.append(i)
+        classes.append(list(courses[i]["class"].keys()))
+    print(course_name,classes)
+    return render(request,"institution_courses.html")
+
+def apply(request):
+
+    if auth.current_user is not None:
+        id = auth.current_user["localId"]
+        inst = request.GET.get("inst")
+        content = True
+        print(id,inst)
+    else:
+        content = False
+    return JsonResponse(json.dumps(content),content_type="application/json",safe=False)

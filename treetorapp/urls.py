@@ -21,6 +21,7 @@ from . import views
 urlpatterns = [
 
     url(r'^quiz-response/',views.quiz_response,name="quiz_response"),
+    url(r'^apply/',views.apply,name="apply"),
     url(r'^show-marks/',views.show_response,name="show_response"),
     url(r'^student-profile/',views.student_profile,name="student_profile"),
     url(r'^search/',views.search,name="search"),
@@ -37,6 +38,7 @@ urlpatterns = [
     url(r'^guardian-update/',views.guardian_update,name="guardian_update"),
     url(r'^academic-update/',views.academic_update,name="academic_update"),
     url(r'^top-5/',views.top_5_students,name="top_5_students"),
+    url(r'^courses/',views.view_courses,name="courses"),
     url(r'^institution-profile/',views.institution_profile,name="institution_profile"),
     url(r'^institution-courses/',views.institution_courses,name="institution_courses"),
     url(r'^institution-form/',views.institution_form,name="institution_form"),

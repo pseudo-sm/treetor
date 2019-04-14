@@ -3,14 +3,13 @@
     <head>
          {% load static %}
          {% load inst_details %}
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/atom-one-dark.css' %}">
-    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800">
-    <link rel="icon" href="{% static 'images/text.png" type="image/png">
-    <link rel="stylesheet" href="{% static 'css/animate.css' %}">
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+        <link rel="stylesheet" href="../static/css/atom-one-dark.css">
+        <link rel="stylesheet" href="../static/css/theme.css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800">
+        <link rel="icon" href="../static/images/text.png" type="image/png">
+        <link rel="stylesheet"href="../static/css/animate.css">
         <style>
              ::-webkit-scrollbar {
                 width: 5px;
@@ -42,7 +41,19 @@
             border-color:rgb(9, 58, 35);
             color:black;
         }
-            
+        .alsoteach {
+
+                cursor: pointer;
+                background-color:rgb(9, 58, 35);
+                width:100%;
+                height:20%;
+                border-radius:20px;
+                margin:1%;
+                color:white;
+                font-size:1.5em;
+
+            }
+
         </style>
         <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
@@ -327,6 +338,7 @@
                                 </div>
                                 </div>
                             </div>
+
                             
                             
                             <div class=" col-lg-3 col-sm-12 col-md-3">
@@ -343,8 +355,15 @@
                                 </div>
                                 </div>
                             </div>
-                            
-                            
+
+                             <div class="col-lg-12 col-sm-12 col-md-12">
+                                 <div class="container pt-lg pb-xl-md position-relative zindex-100 prop">
+                                    {% if also_inst %}
+                                        <a href="{% url 'institution_profile' %}"><button class="btn btn-default alsoteach">Institution-Panel</button></a>
+                                    {% endif %}
+                                 </div>
+                            </div>
+
                             <div class="col-lg-12 col-sm-12 col-md-12">
                                 <div class="container pt-lg pb-xl-md position-relative zindex-100 prop">
                                     <div data-toggle="hidden">
@@ -366,7 +385,7 @@
         
                         </div>
                     </div>
-                      
+
                 </section>
             
             </main>

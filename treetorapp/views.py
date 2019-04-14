@@ -284,6 +284,7 @@ def student_dashboard(request):
 def student_schedule(request):
 
     return render(request,"student_schedule.html")
+@teacher_login_required
 def teacher_dashboard(request):
     uid = auth.current_user["localId"]
     institutes = dict(db.child("users").child("institutes").get().val())
@@ -293,7 +294,8 @@ def teacher_dashboard(request):
         names.update({institute:institutes[institute]["name"]})
     this = db.child("users").child("teachers").child(uid).get().val()
     teacher_name = this["name"]
-    return render(request,"teacher_dashboard.html",{"names":names,"teacher_name":teacher_name})
+
+    return render(request,"teacher_dashboard.html",{"names":names,"teacher_name":teacher_name,"also_inst":True})
 
 @teacher_login_required
 def teacher_profile(request):
@@ -406,7 +408,13 @@ def institution_list(request):
 @institute_login_required
 def institution_profile(request):
 
+    also_teacher = False
+    done = True
     uid = auth.current_user["localId"]
+    all_teachers = dict(db.child("users").child("teachers").get().val())
+    if uid in all_teachers:
+        also_teacher = True
+        done = False
     institution = dict(db.child("users").child("institutes").child(uid).get().val())
     users = dict(db.child("users").child("teachers").get().val())
     teachers_all = dict(db.child("users").child("teachers").get().val())
@@ -448,14 +456,13 @@ def institution_profile(request):
         pending = len(pl)
         for id in pl:
             pending_list.update({id:teachers_all[id]["name"]})
-
     if institution.get("teachers") is not None:
         teacher_list = list(institution["teachers"].keys())
         for teacher in teacher_list :
             all_teachers_inst.update({teacher:teachers_all[teacher]["name"]})
-        return render(request,"institution_profile.html",{"institution":institution_data,"pending":pending,"pending_list":pending_list,"all_teachers":all_teachers_inst,"courses":courses_send})
+        return render(request,"institution_profile.html",{"institution":institution_data,"pending":pending,"pending_list":pending_list,"all_teachers":all_teachers_inst,"courses":courses_send,"done":done,"also_teacher":also_teacher})
     else:
-        return render(request,"institution_profile.html",{"institution":institution_data,"done":True,"courses":courses_send,"pending":pending,"pending_list":pending_list})
+        return render(request,"institution_profile.html",{"institution":institution_data,"done":done,"courses":courses_send,"pending":pending,"pending_list":pending_list,"also_teacher":also_teacher})
 def make_teacher(request):
 
 
@@ -622,7 +629,18 @@ def apply(request):
         id = auth.current_user["localId"]
         inst = request.GET.get("inst")
         content = True
-        print(id,inst)
+        db.child("users").child("institutes").child(inst).child("students").update({id:0})
     else:
         content = False
     return JsonResponse(json.dumps(content),content_type="application/json",safe=False)
+
+
+def add_as_teacher(request):
+
+    uid = auth.current_user["localId"]
+    data = dict(db.child("users").child("institutes").child(uid).get().val())
+    email = data["email"]
+    name = data["name"]
+    db.child("users").child('teachers').child(uid).update({'Experience':'Not Updated',"name":name,"email":email,'gender':'Not Updated','dob':'Not Updated','languages':'Not Updated','phone':'Not Updated','address':'Not Updated','Qualification':'Not Updated','Treetor institutes':"Not Updated",'old tuition':'Not Updated',"facebook":"Not Updated","rank":"N/A","score":"N/A","rating":"N/A"})
+    db.child("users").child("institutes").child(uid).child("teachers").update({uid:0})
+    return HttpResponseRedirect("/teacher-dashboard/")

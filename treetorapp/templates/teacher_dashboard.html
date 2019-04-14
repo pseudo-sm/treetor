@@ -305,7 +305,7 @@
                             </script>
                             
                                                         
-                            <div class=" col-lg-3 col-sm-12 col-md-3" >
+                            <div class=" col-lg-3 col-sm-12 col-md-3" data-toggle="modal" data-target="#optInst">
                                 <div class="container pt-lg pb-xl-md position-relative zindex-100 prop">
                                     <div data-toggle="hidden">
                                     <div class="card shadow animate-this animated fadeIn delay-2s">
@@ -314,8 +314,7 @@
                                         </div>
                                         <div class="px-4 pb-5 text-center">
                                             <strong>INSTITUTIONS</strong><br>
-                                            <button class="btn btn-default form-control" style="background-color:rgb(9, 58, 35);color:white;" data-toggle="modal" data-target="#addInst">Add Institutes</button>
-                                            <button class="btn btn-default form-control" style="background-color:rgb(9, 58, 35);color:white;" data-toggle="modal" data-target="#institutions">View Institutes</button>
+                                            
                                         </div>
 
                                     </div>
@@ -358,9 +357,7 @@
 
                              <div class="col-lg-12 col-sm-12 col-md-12">
                                  <div class="container pt-lg pb-xl-md position-relative zindex-100 prop">
-                                    {% if also_inst %}
-                                        <a href="{% url 'institution_profile' %}"><button class="btn btn-default alsoteach">Institution-Panel</button></a>
-                                    {% endif %}
+                                    
                                  </div>
                             </div>
 
@@ -478,6 +475,7 @@
             gtag('config', 'UA-104437451-1');
         </script>
          <!--modal-->
+
         <div class="modal fade" id="addInst" role="dialog">
             <div class="modal-dialog">
               <!-- Modal content-->
@@ -495,8 +493,9 @@
                         <option value="{{name}}">{{name}}</option>
                     {% endfor %}
                          </datalist>
+                         <button type="button" class="btn btn-default" style="background-color:#28a745;color:white;" id="subjectsubmit">Send Request</button>
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-default" style="background-color:rgb(9, 58, 35);color:white;height:25%;" id="subjectsubmit">Send Request</button>
+                        
                       </div>
                       <script>
                       $("#subjectsubmit").click(function(){
@@ -528,6 +527,30 @@
 
             </div>
           </div>
+
+          <div class="modal fade" id="optInst" role="dialog">
+            <div class="modal-dialog">
+              <!-- Modal content-->
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">institutions</h4>
+                 <button type="button" class="fas fa-times" data-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+
+                    <button class="btn btn-default form-control" style="background-color:#28a745;color:white;" data-toggle="modal" data-target="#addInst">Add Institutes</button>
+                    <button class="btn btn-default form-control" style="background-color:#28a745;color:white;" data-toggle="modal" data-target="#institutions">View Institutes</button>
+                    {% if also_inst %}
+                        <a href="{% url 'institution_profile' %}"><button class="btn btn-default form-control">Institution-Panel</button></a>
+                    {% endif %}
+                </div>
+                  <br>
+                  <br>
+              </div>
+
+            </div>
+          </div>  
+
         <--show inst modal-->
             <!--modal-->
         <div class="modal fade" id="institutions" role="dialog">

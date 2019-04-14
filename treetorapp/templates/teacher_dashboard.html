@@ -526,16 +526,17 @@
               <!-- Modal content-->
               <div class="modal-content">
                 <div class="modal-header">
-                  <h4 class="modal-title">institutions</h4>
+                  <h4 class="modal-title">Institutions</h4>
                  <button type="button" class="fas fa-times" data-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
 
+                    {% if also_inst %}
+                    <a href="{% url 'institution_profile' %}" style="text-decoration:none"><button class="btn btn-default form-control" style="background-color:#28a745;color:white;">Institution-Panel</button></a>
+                    {% endif %}
                     <button class="btn btn-default form-control" style="background-color:#28a745;color:white;" data-toggle="modal" data-target="#addInst" data-dismiss="modal">Add Institutes</button>
                     <button class="btn btn-default form-control" style="background-color:#28a745;color:white;" data-toggle="modal" data-target="#institutions" data-dismiss="modal">View Institutes</button>
-                    {% if also_inst %}
-                    <button class="btn btn-default form-control" style="background-color:#28a745;color:white;"><a href="{% url 'institution_profile' %}">Institution-Panel</a></button>
-                    {% endif %}
+                    
                 </div>
                   <br>
                   <br>

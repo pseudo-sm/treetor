@@ -395,18 +395,18 @@
                                                 
                                                 </div>
                                                 {% if done %}
-                                    <form action="{% url 'make_teacher' %}" method="post">
-                                    {% csrf_token %}
-                                    <div data-animate-hover="2">
-                                        <button id="beateacher" data-toggle="modal" data-target="#beteacher"  class="card shadow animate-this animated fadeIn delay-2s alsoteach">Add Yourself as a Teacher.</button>
-                                    </div>
-                                     </form>
-                                    {% endif %}
-                                    {% if also_teacher %}
-                                        <div data-animate-hover="2">
-                                            <a href="{% url 'teacher_dashboard' %}"><button data-toggle="modal" data-target="#beteacher"  class="card shadow animate-this animated fadeIn delay-2s alsoteach">Teacher-Dashboard</button></a>
-                                        </div>
-                                    {% endif %}
+                                                <form action="{% url 'make_teacher' %}" method="post">
+                                                {% csrf_token %}
+                                                <div data-animate-hover="2">
+                                                    <button id="beateacher" data-toggle="modal" data-target="#beteacher"  class="card shadow animate-this animated fadeIn delay-2s alsoteach">Add Yourself as a Teacher.</button>
+                                                </div>
+                                                </form>
+                                                {% endif %}
+                                                {% if also_teacher %}
+                                                    <div data-animate-hover="2">
+                                                        <a href="{% url 'teacher_dashboard' %}"><button data-toggle="modal" data-target="#beteacher"  class="card shadow animate-this animated fadeIn delay-2s alsoteach">Teacher-Dashboard</button></a>
+                                                    </div>
+                                                {% endif %}
                                             </center>
                                             <br/>
                                             <!--<small>Phone No: <b>9876543210</b></small><br>-->

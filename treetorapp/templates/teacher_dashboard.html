@@ -531,10 +531,10 @@
                 </div>
                 <div class="modal-body">
 
-                    <button class="btn btn-default form-control" style="background-color:#28a745;color:white;" data-toggle="modal" data-target="#addInst">Add Institutes</button>
-                    <button class="btn btn-default form-control" style="background-color:#28a745;color:white;" data-toggle="modal" data-target="#institutions">View Institutes</button>
+                    <button class="btn btn-default form-control" style="background-color:#28a745;color:white;" data-toggle="modal" data-target="#addInst" data-dismiss="modal">Add Institutes</button>
+                    <button class="btn btn-default form-control" style="background-color:#28a745;color:white;" data-toggle="modal" data-target="#institutions" data-dismiss="modal">View Institutes</button>
                     {% if also_inst %}
-                    <button class="btn btn-default form-control" style="background-color:#28a745;color:white;"><a href="{% url 'institution_profile' %}"></a>Institution-Panel</a></button>
+                    <button class="btn btn-default form-control" style="background-color:#28a745;color:white;"><a href="{% url 'institution_profile' %}">Institution-Panel</a></button>
                     {% endif %}
                 </div>
                   <br>

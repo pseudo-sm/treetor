@@ -2,12 +2,13 @@
     
     <head>
         <!-- Index UI Chnaged-->
-        <link rel="stylesheet" href="../static/css/bootstrap.min.css">
-        <link rel="stylesheet" href="../static/css/atom-one-dark.css">
-        <link rel="stylesheet" href="../static/css/theme.css">
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static  'css/atom-one-dark.css' %}">
+        <link rel="stylesheet" href="{% static 'css/theme.css' %}">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800">
-        <link rel="icon" href="../static/images/text.png" type="image/png">
+        <link rel="icon" href="{% static 'images/text.png' %}" type="image/png">
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <script src="../static/js/ajax.js"></script>
         <script src="../static/js/jQuery.3.3.1.js"></script>
@@ -34,6 +35,9 @@
 
             ::-webkit-scrollbar-thumb:hover {
                 background: #fff; 
+            }
+            .droppro {
+                display : none;
             }
         </style>
             
@@ -63,23 +67,35 @@
                                 </button>
 
                                 <div class="collapse navbar-collapse" id="navbar-main-collapse">
-                                    <ul class="navbar-nav align-items-lg-center ml-lg-auto">
-                                        <li class="nav-item mr-0">
-                                                <a href="{% url 'signin' %}"  class="nav-link d-lg-none">LogIn</a>
-                                                
-                                            <a class="btn btn-sm btn-white btn-circle btn-icon d-none d-lg-inline-flex" href="{% url 'signin' %}">
-                                                <span class="btn-inner--icon"><i class="fas fa-sign-in-alt fa-2x"></i></span>
-                                                <span class="btn-inner--text" style="text-align: center;font-size: 20px">Log in</span>
-                                            </a>
 
+                                    <ul class="navbar-nav align-items-lg-center ml-lg-auto">
+                                        <li class="nav-item mr-0 prsec">
+                                            <span class="btn-icon d-none d-lg-inline-flex" style="float:right"><i class="fas fa-user-circle fa-2x" style="color:white;"></i><br></span>
+
+                                            <div class="droppro">
+                                                <div class="tongue tongue-down tongue-secondary tongue-rot" style="margin-top:35%;float:right"></div>
+                                                <div style="background:white">
+                                                <a href="{% url 'signin' %}" style="text-decoration:none;color:white;float:right;margin-top:85%">Login</a>
+                                                <a href="{% url 'signin' %}" style="text-decoration:none;color:white;float:right;margin-top:1%">Signup</a>
+                                                </div>
+                                            </div>
+                                            <script>
+                                                $( ".prsec" )
+                                                  .mouseenter(function() {
+                                                    $(".droppro").show();
+                                                  })
+                                                  .mouseleave(function() {
+                                                  console.log('sasasdasdasdas');
+                                                    $(".droppro").hide();
+                                                  });
+                                            </script>
                                         </li>
                                         &nbsp;&nbsp;
                                         <li class="nav-item mr-1">
+                                                <a href="{% url 'signin' %}"  class="nav-link d-lg-none">Login</a>
                                                 <a href="{% url 'signup' %}"  class="nav-link d-lg-none">Register</a>
-                                            <a class="btn btn-sm btn-white btn-circle btn-icon d-none d-lg-inline-flex" href="{% url 'signup' %}">
-                                                <span class="btn-inner--icon"><i class="fas fa-sign-in-alt fa-2x"></i></span>
-                                                <span class="btn-inner--text" style="text-align: center;font-size: 20px">Register</span>
-                                            </a>
+
+
                                         </li>
                                     </ul>
 
@@ -149,8 +165,13 @@
                                         </div>
                                       </div>
                                     </form>
-
-
+                                    <style>
+                                        .tongue-rot{
+                                            -ms-transform: rotate(360deg); /* IE 9 */
+                                          -webkit-transform: rotate(360deg); /* Safari */
+                                          transform: rotate(360deg);
+                                        }
+                                    </style>
 
                                     <div class="mt-5">
         <!--

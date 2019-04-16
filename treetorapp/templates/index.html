@@ -70,25 +70,56 @@
 
                                     <ul class="navbar-nav align-items-lg-center ml-lg-auto">
                                         <li class="nav-item mr-0 prsec">
-                                            <span class="btn-icon d-none d-lg-inline-flex" style="float:right"><i class="fas fa-user-circle fa-2x" style="color:white;"></i><br></span>
+                                            <!-- <span class="btn-icon d-none d-lg-inline-flex" style="float:right"><i class="fas fa-user-circle fa-2x" style="color:white;"></i><br></span> -->
 
-                                            <div class="droppro">
-                                                <div class="tongue tongue-down tongue-secondary tongue-rot" style="margin-top:35%;float:right"></div>
-                                                <div style="background:white">
-                                                <a href="{% url 'signin' %}" style="text-decoration:none;color:white;float:right;margin-top:85%">Login</a>
-                                                <a href="{% url 'signin' %}" style="text-decoration:none;color:white;float:right;margin-top:1%">Signup</a>
-                                                </div>
-                                            </div>
-                                            <script>
-                                                $( ".prsec" )
-                                                  .mouseenter(function() {
-                                                    $(".droppro").show();
-                                                  })
-                                                  .mouseleave(function() {
-                                                  console.log('sasasdasdasdas');
-                                                    $(".droppro").hide();
-                                                  });
-                                            </script>
+                                            <style>
+                                                .dropbtn {
+                                                  background-color:transparent;
+                                                  color: white;
+                                                  padding: 16px;
+                                                  font-size: 16px;
+                                                  border: none;
+                                                }
+                                                
+                                                .dropdown {
+                                                  position: relative;
+                                                  display: inline-block;
+                                                }
+                                                
+                                                .dropdown-content {
+                                                  display: none;
+                                                  position: absolute;
+                                                  background-color: #f1f1f1;
+                                                  min-width: 160px;
+                                                  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                                                  z-index: 1;
+                                                  border-radius: 10px;
+                                                  color:#28a745;
+                                                }
+                                                
+                                                .dropdown-content a {
+                                                  color: black;
+                                                  padding: 12px 16px;
+                                                  text-decoration: none;
+                                                  display: block;
+                                                }
+                                                
+                                                .dropdown-content a:hover {background-color: #ddd;}
+                                                
+                                                .dropdown:hover .dropdown-content {display: block;}
+                                                
+                                                .dropdown:hover .dropbtn {
+                                                    
+                                                }
+                                                </style>
+                                                <div class="dropdown">
+                                                    <button class="dropbtn"><i class="fas fa-user-circle fa-2x"></i></button>
+                                                    <div class="dropdown-content">
+                                                      <a href="{% url 'signin' %}">Log In</a>
+                                                      <a href="{% url 'signup' %}">Register</a>
+                                                      
+                                                    </div>
+                                                  </div>
                                         </li>
                                         &nbsp;&nbsp;
                                         <li class="nav-item mr-1">

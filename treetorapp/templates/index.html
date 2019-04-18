@@ -124,9 +124,12 @@
                                         </li>
                                         &nbsp;&nbsp;
                                         <li class="nav-item mr-1">
+                                            {% if user %}
                                                 <a href="{% url 'signin' %}"  class="nav-link d-lg-none">Login</a>
                                                 <a href="{% url 'signup' %}"  class="nav-link d-lg-none">Register</a>
-
+                                            {% else %}
+                                                <a>Dashboard</a>
+                                            {% endif %}
 
                                         </li>
                                     </ul>

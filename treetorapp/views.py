@@ -71,8 +71,10 @@ def institute_login_required(function):
 
 def home(request):
 
-    return render(request,"index.html")
-
+    if auth.current_user is not None:
+        return render(request,"index.html",{"user":True})
+    else:
+        return render(request,"index.html")
 def signup(request):
 
     return render(request,"signup.html")
@@ -515,7 +517,7 @@ def add_courses(request):
     for i in range(len(subj)):
         db.child("users").child("institutes").child(uid).child("courses").child(name).child("subjects").child(subjects[i]).update({"teacher":teachers_list[i],"hours":hours_list[i]})
     for i in range(len(class_list)):
-        db.child("users").child("institutes").child(uid).child("courses").child(name).child("class").update({str(class_list[i]):0})
+        db.child("users").child("institutes").child(uid).child("courses").child(name).child("class").update({class_list[i]:0})
     all=True
     return HttpResponse(json.dumps(all),content_type='application/json')
 

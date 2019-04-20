@@ -72,9 +72,10 @@ def institute_login_required(function):
 def home(request):
 
     if auth.current_user is not None:
-        return render(request,"index.html",{"user":True})
+        print(auth.current_user)
+        return render(request,"index.html",{"xyz":True})
     else:
-        return render(request,"index.html")
+        return render(request,"index.html",{"yuo":True})
 def signup(request):
 
     return render(request,"signup.html")
@@ -113,7 +114,7 @@ def post_signin(request):
     teachers = dict(db.child("users").child("teachers").get().val()).keys()
 
     if uid in students:
-        return HttpResponseRedirect("/student-profile/")
+        return HttpResponseRedirect("/home/")
     elif uid in institutes:
         return HttpResponseRedirect("/institution-profile/")
     else:

@@ -544,8 +544,55 @@ def add_teachers(request):
 
 def institution_teachers(request):
     return render(request,"institution_teachers.html")
+
+@institute_login_required
 def all_students(request):
-    return render(request,"all_students.html")
+
+    names = []
+    emails = []
+    schools = []
+    schools = []
+    scores = []
+    ranks = []
+    pnames = []
+    pemails = []
+    pschools = []
+    pschools = []
+    pscores = []
+    pranks = []
+    pids = []
+    ids = []
+    uid = auth.current_user["localId"]
+    students = dict(db.child("users").child("students").get().val())
+    this_students = dict(db.child("users").child("institutes").child(uid).child("students").get().val())
+    for i in this_students:
+        if this_students[i] == 1:
+            ids.append(i)
+            names.append(students[i]["name"])
+            emails.append(students[i]["email"])
+            schools.append(students[i]["school"])
+            scores.append(students[i]["score"])
+            ranks.append(students[i]["rank"])
+        else:
+            pids.append(i)
+            pnames.append(students[i]["name"])
+            pemails.append(students[i]["email"])
+            pschools.append(students[i]["school"])
+            pscores.append(students[i]["score"])
+            pranks.append(students[i]["rank"])
+    pending = zip(pids,pnames,pemails,pschools,pscores,pranks)
+    context = zip(ids,names,emails,schools,scores,ranks)
+    return render(request,"all_students.html",{"context":context,"pending":pending})
+
+def accept_students(request):
+
+    id = request.GET.get("id")
+    print(id)
+    uid = auth.current_user["localId"]
+    db.child("users").child("institutes").child(uid).child("students").update({id:1})
+    content = True
+    return JsonResponse(json.dumps(content),safe=False,content_type="json/application")
+
 def comment_unit(request):
     return render(request,"comment_unit.html")
 
@@ -644,7 +691,7 @@ def apply(request):
 
     if auth.current_user is not None:
         id = auth.current_user["localId"]
-        inst = request.GET.get("inst")
+        inst = request.GET.get("id")[1:]
         content = True
         db.child("users").child("institutes").child(inst).child("students").update({id:0})
     else:

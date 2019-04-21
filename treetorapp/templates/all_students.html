@@ -252,7 +252,7 @@
                     </div>
                     <div class="container">
                         
-                        <div class="row">
+                        <div class="row pending">
                             
                             <div class="col-md-12 col-sm-12 col-lg-12"> <h2 class="text-green my-4" style="color: green;margin-left: 10%">
                             <span class="display-5 font-weight-light"><stong style="color: yellow;text-shadow: 2px 2px grey">All</stong> Students.</span>
@@ -263,6 +263,53 @@
                     
                                 <button class="searchBtn animated pulse " style="width:70px;height: 70px;border: solid 0px;border-radius:70px;margin-left: -35px;background-color: #FFE667;"><i class="fas fa-search fa-2x"></i></button>
                                 </center></div>
+                            <h4>Pending</h4>
+                            {% for id,name,email,school,score,rank in pending %}
+                            <div class="d-md-none d-sm-none col-lg-3 d-lg-block" id="h{{id}}">
+                                <div class="container pt-lg pb-xl-md position-relative zindex-100 prop">
+                                    <div data-toggle="hidden">
+                                    <div class="card shadow animate-this animated fadeIn delay-2s">
+                                        <div class="py-5 text-center">
+                                            <img alt="" src="../static/images/learning.png" class="img-saturate" style="width: 100px;border: 1px solid grey;border-radius: 50px">
+                                        </div>
+                                        <div class="px-4 pb-5 text-center">
+                                            <strong>{{name}}</strong><br/><small>{{email}}</small><br><small>{{school}}</small><br><small>Score:</small><strong>{{score}}</strong><br>
+
+                                            <strong>Global Rank: {{rank}}</strong>
+                                            <br/>
+                                            <br/>
+                                            <button class="btn btn-dark accept" id="{{id}}">Accept</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                            <script>
+                                $(".accept").click(function() {
+                                    var id = $(this).attr('id');
+                                    $.ajax({
+                                     url: '/accept-students/',
+                                   data: {
+                                  'id':id,
+                                },
+                                dataType: 'json',
+                                success: function (content) {
+                                $("#h"+id).remove();
+
+                                }
+
+
+                                });
+                           });
+                            </script>
+                             <!-- dummy Details Ends-->
+                        </div>
+                        <hr>
+                        <div class="row assoc">
+                            <h4>Associated</h4>
+                        {% for id,name,email,school,score,rank in context %}
                             <div class="d-md-none d-sm-none col-lg-3 d-lg-block">
                                 <div class="container pt-lg pb-xl-md position-relative zindex-100 prop">
                                     <div data-toggle="hidden">
@@ -271,20 +318,19 @@
                                             <img alt="" src="../static/images/learning.png" class="img-saturate" style="width: 100px;border: 1px solid grey;border-radius: 50px">
                                         </div>
                                         <div class="px-4 pb-5 text-center">
-                                            <strong>Mr. Annonymous</strong><br/><small>anybody@treetor.com</small><br><small>Sai Inter. School</small><br><small>Score:</small><strong>1600xp</strong><br>
+                                            <strong>{{name}}</strong><br/><small>{{email}}</small><br><small>{{school}}</small><br><small>Score:</small><strong>{{score}}</strong><br>
 
-                                            <strong>Global Rank: 3rd</strong>
+                                            <strong>Global Rank: {{rank}}</strong>
                                             <br/>
+                                            <button class="btn btn-dark">View</button>
                                         </div>
                                     </div>
                                 </div>
                                 </div>
                             </div>
+                            {% endfor %}
+                            </div>
 
-                            
-                             <!-- dummy Details Ends-->
-        
-                        </div>
                     </div>
                       
                 </section>

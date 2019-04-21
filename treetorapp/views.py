@@ -69,11 +69,27 @@ def institute_login_required(function):
                 return function(request, *args, **kw)
     return wrapper
 
+def find_user(uid):
+
+    all = dict(db.child("users").get().val())
+    if uid in all["students"]:
+        parent = "students"
+    elif uid in all["teachers"] and uid not in all["institutes"]:
+        parent = "teachers"
+    else:
+        parent = "institutes"
+    return parent
+
 def home(request):
 
     if auth.current_user is not None:
-        print(auth.current_user)
-        return render(request,"index.html",{"xyz":True})
+        user = find_user(auth.current_user["localId"])
+        if user == "students":
+            return render(request,"index.html",{"xyz":True,"profile":"student-profile/"})
+        elif user == "teachers":
+            return render(request,"index.html",{"xyz":True,"profile":"teacher-profile/","dashboard":"teacher-dashboard/"})
+        else:
+            return render(request,"index.html",{"xyz":True,"profile":"institution-profile/"})
     else:
         return render(request,"index.html",{"yuo":True})
 def signup(request):
@@ -114,7 +130,7 @@ def post_signin(request):
     teachers = dict(db.child("users").child("teachers").get().val()).keys()
 
     if uid in students:
-        return HttpResponseRedirect("/home/")
+        return HttpResponseRedirect("/")
     elif uid in institutes:
         return HttpResponseRedirect("/institution-profile/")
     else:
@@ -293,8 +309,6 @@ def teacher_dashboard(request):
     institutes = dict(db.child("users").child("institutes").get().val())
     institutes_id = list(institutes.keys())
     names = {}
-    for institute in institutes_id:
-        names.update({institute:institutes[institute]["name"]})
     this = db.child("users").child("teachers").child(uid).get().val()
     teacher_name = this["name"]
 

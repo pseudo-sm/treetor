@@ -117,7 +117,11 @@
                                                     <button class="dropbtn"><i class="fas fa-user-circle fa-2x"></i></button>
                                                     <div class="dropdown-content">
                                                         {% if xyz %}
-                                                            <a href="{% url 'student_profile' %}">Profile</a>
+                                                            <a href={{profile}}>Profile</a>
+                                                            {% if dashboard %}
+                                                                <a href={{dashboard}}>Dashboard</a>
+                                                            {% endif %}
+
                                                             <a href="{% url 'logout' %}"><i class="fa fa-sign-out"></i>Logout</a>
                                                         {% endif %}
                                                         {% if yuo %}

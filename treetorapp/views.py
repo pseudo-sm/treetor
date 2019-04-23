@@ -1,7 +1,7 @@
 from django.shortcuts import render,HttpResponse,HttpResponseRedirect
 from django.http import JsonResponse
 from requests.exceptions import HTTPError
-
+from django.views.decorators.csrf import csrf_exempt
 import json
 import pyrebase
 import difflib
@@ -564,22 +564,26 @@ def all_students(request):
     ids = []
     uid = auth.current_user["localId"]
     students = dict(db.child("users").child("students").get().val())
-    this_students = dict(db.child("users").child("institutes").child(uid).child("students").get().val())
-    for i in this_students:
-        if this_students[i] == 1:
-            ids.append(i)
-            names.append(students[i]["name"])
-            emails.append(students[i]["email"])
-            schools.append(students[i]["school"])
-            scores.append(students[i]["score"])
-            ranks.append(students[i]["rank"])
-        else:
-            pids.append(i)
-            pnames.append(students[i]["name"])
-            pemails.append(students[i]["email"])
-            pschools.append(students[i]["school"])
-            pscores.append(students[i]["score"])
-            pranks.append(students[i]["rank"])
+    try:
+        this_students = dict(db.child("users").child("institutes").child(uid).child("students").get().val())
+        for i in this_students:
+            if this_students[i] == 1:
+                ids.append(i)
+                names.append(students[i]["name"])
+                emails.append(students[i]["email"])
+                schools.append(students[i]["school"])
+                scores.append(students[i]["score"])
+                ranks.append(students[i]["rank"])
+            else:
+                pids.append(i)
+                pnames.append(students[i]["name"])
+                pemails.append(students[i]["email"])
+                pschools.append(students[i]["school"])
+                pscores.append(students[i]["score"])
+                pranks.append(students[i]["rank"])
+    except TypeError:
+        print("error")
+        return render(request,"all_students.html",{"none":True})
     pending = zip(pids,pnames,pemails,pschools,pscores,pranks)
     context = zip(ids,names,emails,schools,scores,ranks)
     return render(request,"all_students.html",{"context":context,"pending":pending})
@@ -708,3 +712,14 @@ def add_as_teacher(request):
     db.child("users").child('teachers').child(uid).update({'Experience':'Not Updated',"name":name,"email":email,'gender':'Not Updated','dob':'Not Updated','languages':'Not Updated','phone':'Not Updated','address':'Not Updated','Qualification':'Not Updated','Treetor institutes':"Not Updated",'old tuition':'Not Updated',"facebook":"Not Updated","rank":"N/A","score":"N/A","rating":"N/A"})
     db.child("users").child("institutes").child(uid).child("teachers").update({uid:0})
     return HttpResponseRedirect("/teacher-dashboard/")
+
+def change_picture(request):
+
+    print('sasasasasas')
+    uid = auth.current_user["localId"]
+    image = request.FILES.get("dp")
+    type = find_user(uid)
+    # storage.child("users").child(type).child(uid).put(image)
+    print(image)
+    content = True
+    return JsonResponse(json.dumps(content),content_type="json/application",safe=False)

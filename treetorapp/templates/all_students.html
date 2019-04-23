@@ -285,7 +285,9 @@
                                 </div>
                             </div>
                             {% endfor %}
-
+                            {% if none %}
+                                <h1>No Students Found !!</h1>
+                            {% endif %}
                             <script>
                                 $(".accept").click(function() {
                                     var id = $(this).attr('id');

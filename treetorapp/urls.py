@@ -47,6 +47,7 @@ urlpatterns = [
     url(r'^institution-teachers/',views.institution_teachers,name="institution_teachers"),
     url(r'^institution-update/',views.institution_update,name="institution_update"),
     url(r'^institution-details/',views.institution_details,name="institution_details"),
+    url(r'^change-picture/',views.change_picture,name="change_picture"),
     url(r'^make-teacher/',views.add_as_teacher,name="make_teacher"),
     url(r'^add-courses/',views.add_courses,name="add_courses"),
     url(r'^add-teachers/',views.add_teachers,name="add_teachers"),

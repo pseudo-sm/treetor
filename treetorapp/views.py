@@ -183,7 +183,7 @@ def search(request):
     if search is not "":
         for institute in data:
             if difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["name"]).lower())).ratio() > 0.3 or difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["area"]).lower())).ratio() > 0.3 :
-                image = storage.child("users").child("institutes").child(institute).get_url(token)
+                image = storage.child("users").child("institutes").child(institute).child(institute).get_url(token)
                 r = requests.get(image)
                 print(r.status_code)
                 print(type(r.status_code))

@@ -176,18 +176,20 @@ def search(request):
     results = []
     subjects = []
     courses_send = []
-    for institute in data:
-        if difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["name"]).lower())).ratio() > 0.5 or difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["area"]).lower())).ratio() > 0.3 :
-            results.append({"name":data[institute]["name"],"address":data[institute]["area"],"id":institute})
-        if search.lower() in str(data[institute]["name"]).lower() and {"name":data[institute]["name"],"address":data[institute]["area"]} not in results:
-            courses_res =  ",".join(list(data[institute]["courses"].keys()))
-            results.append({"name":data[institute]["name"],"address":data[institute]["area"],"courses":courses_res,"id":institute})
-        if data[institute].get("courses"):
-            courses = data[institute]["courses"]
-            for course in courses:
-
-                if difflib.SequenceMatcher(a=search.lower(),b = (course.lower())).ratio() > 0.3:
-                    courses_send.append({"name":data[institute]["name"],"address":data[institute]["area"],"course":course,"duration":data[institute]["courses"][course]["duration"],"off":data[institute]["courses"][course]["off"],"hours":data[institute]["courses"][course]["hours"],"price":data[institute]["courses"][course]["price"],"id":institute})
+    if search is not "":
+        for institute in data:
+            if difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["name"]).lower())).ratio() > 0.3 or difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["area"]).lower())).ratio() > 0.3 :
+                results.append({"name":data[institute]["name"],"address":data[institute]["area"],"id":institute})
+            if search.lower() in str(data[institute]["name"]).lower() and {"name":data[institute]["name"],"address":data[institute]["area"]} not in results:
+                if data[institute].get("courses") is not None:
+                    courses_res =  ",".join(list(data[institute]["courses"].keys()))
+                    results.append({"name":data[institute]["name"],"address":data[institute]["area"],"courses":courses_res,"id":institute})
+            if data[institute].get("courses"):
+                courses = data[institute]["courses"]
+                for course in courses:
+                    if difflib.SequenceMatcher(a=search.lower(),b = (course.lower())).ratio() > 0.3:
+                        print(institute)
+                        courses_send.append({"name":data[institute]["name"],"address":data[institute]["area"],"course":course,"duration":data[institute]["courses"][course]["duration"],"off":data[institute]["courses"][course]["off"],"price":data[institute]["courses"][course]["price"],"id":institute})
 
     if len(results) ==  0:
         empty_results=1
@@ -198,7 +200,17 @@ def search(request):
         empty_courses=1
     else:
         empty_courses=0
-    return render(request,"ser_res.html",{"results":results,"empty_results":empty_results,"courses":courses_send,"empty_courses":empty_courses})
+    if auth.current_user is not None:
+        user = find_user(auth.current_user["localId"])
+        if user == "students":
+            return render(request,"ser_res.html",{"xyz":True,"profile":"student-profile/","results":results,"empty_results":empty_results,"courses":courses_send,"empty_courses":empty_courses})
+        elif user == "teachers":
+            return render(request,"ser_res.html",{"xyz":True,"profile":"teacher-profile/","dashboard":"teacher-dashboard/","results":results,"empty_results":empty_results,"courses":courses_send,"empty_courses":empty_courses})
+        else:
+            return render(request,"ser_res.html",{"xyz":True,"profile":"institution-profile/","results":results,"empty_results":empty_results,"courses":courses_send,"empty_courses":empty_courses})
+    else:
+        return render(request,"ser_res.html",{"yuo":True,"results":results,"empty_results":empty_results,"courses":courses_send,"empty_courses":empty_courses})
+
 def institution_form(request):
 
     return render(request,"institution-form.html")

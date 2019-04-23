@@ -114,8 +114,10 @@
                                                 }
                                                 </style>
                                                 <div class="dropdown d-lg-inline-flex">
+                                                        <li class="nav-item mr-1">
                                                     <button class="dropbtn"><i class="fas fa-user-circle fa-2x"></i></button>
                                                     <div class="dropdown-content">
+
                                                         {% if xyz %}
                                                             <a href={{profile}}>Profile</a>
                                                             {% if dashboard %}
@@ -129,10 +131,11 @@
                                                           <a href="{% url 'signup' %}">Register</a>
                                                         {% endif %}
                                                     </div>
+                                                </li>
                                                   </div>
                                         </li>
                                         &nbsp;&nbsp;
-                                        <!-- <li class="nav-item mr-1">
+                                        <li class="nav-item mr-1">
                                         {% if xyz %}
                                             <a href="{% url 'student_profile' %}" class="nav-link d-lg-none">Profile</a>
                                             <a href="{% url 'logout' %}" class="nav-link d-lg-none"><i class="fa fa-sign-out"></i>Logout</a>
@@ -142,7 +145,7 @@
                                           <a href="{% url 'signup' %}" class="nav-link d-lg-none">Register</a>
                                         {% endif %}
 
-                                        </li> -->
+                                        </li>
                                     </ul>
 
                                 </div>

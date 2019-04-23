@@ -8,6 +8,9 @@ import difflib
 from datetime import datetime
 from django.contrib import auth as authe
 from functools import wraps
+import requests
+
+
 from django.urls import reverse
 config = {
     'apiKey': "AIzaSyDXqt9Hu_sk_ndXasZzXWdBF2bAGlQwF-g",
@@ -447,6 +450,12 @@ def institution_profile(request):
         done = False
     institution = dict(db.child("users").child("institutes").child(uid).get().val())
     users = dict(db.child("users").child("teachers").get().val())
+    image = storage.child("users").child("institutes").child(uid).child(uid).get_url(auth.current_user["idToken"])
+    r = requests.get(image)
+    print(r.status_code)
+    print(type(r.status_code))
+    if r.status_code == 404:
+        image = "../static/images/enterprise.png"
     teachers_all = dict(db.child("users").child("teachers").get().val())
     name = institution["name"]
     classes = institution["classes"]
@@ -454,7 +463,7 @@ def institution_profile(request):
     teachers = institution["number teachers"]
     students = institution["number students"]
     email = institution["email"]
-    type = institution["type"]
+    type1 = institution["type"]
     subject_name = []
     duration = []
     off = []
@@ -467,7 +476,7 @@ def institution_profile(request):
     pending_list = {}
     course_names = []
     all_teachers_inst = {}
-    institution_data = {"name":name,"classes":classes,"area":area,"teachers":teachers,"students":students,"email":email,"type":type}
+    institution_data = {"name":name,"classes":classes,"area":area,"teachers":teachers,"students":students,"email":email,"type":type1}
     if institution.get("courses") is not None:
         print('below')
         courses = institution["courses"]
@@ -490,9 +499,9 @@ def institution_profile(request):
         teacher_list = list(institution["teachers"].keys())
         for teacher in teacher_list :
             all_teachers_inst.update({teacher:teachers_all[teacher]["name"]})
-        return render(request,"institution_profile.html",{"institution":institution_data,"pending":pending,"pending_list":pending_list,"all_teachers":all_teachers_inst,"courses":courses_send,"done":done,"also_teacher":also_teacher})
+        return render(request,"institution_profile.html",{"image":image,"institution":institution_data,"pending":pending,"pending_list":pending_list,"all_teachers":all_teachers_inst,"courses":courses_send,"done":done,"also_teacher":also_teacher})
     else:
-        return render(request,"institution_profile.html",{"institution":institution_data,"done":done,"courses":courses_send,"pending":pending,"pending_list":pending_list,"also_teacher":also_teacher})
+        return render(request,"institution_profile.html",{"image":image,"institution":institution_data,"done":done,"courses":courses_send,"pending":pending,"pending_list":pending_list,"also_teacher":also_teacher})
 def make_teacher(request):
 
 
@@ -728,11 +737,9 @@ def add_as_teacher(request):
 
 def change_picture(request):
 
-    print('sasasasasas')
     uid = auth.current_user["localId"]
     image = request.FILES.get("dp")
-    type = find_user(uid)
-    # storage.child("users").child(type).child(uid).put(image)
-    print(image)
+    type_user = find_user(uid)
+    storage.child("users").child(type_user).child(uid).child(uid).put(image,auth.current_user['idToken'])
     content = True
-    return JsonResponse(json.dumps(content),content_type="json/application",safe=False)
+    return HttpResponseRedirect("/institution-profile/")

@@ -179,20 +179,38 @@ def search(request):
     results = []
     subjects = []
     courses_send = []
+    token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjY1NmMzZGQyMWQwZmVmODgyZTA5ZTBkODY5MWNhNWM3ZjJiMGQ2MjEiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vdHJlZXRvci03NWIxNCIsImF1ZCI6InRyZWV0b3ItNzViMTQiLCJhdXRoX3RpbWUiOjE1NTYwNjA0MDYsInVzZXJfaWQiOiJqRGRZY2FlQ2diVnVmRGF1UHo0ZlVkYlZpRW4yIiwic3ViIjoiakRkWWNhZUNnYlZ1ZkRhdVB6NGZVZGJWaUVuMiIsImlhdCI6MTU1NjA2MDQwNywiZXhwIjoxNTU2MDY0MDA3LCJlbWFpbCI6InRyaWRlbnRAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbInRyaWRlbnRAZ21haWwuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.TCFqZ_Z6DEp8a9yWxJx1w19dsxPR-0iuVdV3vfpZg1DI2Ss4N44Jph7YUrNNk3BFPHjY_Gp6wA5nxrNRZ2eB367sOyzXgyHAxDgOY-fyBI14xtIrV7xK6NZ1VfMG383Mcx6fEVatpZkx1O8XvZ0Ir-d_Fwz0Bw60hTuTLXu9WAjCH-lchnqMAO5qIvMN6Rx0Aay9vcFHJB7IVHgeKg-AWkh2pC1XYkT7jP45gT0BvudmRwH1QyVACsHFJQ6QQ1Gk6vgkW0UyaAr_N3Hz1Gj4T0QyWD0x7BO3fVwkpUQOa0lyE4GWl7o9Zw3UCk5NUI4fgLsm_rJ3IeYV5TIr7ImS9w"
     if search is not "":
         for institute in data:
             if difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["name"]).lower())).ratio() > 0.3 or difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["area"]).lower())).ratio() > 0.3 :
-                results.append({"name":data[institute]["name"],"address":data[institute]["area"],"id":institute})
+                image = storage.child("users").child("institutes").child(institute).get_url(token)
+                r = requests.get(image)
+                print(r.status_code)
+                print(type(r.status_code))
+                if r.status_code == 404:
+                    image = "../static/images/enterprise.png"
+                results.append({"name":data[institute]["name"],"address":data[institute]["area"],"id":institute,"image":image})
             if search.lower() in str(data[institute]["name"]).lower() and {"name":data[institute]["name"],"address":data[institute]["area"]} not in results:
                 if data[institute].get("courses") is not None:
+                    image = storage.child("users").child("institutes").child(institute).get_url(token)
+                    r = requests.get(image)
+                    print(r.status_code)
+                    print(type(r.status_code))
+                    if r.status_code == 404:
+                        image = "../static/images/enterprise.png"
                     courses_res =  ",".join(list(data[institute]["courses"].keys()))
-                    results.append({"name":data[institute]["name"],"address":data[institute]["area"],"courses":courses_res,"id":institute})
+                    results.append({"image":image,"name":data[institute]["name"],"address":data[institute]["area"],"courses":courses_res,"id":institute})
             if data[institute].get("courses"):
                 courses = data[institute]["courses"]
                 for course in courses:
                     if difflib.SequenceMatcher(a=search.lower(),b = (course.lower())).ratio() > 0.3:
-                        print(institute)
-                        courses_send.append({"name":data[institute]["name"],"address":data[institute]["area"],"course":course,"duration":data[institute]["courses"][course]["duration"],"off":data[institute]["courses"][course]["off"],"price":data[institute]["courses"][course]["price"],"id":institute})
+                        image = storage.child("users").child("institutes").child(institute).get_url(token)
+                        r = requests.get(image)
+                        print(r.status_code)
+                        print(type(r.status_code))
+                        if r.status_code == 404:
+                            image = "../static/images/enterprise.png"
+                        courses_send.append({"image":image,"name":data[institute]["name"],"address":data[institute]["area"],"course":course,"duration":data[institute]["courses"][course]["duration"],"off":data[institute]["courses"][course]["off"],"price":data[institute]["courses"][course]["price"],"id":institute})
         timestamp = int(datetime.now().timestamp())
         db.child("search track").child(search).update({timestamp:0})
     if len(results) ==  0:

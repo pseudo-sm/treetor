@@ -190,7 +190,8 @@ def search(request):
                     if difflib.SequenceMatcher(a=search.lower(),b = (course.lower())).ratio() > 0.3:
                         print(institute)
                         courses_send.append({"name":data[institute]["name"],"address":data[institute]["area"],"course":course,"duration":data[institute]["courses"][course]["duration"],"off":data[institute]["courses"][course]["off"],"price":data[institute]["courses"][course]["price"],"id":institute})
-
+        timestamp = int(datetime.now().timestamp())
+        db.child("search track").child(search).update({timestamp:0})
     if len(results) ==  0:
         empty_results=1
     else:

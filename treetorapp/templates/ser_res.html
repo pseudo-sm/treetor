@@ -323,10 +323,29 @@
                                                     <strong>Course Price: </strong>{{i.price}}<br/>
                                                     <!--<strong>Rating: </strong>{{i.rating}}<strong>/5</strong>-->
                                                 </div>
-                                                <div class="col-lg-2 col-sm-12 col-md-12 py-5"><center><button id="democlass" data-toggle="modal" data-target="#demoModal" class="btn btn-dark">Free Class</button><button style="margin:5%" class="btn btn-dark apply" id="{{i.id}}">Apply </button></center></div>
+                                                <div class="col-lg-2 col-sm-12 col-md-12 py-5"><center><button id="democlass" data-toggle="modal" data-target="#demoModal" class="btn btn-dark">Free Class</button><button style="margin:5%" class="btn btn-dark apply" id="k{{i.id}}">Apply </button></center></div>
                                                 <script>
-                                                    $("#{{i.id}}").click(function() {
-                                                            console.log('clickedrrrrr!!');
+                                                    $(".apply").click(function() {
+                                                            var  id = $(this).attr('id');
+                                                            $.ajax({
+                                                             url: '/apply/',
+                                                           data: {
+                                                          'id':id,
+                                                        },
+                                                        dataType: 'json',
+                                                        success: function (content) {
+                                                        console.log(content);
+                                                        if(content == 'false')
+                                                        {
+                                                            window.location="/signin/"
+                                                        }
+                                                        else {
+                                                        alert("Your application has been submitted , the institute will shortly respond !!");
+
+                                                        }
+                                                    }
+
+                                                        });
                                                     });
                                                 </script>
                                             </div>

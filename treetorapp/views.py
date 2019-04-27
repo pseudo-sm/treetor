@@ -796,3 +796,27 @@ def add_batch(request):
         db.child("users").child("institutes").child(uid).child("batches").child(batch_id).child("students").update({student:0})
     content = True
     return JsonResponse(json.dumps(content),content_type="application/json",safe=False)
+
+@institute_login_required
+def batches(request):
+
+    uid = auth.current_user["localId"]
+    bids = []
+    bcourses = []
+    bteachers = []
+    btimes = []
+    bstudents = []
+    context_batches = []
+    institute = dict(db.child("users").child("institutes").child(uid).get().val())
+    teachers = dict(db.child("users").child("teachers").get().val())
+    if institute.get("batches") is not None:
+        all_batches = institute["batches"]
+        for id in all_batches:
+            bids.append(id)
+            bcourses.append(all_batches[id]["course"])
+            teacher = all_batches[id]["teacher"]
+            bteachers.append(teachers[teacher]["name"])
+            btimes.append(all_batches[id]["time"])
+            bstudents.append(list(all_batches[id]["students"].keys()))
+    context_batches = zip(bids,bcourses,bteachers,btimes,bstudents)
+    return render(request,"batches.html",{"batches":context_batches})

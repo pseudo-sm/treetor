@@ -606,6 +606,7 @@
                                                                 <center>
                                                                 <div data-animate-hover="2">
                                                                     <button data-toggle="modal" data-target="#abatches"  class="card shadow animate-this animated fadeIn delay-2s add">Add Batches</button>
+                                                                    <button data-toggle="modal" href="{% url 'batches' %}"  class="card shadow animate-this animated fadeIn delay-2s add">View Batches</button>
                                                                 </div>
                                                                 </center>
                                                               {% if batches %}
@@ -637,7 +638,6 @@
                                                               <table class="table">
                                                                   <thead>
                                                                     <tr>
-                                                                      <th>#</th>
                                                                       <th>Teacher Name</th>
                                                                       <th>ID</th>
                                                                     </tr>
@@ -645,7 +645,6 @@
                                                                   {% for id,name in all_teachers.items %}
                                                                   <tbody>
                                                                     <tr>
-                                                                      <th scope="row">1</th>
                                                                       <td>{{name}}</td>
                                                                       <td>{{id}}</td>
                                                                     </tr>

@@ -789,7 +789,7 @@ def add_batch(request):
     teacher = request.GET.get("teacher")
     course = request.GET.get("course")
     students = request.GET.get("students")
-    students = students[1:len(students)-1].split(',')
+    students = students[2:len(students)-2].split(',')
     batch_id = random.randint(100000,999999)
     db.child("users").child("institutes").child(uid).child("batches").child(batch_id).update({"time":time,"teacher":teacher,"course":course})
     for student in students:
@@ -820,3 +820,16 @@ def batches(request):
             bstudents.append(list(all_batches[id]["students"].keys()))
     context_batches = zip(bids,bcourses,bteachers,btimes,bstudents)
     return render(request,"batches.html",{"batches":context_batches})
+
+
+def student_report(request):
+
+    uid = auth.current_user["localId"]
+    id = request.GET.get("id")
+    content = {}
+    students = dict(db.child("users").child("institutes").child(uid).child("batches").child(id).child("students").get().val())
+    all_students = dict(db.child("users").child("students").get().val())
+    for student in students:
+        content.update({student:{"name":all_students[student]["name"]}})
+    print(content)
+    return JsonResponse(json.dumps(content),content_type="json/application",safe=False)

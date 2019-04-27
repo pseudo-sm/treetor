@@ -34,6 +34,11 @@
             -webkit-animation-delay: 0.5s;
             -webkit-animation-iteration-count: infinite;
         }
+        .batches {
+              font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+              border-collapse: collapse;
+              width: 100%;
+            }
             
         </style>
         <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
@@ -277,7 +282,7 @@
 
                                             <br/>
                                             <br/>
-                                            <button class="btn btn-dark accept" id="{{id}}">View Students</button>
+                                            <button class="btn btn-dark view" id="{{id}}">View Students</button>
                                         </div>
                                     </div>
                                 </div>
@@ -285,7 +290,51 @@
                             </div>
                             {% endfor %}
                              <!-- dummy Details Ends-->
+                            <script>
+                                $('.view').click(function() {
+                                    id = $(this).attr('id');
+                                    $.ajax({
+                                         url: '/student-report/',
+                                       data: {
+                                      'id':id,
+                                    },
+                                    dataType: 'json',
+                                    success: function (content) {
+                                        $("#trigger").click();
+                                       var obj = jQuery.parseJSON(content);
+                                        $.each(obj, function(key,value) {
+                                          $(".batches").append('<td>'+key+'</td><td>'+value.name+'</td>');
+                                        });
+                                    }
+
+                                    });
+                                });
+                            </script>
+                            <button style="display:none;" id="trigger" data-toggle="modal" data-target="#demoModal"></button>
+                             <div class="modal fade" id="demoModal" role="dialog">
+                                <div class="modal-dialog">
+                                  <!-- Modal content-->
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                     <button type="button" class="fas fa-times" data-dismiss="modal"></button>
+                                      <h4 class="modal-title">Student Report</h4>
+                                    </div>
+                                    <div class="modal-body report">
+                                        <table class="batches" cellspacing="2px" cellpadding="2px">
+                                            <tr>
+                                                <th>Id</th>
+                                                <th>Student</th>
+                                            </tr>
+                                        </table>
+                                      </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
                         </div>
+
 
                     </div>
                       

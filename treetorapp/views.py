@@ -9,7 +9,7 @@ from datetime import datetime
 from django.contrib import auth as authe
 from functools import wraps
 import requests
-
+import random
 
 from django.urls import reverse
 config = {
@@ -494,6 +494,7 @@ def institution_profile(request):
     pending_list = {}
     course_names = []
     all_teachers_inst = {}
+    courses_context = {}
     institution_data = {"name":name,"classes":classes,"area":area,"teachers":teachers,"students":students,"email":email,"type":type1}
     if institution.get("courses") is not None:
         print('below')
@@ -508,6 +509,7 @@ def institution_profile(request):
             all_subjects = list(institution["courses"][course]["subjects"].keys())
             subjects.append(",".join(all_subjects))
     courses_send = (zip(course_names,duration,off,class_1,price,subjects))
+
     if institution.get("pending") is not None:
         pl = list(institution["pending"].keys())
         pending = len(pl)
@@ -517,9 +519,26 @@ def institution_profile(request):
         teacher_list = list(institution["teachers"].keys())
         for teacher in teacher_list :
             all_teachers_inst.update({teacher:teachers_all[teacher]["name"]})
-        return render(request,"institution_profile.html",{"image":image,"institution":institution_data,"pending":pending,"pending_list":pending_list,"all_teachers":all_teachers_inst,"courses":courses_send,"done":done,"also_teacher":also_teacher})
+    btimes = []
+    bid = []
+    bcourse = []
+    if institution.get("batches") is not None:
+        for id in institution["batches"]:
+            btimes.append(institution["batches"][id]["time"])
+            bcourse.append(institution["batches"][id]["course"])
+            bid.append(id)
+    batches = zip(btimes,bcourse,bid)
+
+    students_context = {}
+    all_students = dict(db.child("users").child("students").get().val())
+    if institution.get("students") is not None:
+        for student in institution["students"]:
+            if institution["students"][student] == 1:
+                students_context.update({student:all_students[student]["name"]})
+
+        return render(request,"institution_profile.html",{"image":image,"institution":institution_data,"pending":pending,"pending_list":pending_list,"all_teachers":all_teachers_inst,"courses":courses_send,"done":done,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches})
     else:
-        return render(request,"institution_profile.html",{"image":image,"institution":institution_data,"done":done,"courses":courses_send,"pending":pending,"pending_list":pending_list,"also_teacher":also_teacher})
+        return render(request,"institution_profile.html",{"image":image,"institution":institution_data,"done":done,"courses":courses_send,"pending":pending,"pending_list":pending_list,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches})
 def make_teacher(request):
 
 
@@ -761,3 +780,19 @@ def change_picture(request):
     storage.child("users").child(type_user).child(uid).child(uid).put(image,auth.current_user['idToken'])
     content = True
     return HttpResponseRedirect("/institution-profile/")
+
+@institute_login_required
+def add_batch(request):
+
+    uid = auth.current_user["localId"]
+    time = request.GET.get("time")
+    teacher = request.GET.get("teacher")
+    course = request.GET.get("course")
+    students = request.GET.get("students")
+    students = students[1:len(students)-1].split(',')
+    batch_id = random.randint(100000,999999)
+    db.child("users").child("institutes").child(uid).child("batches").child(batch_id).update({"time":time,"teacher":teacher,"course":course})
+    for student in students:
+        db.child("users").child("institutes").child(uid).child("batches").child(batch_id).child("students").update({student:0})
+    content = True
+    return JsonResponse(json.dumps(content),content_type="application/json",safe=False)

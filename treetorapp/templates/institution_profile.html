@@ -459,6 +459,17 @@
                                                 
                                               </div>
 
+                                               <div class="card">
+                                                <div class="card-header" id="headingFour">
+                                                  <h5 class="mb-0">
+                                                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                                      Batches
+                                                    </button>
+                                                  </h5>
+                                                </div>
+
+                                              </div>
+
                                             
                                               <div class="card">
                                                 <div class="card-header" id="headingThree">
@@ -549,7 +560,8 @@
                                                                 </tr>
                                                                 </table>
                                                             </div>
-                                                        </div>                                                  
+                                                        </div>
+
                                                     <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
                                                           <div class="card-body" id="courses-card">
                                                                <div class="px-3 pb-2 text-center">
@@ -578,6 +590,34 @@
                                                                             <td>{{class_1}}</td>
                                                                             <td>{{price}}</td>
                                                                             <td>{{subjects}}</td>
+                                                                          </tr>
+                                                                        {% endfor %}
+
+                                                                </table>
+                                                              {% endif %}
+                                                          </div>
+                                                        </div>
+
+                                                    <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
+                                                          <div class="card-body" id="courses-card">
+                                                               <div class="px-3 pb-2 text-center">
+                                                                    <strong>Batches</strong>
+                                                                </div><hr/>
+                                                                <center>
+                                                                <div data-animate-hover="2">
+                                                                    <button data-toggle="modal" data-target="#abatches"  class="card shadow animate-this animated fadeIn delay-2s add">Add Batches</button>
+                                                                </div>
+                                                                </center>
+                                                              {% if batches %}
+                                                                <table class="courses" id="batch-table" border="2">
+                                                                    <tr>
+                                                                        <th align="center">Course</th>
+                                                                        <th align="center">Time</th>
+                                                                    </tr>
+                                                                        {% for time,course,id in batches %}
+                                                                         <tr>
+                                                                            <td>{{course}}</td>
+                                                                            <td>{{time}}</td>
                                                                           </tr>
                                                                         {% endfor %}
 
@@ -847,6 +887,55 @@
             </div>
           </div>
         <!-- Request modal-->
+        <!-- bataches modal-->
+        <div class="modal fade" id="abatches" role="dialog">
+            <div class="modal-dialog">
+              <!-- Modal content-->
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Fill Subject Information</h4>
+                 <button type="button" class="fas fa-times" data-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+
+                  <div>
+
+                  Batch Time : <input type="time" class="form-control" id="time"><br>
+                  <div class="coursedet">
+
+                  Teacher : <select id="teacherbatch" class="form-control teacher">
+                                {% for id,name in all_teachers.items %}
+                                <option value={{id}}>{{name}}</option>
+                                {% endfor %}
+                            </select>
+                  </div>
+                  <div class="coursedet">
+                      Course : <select id="course" class="form-control teacher">
+                                    {% for course in all_course %}
+                                    <option value={{course}}>{{course}}</option>
+                                    {% endfor %}
+                                </select>
+                  </div>
+
+                  <br>
+
+                  <div>
+                      {% for id,name in all_students.items %}
+                      <div>{{name}} <input type="checkbox" value="{{id}}" class="students"></div>
+                      {% endfor %}
+                  </div>
+
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" id="batchsubmit">Submit</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        <!-- bataches modal ends -->
         <div class="modal fade" id="requests" role="dialog">
             <div class="modal-dialog">
               <!-- Modal content-->
@@ -955,7 +1044,6 @@
                      $('.teacher').each(function() {
                         teachers.push($(this).val());
                      });
-                     console.log('htfhjtd');
                      $.ajax({
                              url: '/add-courses/',
                            data: {
@@ -975,6 +1063,38 @@
                             $('.modal').hide();
                             $('.fade').hide();
                             $('#courses-table').append('<tr><td>'+name+'</td><td>'+duration+'</td><td>'+off+'</td><td>'+price+'</td><td>'+subjects+'</td><td>'+class1+'</td></tr>');
+
+
+                        }
+
+
+                        });
+
+            });
+
+            $("#batchsubmit").click(function() {
+                time = $("#time").val();
+                teacher = $("#teacherbatch").val();
+                course = $("#course").val();
+                var students = [];
+                 $('.students').each(function() {
+                    students.push($(this).val());
+                 });
+                 $.ajax({
+                             url: '/add-batch/',
+                           data: {
+                          'time':time,
+                          'teacher':teacher,
+                          'course':course,
+                          'students':JSON.stringify(students),
+
+                        },
+                        dataType: 'json',
+                        success: function (content) {
+                            console.log($('#acourses'));
+                            $('.modal').hide();
+                            $('.fade').hide();
+                            $('#batch-table').append('<tr><td>'+course+'</td><td>'+time+'</td></tr>');
 
 
                         }
@@ -1006,7 +1126,7 @@
 
             });
         </script>
-        
+
     </body>
     
 </html>

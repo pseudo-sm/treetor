@@ -606,7 +606,7 @@
                                                                 <center>
                                                                 <div data-animate-hover="2">
                                                                     <button data-toggle="modal" data-target="#abatches"  class="card shadow animate-this animated fadeIn delay-2s add">Add Batches</button>
-                                                                    <button data-toggle="modal" href="{% url 'batches' %}"  class="card shadow animate-this animated fadeIn delay-2s add">View Batches</button>
+                                                                    <button data-toggle="modal" onclick="location.href={% url 'batches' %}"  class="card shadow animate-this animated fadeIn delay-2s add">View Batches</button>
                                                                 </div>
                                                                 </center>
                                                               {% if batches %}

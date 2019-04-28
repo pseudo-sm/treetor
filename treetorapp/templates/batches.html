@@ -304,7 +304,8 @@
                                         $("#trigger").click();
                                        var obj = jQuery.parseJSON(content);
                                         $.each(obj, function(key,value) {
-                                          $(".batches").append('<tr><td>'+key+'</td><td>'+value.name+'</td><tr>');
+                                          $(".batches").empty();
+                                          $(".batches").append('<tr><td>'+key+'</td><td>'+value.name+'</td><td>'+value.attendance+'%</td><tr>');
                                         });
                                     }
 
@@ -325,6 +326,7 @@
                                             <tr>
                                                 <th>Id</th>
                                                 <th>Student</th>
+                                                <th>Attendance</th>
                                             </tr>
                                         </table>
                                       </div>

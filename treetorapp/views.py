@@ -339,13 +339,16 @@ def student_schedule(request):
     return render(request,"student_schedule.html")
 @teacher_login_required
 def teacher_dashboard(request):
+    names = {}
     uid = auth.current_user["localId"]
     institutes = dict(db.child("users").child("institutes").get().val())
     institutes_id = list(institutes.keys())
     names = {}
     this = db.child("users").child("teachers").child(uid).get().val()
     teacher_name = this["name"]
-
+    for inst in institutes:
+        names.update({inst:institutes[inst]["name"]})
+    print(names)
     return render(request,"teacher_dashboard.html",{"names":names,"teacher_name":teacher_name,"also_inst":True})
 
 @teacher_login_required
@@ -706,6 +709,7 @@ def accept_request(request):
     uid = auth.current_user["localId"]
     db.child("users").child("institutes").child(uid).child("pending").child(accepted).remove()
     db.child("users").child("institutes").child(uid).child("teachers").update({accepted:0})
+    db.child("users").child("teachers").child(accepted).child("institutes").update({uid:0})
     all = True
     return HttpResponse(json.dumps(all),content_type="application/json")
 
@@ -799,7 +803,6 @@ def add_batch(request):
 
 @institute_login_required
 def batches(request):
-
     uid = auth.current_user["localId"]
     bids = []
     bcourses = []
@@ -822,14 +825,27 @@ def batches(request):
     return render(request,"batches.html",{"batches":context_batches})
 
 
+@institute_login_required
 def student_report(request):
-
     uid = auth.current_user["localId"]
     id = request.GET.get("id")
     content = {}
-    students = dict(db.child("users").child("institutes").child(uid).child("batches").child(id).child("students").get().val())
+    institute = dict(db.child("users").child("institutes").child(uid).child("batches").child(id).get().val())
+    students = institute["students"]
     all_students = dict(db.child("users").child("students").get().val())
     for student in students:
         content.update({student:{"name":all_students[student]["name"]}})
-    print(content)
+    if institute.get("attendance") is not None:
+        classes = 0
+        for session in institute["attendance"]:
+            for student in institute["attendance"][session]:
+                present = 0
+                for session in institute["attendance"]:
+                    if int(institute["attendance"][session][student]) == 1:
+                        present+=1
+            classes+=1
+            print(present,classes)
+        percentage = (present/classes)*100
+        content[student].update({"attendance":percentage})
+
     return JsonResponse(json.dumps(content),content_type="json/application",safe=False)

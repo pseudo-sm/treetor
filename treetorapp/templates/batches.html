@@ -304,7 +304,7 @@
                                         $("#trigger").click();
                                        var obj = jQuery.parseJSON(content);
                                         $.each(obj, function(key,value) {
-                                          $(".batches").append('<td>'+key+'</td><td>'+value.name+'</td>');
+                                          $(".batches").append('<tr><td>'+key+'</td><td>'+value.name+'</td><tr>');
                                         });
                                     }
 

@@ -58,6 +58,7 @@ urlpatterns = [
     url(r'^accept-students/',views.accept_students,name="accept_students"),
     url(r'^suggestion-box/',views.comment_unit,name="comment_unit"),
     url(r'^signup/',views.signup,name="signup"),
+    url(r'^reset-password/',views.reset_password,name="reset_password"),
     url(r'^post_signup/',views.post_signup,name="post_signup"),
     url(r'^post_signin/',views.post_signin,name="post_signin"),
     url(r'^post_schedule/',views.post_schedule,name="post_schedule"),

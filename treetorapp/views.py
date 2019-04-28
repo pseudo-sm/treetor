@@ -849,3 +849,11 @@ def student_report(request):
         content[student].update({"attendance":percentage})
 
     return JsonResponse(json.dumps(content),content_type="json/application",safe=False)
+
+def reset_password(request):
+
+    email = request.GET.get("email")
+    print(email)
+    auth.send_password_reset_email(email)
+    content = True
+    return JsonResponse(json.dumps(content),content_type="json/application", safe=False)

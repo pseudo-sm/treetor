@@ -857,3 +857,18 @@ def reset_password(request):
     auth.send_password_reset_email(email)
     content = True
     return JsonResponse(json.dumps(content),content_type="json/application", safe=False)
+
+
+def geolocation(request):
+
+    lat = request.GET.get("latitude")
+    lon = request.GET.get("longitude")
+
+    if auth.current_user is not None:
+        uid = auth.current_user["localId"]
+        db.child("users").child("institutes").child(uid).child("gelocation").update({"latitude":lat,"longitude":lon})
+    else:
+        timestamp = int(datetime.now().timestamp())
+        db.child("visitors").child(timestamp).child("geolocation").update({"latitude":lat,"longitude":lon})
+    content = True
+    return JsonResponse(json.dumps(content),content_type="json/application",safe=False)

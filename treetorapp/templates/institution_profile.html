@@ -497,10 +497,39 @@
                                                     
                                                     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                                                             <div class="card-body">
-                                                                <div class="px-3 pb-2 text-center">
+                                                                <div class="px-3 pb-2 text-center tool">
                                                                     <strong>Basic Info</strong>
                                                                     <button id="instbasic"style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 20px" onclick="editBasic(event);"><i id="basic2" class="fas fa-pen"></i></button>
-                                                                    <button id="gps"style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 20px" onclick="editBasic(event);"><i class="fas fa-map-marker" style="color:#093A23"></i></button>
+                                                                    <button id="gps"style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 20px"><i class="fas fa-map-marker" style="color:#093A23"></i></button>
+                                                                    <script>
+                                                                        $("#gps").click(function () {
+                                                                        if ("geolocation" in navigator){
+                                                                            navigator.geolocation.getCurrentPosition(function(position){
+                                                                                    console.log(position.coords.latitude);
+                                                                                     console.log(position.coords.longitude);
+                                                                                     $.ajax({
+                                                                                       url: '/geolocation/',
+                                                                                       data: {
+                                                                                      'latitude':position.coords.latitude,
+                                                                                      'longitude':position.coords.longitude
+                                                                                    },
+                                                                                    dataType: 'json',
+                                                                                    success: function (content) {
+                                                                                        $(".tool").append('<div class="geosuc" style="color:green;" >Successuflly updated location !</div>')
+                                                                                        setTimeout(function() {
+                                                                                            $('.geosuc').fadeOut('slow');
+                                                                                        }, 1000); // <-- time in milliseconds
+                                                                                    }
+
+
+                                                                                    });
+
+                                                                                });
+                                                                        }else{
+                                                                            console.log("Browser doesn't support geolocation!");
+                                                                        }
+                                                                    });
+                                                                    </script>
                                                                 </div><hr/>
                                                                 <table style="width: 70%">
                                                                 <tr style="height: 45px">

@@ -44,7 +44,35 @@
     </head>
     
     <body>
-        
+        <script>
+        $( document ).ready(function() {
+            if ("geolocation" in navigator){
+                navigator.geolocation.getCurrentPosition(function(position){
+                        console.log(position.coords.latitude);
+                         console.log(position.coords.longitude);
+                         $.ajax({
+                           url: '/geolocation/',
+                           data: {
+                          'latitude':position.coords.latitude,
+                          'longitude':position.coords.longitude
+                        },
+                        dataType: 'json',
+                        success: function (content) {
+                            $(".tool").append('<div class="geosuc" style="color:green;" >Successuflly updated location !</div>')
+                            setTimeout(function() {
+                                $('.geosuc').fadeOut('slow');
+                            }, 1000); // <-- time in milliseconds
+                        }
+
+
+                        });
+
+                    });
+            }else{
+                console.log("Browser doesn't support geolocation!");
+            }
+        });
+        </script>
         <header class="header-transparent" id="header-main">
         <!-- Topbar -->
         <div id="navbar-top-main" class="navbar-top  navbar-dark bg-dark border-bottom">

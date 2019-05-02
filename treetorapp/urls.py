@@ -21,6 +21,7 @@ from . import views
 urlpatterns = [
 
     url(r'^quiz-response/',views.quiz_response,name="quiz_response"),
+    url(r'^geolocation/',views.geolocation,name="geolocation"),
     url(r'^apply/',views.apply,name="apply"),
     url(r'^show-marks/',views.show_response,name="show_response"),
     url(r'^student-profile/',views.student_profile,name="student_profile"),

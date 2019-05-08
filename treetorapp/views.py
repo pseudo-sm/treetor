@@ -186,11 +186,17 @@ def search(request):
             if difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["name"]).lower())).ratio() > 0.3 or difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["area"]).lower())).ratio() > 0.3 :
                 image = storage.child("users").child("institutes").child(institute).child(institute).get_url(token)
                 r = requests.get(image)
-                print(r.status_code)
-                print(type(r.status_code))
                 if r.status_code == 404:
                     image = "../static/images/enterprise.png"
-                results.append({"name":data[institute]["name"],"address":data[institute]["area"],"id":institute,"image":image})
+                courses_res = ""
+                if data[institute].get("courses") is not None:
+                        courses_res =  ",".join(list(data[institute]["courses"].keys()))
+                geo = {}
+                if data[institute].get("geolocation") is not None:
+                    lat = data[institute]["geolocation"]["latitutde"]
+                    lon = data[institute]["geolocation"]["longiitutde"]
+                    geo.update({"lat":lat,"lon":lon})
+                results.append({"name":data[institute]["name"],"address":data[institute]["area"],"id":institute,"image":image,"courses":courses_res,"geo":geo})
             if search.lower() in str(data[institute]["name"]).lower() and {"name":data[institute]["name"],"address":data[institute]["area"]} not in results:
                 if data[institute].get("courses") is not None:
                     image = storage.child("users").child("institutes").child(institute).get_url(token)
@@ -200,18 +206,22 @@ def search(request):
                     if r.status_code == 404:
                         image = "../static/images/enterprise.png"
                     courses_res =  ",".join(list(data[institute]["courses"].keys()))
-                    results.append({"image":image,"name":data[institute]["name"],"address":data[institute]["area"],"courses":courses_res,"id":institute})
+                    geo = {}
+                    if data[institute].get("geolocation") is not None:
+                        lat = data[institute]["geolocation"]["latitutde"]
+                        lon = data[institute]["geolocation"]["longiitutde"]
+                        geo.update({"lat":lat,"lon":lon})
+                    results.append({"image":image,"name":data[institute]["name"],"address":data[institute]["area"],"courses":courses_res,"id":institute,"geo":geo})
             if data[institute].get("courses"):
                 courses = data[institute]["courses"]
                 for course in courses:
                     if difflib.SequenceMatcher(a=search.lower(),b = (course.lower())).ratio() > 0.3:
                         image = storage.child("users").child("institutes").child(institute).get_url(token)
                         r = requests.get(image)
-                        print(r.status_code)
-                        print(type(r.status_code))
                         if r.status_code == 404:
                             image = "../static/images/enterprise.png"
-                        courses_send.append({"image":image,"name":data[institute]["name"],"address":data[institute]["area"],"course":course,"duration":data[institute]["courses"][course]["duration"],"off":data[institute]["courses"][course]["off"],"price":data[institute]["courses"][course]["price"],"id":institute})
+                        courses_res =  ",".join(list(data[institute]["courses"].keys()))
+                        courses_send.append({"courses":courses_res,"image":image,"name":data[institute]["name"],"address":data[institute]["area"],"course":course,"duration":data[institute]["courses"][course]["duration"],"off":data[institute]["courses"][course]["off"],"price":data[institute]["courses"][course]["price"],"id":institute})
         timestamp = int(datetime.now().timestamp())
         db.child("search track").child(search).update({timestamp:0})
     if len(results) ==  0:
@@ -223,6 +233,7 @@ def search(request):
         empty_courses=1
     else:
         empty_courses=0
+    print(results)
     if auth.current_user is not None:
         user = find_user(auth.current_user["localId"])
         if user == "students":

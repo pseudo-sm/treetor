@@ -65,6 +65,7 @@ def institute_login_required(function):
         else:
             id = auth.current_user["localId"]
             type = db.child("users").child("institutes").child(id).get().val()
+            print(type,id)
             if type is None:
 
                 return HttpResponseRedirect('/signin/')
@@ -629,6 +630,7 @@ def all_students(request):
     try:
         this_students = dict(db.child("users").child("institutes").child(uid).child("students").get().val())
         for i in this_students:
+            print(i)
             if this_students[i] == 1:
                 ids.append(i)
                 names.append(students[i]["name"])

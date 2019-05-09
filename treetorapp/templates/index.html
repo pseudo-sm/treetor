@@ -40,6 +40,11 @@
                 display : none;
             }
         </style>
+
+
+
+
+
             
     </head>
     
@@ -54,7 +59,7 @@
                            url: '/geolocation/',
                            data: {
                           'latitude':position.coords.latitude,
-                          'longitude':position.coords.longitude
+                          'longitude':position.coords.longitude,
                         },
                         dataType: 'json',
                         success: function (content) {

@@ -183,6 +183,7 @@ def search(request):
     token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjY1NmMzZGQyMWQwZmVmODgyZTA5ZTBkODY5MWNhNWM3ZjJiMGQ2MjEiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vdHJlZXRvci03NWIxNCIsImF1ZCI6InRyZWV0b3ItNzViMTQiLCJhdXRoX3RpbWUiOjE1NTYwNjA0MDYsInVzZXJfaWQiOiJqRGRZY2FlQ2diVnVmRGF1UHo0ZlVkYlZpRW4yIiwic3ViIjoiakRkWWNhZUNnYlZ1ZkRhdVB6NGZVZGJWaUVuMiIsImlhdCI6MTU1NjA2MDQwNywiZXhwIjoxNTU2MDY0MDA3LCJlbWFpbCI6InRyaWRlbnRAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbInRyaWRlbnRAZ21haWwuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.TCFqZ_Z6DEp8a9yWxJx1w19dsxPR-0iuVdV3vfpZg1DI2Ss4N44Jph7YUrNNk3BFPHjY_Gp6wA5nxrNRZ2eB367sOyzXgyHAxDgOY-fyBI14xtIrV7xK6NZ1VfMG383Mcx6fEVatpZkx1O8XvZ0Ir-d_Fwz0Bw60hTuTLXu9WAjCH-lchnqMAO5qIvMN6Rx0Aay9vcFHJB7IVHgeKg-AWkh2pC1XYkT7jP45gT0BvudmRwH1QyVACsHFJQ6QQ1Gk6vgkW0UyaAr_N3Hz1Gj4T0QyWD0x7BO3fVwkpUQOa0lyE4GWl7o9Zw3UCk5NUI4fgLsm_rJ3IeYV5TIr7ImS9w"
     if search is not "":
         for institute in data:
+            print(institute)
             if difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["name"]).lower())).ratio() > 0.3 or difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["area"]).lower())).ratio() > 0.3 :
                 image = storage.child("users").child("institutes").child(institute).child(institute).get_url(token)
                 r = requests.get(image)
@@ -770,10 +771,13 @@ def view_courses(request):
 def apply(request):
 
     if auth.current_user is not None:
+        uid = auth.current_user["localId"]
+        user_type = find_user(uid)
         id = auth.current_user["localId"]
         inst = request.GET.get("id")[1:]
         content = True
-        db.child("users").child("institutes").child(inst).child("students").update({id:0})
+        if user_type == "students":
+            db.child("users").child("institutes").child(inst).child("students").update({id:0})
     else:
         content = False
     return JsonResponse(json.dumps(content),content_type="application/json",safe=False)
@@ -876,12 +880,17 @@ def geolocation(request):
 
     lat = request.GET.get("latitude")
     lon = request.GET.get("longitude")
-
     if auth.current_user is not None:
         uid = auth.current_user["localId"]
-        db.child("users").child("institutes").child(uid).child("gelocation").update({"latitude":lat,"longitude":lon})
+        user_type = find_user(uid)
+        if user_type == "institutes":
+            db.child("users").child("institutes").child(uid).child("gelocation").update({"latitude":lat,"longitude":lon})
     else:
         timestamp = int(datetime.now().timestamp())
         db.child("visitors").child(timestamp).child("geolocation").update({"latitude":lat,"longitude":lon})
     content = True
     return JsonResponse(json.dumps(content),content_type="json/application",safe=False)
+
+def coming(request):
+
+    return render(request,"comingsoon.html")

@@ -8,6 +8,9 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800">
         <link rel="icon" href="../static/images/text.png" type="image/png">
         <link rel="stylesheet"href="../static/css/animate.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Great+Vibes" rel="stylesheet">
+
         <style>
              ::-webkit-scrollbar {
                 width: 5px;
@@ -99,6 +102,47 @@
             }
             
         </style>
+        <style>
+
+                    .countdown {
+              display: inline-block;
+              margin: 20px 0;
+            }
+            .countdown__chart {
+              position: relative;
+              float: left;
+              margin: 0 16px;
+            }
+            .countdown__chart svg path {
+              transition: stroke-dashoffset 0.2s linear;
+            }
+            .countdown__time {
+              position: absolute;
+              width: 78px;
+              height: 78px;
+              top: 0;
+              text-align: center;
+              color: #222222;
+              font-size: 33px;
+              font-weight: 300;
+              line-height: 78px;
+              left: 0;
+            }
+            .countdown__title {
+              position: absolute;
+              width: 100%;
+              text-align: center;
+              bottom: -20px;
+              color: #093a23;
+              font-size: 14px;
+              font-weight: 300;
+              line-height: 16px;
+              letter-spacing: 1px;
+              text-transform: lowercase;
+              left: 0;
+            }
+
+    </style>
         <script src="../static/js/bootstrap.bundle.min.js"></script>
         <script src="../static/js/bootstrap.min.js"></script>
         <script src="../static/js/ajax.js"></script>
@@ -290,8 +334,13 @@
         
         <main>
 
+
+
+
+
+
                 <section class="-rotate">
-                    
+
                     <div class="section-inner" style="margin: 10%"></div>
                     
                     <div class="pt-5 position-absolute middle right-0 col-lg-7 col-xl-7 d-none d-lg-block">
@@ -315,12 +364,117 @@
                         </figure>
                     </div>
 
+                    <div class="container" style="margin:0 auto;padding-bottom:5%;">
+                        <div style="margin:0 auto;">
+                            <div style="margin-left:30%;position:relative;">
+                             <div class="countdown js-countdown" data-date={{time}}>
+                                <div class="countdown__chart" data-countdown="days">
+                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="78" height="78" viewBox="0 0 78 78" style="" class=""><path stroke="#28a745" fill="transparent" stroke-width="1" d="M1,39A38,38 0,1,1 77,39A38,38 0,1,1 1,39" class=""></path><path stroke="#093a23" fill="transparent" transform="translate(78, 0) rotate(90)" stroke-width="2" d="M1,39A38,38 0,1,1 77,39A38,38 0,1,1 1,39" stroke-dasharray="240" stroke-dashoffset="240" class="EtbJxvBh_1 js-circle-countdown"></path></svg>                                    <span class="countdown__time" data-value="days">0</span>
+                                    <span class="countdown__title">Days</span>
+                                </div>
+                                <div class="countdown__chart" data-countdown="hours">
+                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="78" height="78" viewBox="0 0 78 78" style="" class=""><path stroke="#28a745" fill="transparent" stroke-width="1" d="M1,39A38,38 0,1,1 77,39A38,38 0,1,1 1,39" class=""></path><path stroke="#093a23" fill="transparent" transform="translate(78, 0) rotate(90)" stroke-width="2" d="M1,39A38,38 0,1,1 77,39A38,38 0,1,1 1,39" stroke-dasharray="240" stroke-dashoffset="240" class="EtbJxvBh_1 js-circle-countdown"></path></svg>                                    <span class="countdown__time" data-value="hours">0</span>
+                                    <span class="countdown__title">Hours</span>
+                                </div>
+                                <div class="countdown__chart" data-countdown="minutes">
+                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="78" height="78" viewBox="0 0 78 78" style="" class=""><path stroke="#28a745" fill="transparent" stroke-width="1" d="M1,39A38,38 0,1,1 77,39A38,38 0,1,1 1,39" class=""></path><path stroke="#093a23" fill="transparent" transform="translate(78, 0) rotate(90)" stroke-width="2" d="M1,39A38,38 0,1,1 77,39A38,38 0,1,1 1,39" stroke-dasharray="240" stroke-dashoffset="240" class="EtbJxvBh_1 js-circle-countdown"></path></svg>                                    <span class="countdown__time" data-value="minutes">0</span>
+                                    <span class="countdown__title">Minutes</span>
+                                </div>
+                                <div class="countdown__chart" data-countdown="seconds">
+                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="78" height="78" viewBox="0 0 78 78" style="" class=""><path stroke="#28a745" fill="transparent" stroke-width="1" d="M1,39A38,38 0,1,1 77,39A38,38 0,1,1 1,39" class=""></path><path stroke="#093a23" fill="transparent" transform="translate(78, 0) rotate(90)" stroke-width="2" d="M1,39A38,38 0,1,1 77,39A38,38 0,1,1 1,39" stroke-dasharray="240" stroke-dashoffset="240" class="EtbJxvBh_1 js-circle-countdown"></path></svg>                                    <span class="countdown__time" data-value="seconds">0</span>
+                                    <span class="countdown__title">Seconds</span>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        <script>
+                            $(document).ready(function(){
+                      $(".js-countdown").jqCountdown({
+                            daysInterval: 7,
+                            hoursInterval: 24,
+                            minutesInterval: 60,
+                        });
+                    });
+
+                    $.fn.jqCountdown = function (options) {
+                        var defaultOptions = {
+                            daysInterval: 7,
+                            hoursInterval: 24,
+                            minutesInterval: 60,
+                        };
+                        var options = $.extend({}, defaultOptions, options);
+                        var self = this,
+                                date = $(self).attr("data-date"),
+                                ts = new Date(date),
+                                now = 0,
+                                diff = 0,
+                                days, hours, minutes, seconds,
+                                dashoffset = 240,
+                                dayPercent = dashoffset / 7,
+                                hourPercent = dashoffset / 24,
+                                minutesPercent = dashoffset / 60,
+                                interval = false;
+
+                        this.init = function () {
+                            now = new Date().getTime();
+                            diff = (ts.getTime() - now);
+                            days = this.getDays(diff);
+                            hours = this.getHours(diff, days);
+                            minutes = this.getMinutes(diff, days, hours);
+                            seconds = this.getSeconds(diff, days, hours, minutes);
+                            this.setValue(days, "days");
+                            this.setValue(hours, "hours");
+                            this.setValue(minutes, "minutes");
+                            this.setValue(seconds, "seconds");
+                            this.setCircleDays(days);
+                            this.setCircleHours(hours);
+                            this.setCircleMinutes(minutes);
+                            this.setCircleSeconds(seconds);
+                        }
+                        this.getDays = function (diff) {
+                            return (diff / (24 * 60 * 60 * 1000)) ^ 0;
+                        }
+                        this.getHours = function (diff, days) {
+                            diff = diff - days * 24 * 3600 * 1000;
+                            return (diff / (60 * 60 * 1000)) ^ 0;
+                        }
+                        this.getMinutes = function (diff, days, hours) {
+                            diff = diff - days * 24 * 3600 * 1000 - hours * 3600 * 1000;
+                            return diff / (60 * 1000) ^ 0;
+                        }
+                        this.getSeconds = function (diff, days, hours, minutes) {
+                            diff = diff - days * 24 * 3600 * 1000 - hours * 3600 * 1000 - minutes * 60 * 1000;
+                            return Math.ceil(diff / 1000);
+                        }
+                        this.setValue = function (val, type) {
+                            $(self).find("[data-value=" + type + "]").html(val);
+                        }
+                        this.setCircleDays = function (val) {
+                            $(self).find("[data-countdown=days]").find("svg").find(".js-circle-countdown").attr("stroke-dashoffset", val * dayPercent);
+                        }
+                        this.setCircleHours = function (val) {
+                            $(self).find("[data-countdown=hours]").find("svg").find(".js-circle-countdown").attr("stroke-dashoffset", val * hourPercent);
+                        }
+                        this.setCircleMinutes = function (val) {
+                            $(self).find("[data-countdown=minutes]").find("svg").find(".js-circle-countdown").attr("stroke-dashoffset", val * minutesPercent);
+                        }
+                        this.setCircleSeconds = function (val) {
+                            $(self).find("[data-countdown=seconds]").find("svg").find(".js-circle-countdown").attr("stroke-dashoffset", val * minutesPercent);
+                        }
+                        self.init();
+                        interval = setInterval(function () {
+                            self.init();
+                        }, 1000)
+                    }
+                        </script>
+                    </div>
+
+
                     <div class="container-fluid">
+
                         <div class="row">
-
                             <div class="col-sm-12 col-md-12 col-lg-12">
-                                <div class="container pt-lg pb-xl-md position-relative zindex-100 prop">
-
+                            <div class="container pt-lg pb-xl-md position-relative zindex-100 prop">
                             <div  data-toggle="hidden">
                                     <div class="card shadow animate-this animated fadeIn delay-2s">
                                         <div class="py-5 text-center" id="inst-logo">

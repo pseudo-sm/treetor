@@ -486,8 +486,6 @@ def institution_profile(request):
     users = dict(db.child("users").child("teachers").get().val())
     image = storage.child("users").child("institutes").child(uid).child(uid).get_url(auth.current_user["idToken"])
     r = requests.get(image)
-    print(r.status_code)
-    print(type(r.status_code))
     if r.status_code == 404:
         image = "../static/images/enterprise.png"
     teachers_all = dict(db.child("users").child("teachers").get().val())
@@ -513,7 +511,6 @@ def institution_profile(request):
     courses_context = {}
     institution_data = {"name":name,"classes":classes,"area":area,"teachers":teachers,"students":students,"email":email,"type":type1}
     if institution.get("courses") is not None:
-        print('below')
         courses = institution["courses"]
         for course in courses:
             duration.append(institution["courses"][course]["duration"])
@@ -547,14 +544,16 @@ def institution_profile(request):
 
     students_context = {}
     all_students = dict(db.child("users").child("students").get().val())
+    time = institution["signup time"]
+    month = str(int(time[5:7])+6)
+    time = time[:4]+"/"+month+"/"+time[8:] + " 00:00:00"
     if institution.get("students") is not None:
         for student in institution["students"]:
             if institution["students"][student] == 1:
                 students_context.update({student:all_students[student]["name"]})
-
-        return render(request,"institution_profile.html",{"image":image,"institution":institution_data,"pending":pending,"pending_list":pending_list,"all_teachers":all_teachers_inst,"courses":courses_send,"done":done,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches})
+        return render(request,"institution_profile.html",{"time":time,"image":image,"institution":institution_data,"pending":pending,"pending_list":pending_list,"all_teachers":all_teachers_inst,"courses":courses_send,"done":done,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches})
     else:
-        return render(request,"institution_profile.html",{"image":image,"institution":institution_data,"done":done,"courses":courses_send,"pending":pending,"pending_list":pending_list,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches})
+        return render(request,"institution_profile.html",{"time":time,"image":image,"institution":institution_data,"done":done,"courses":courses_send,"pending":pending,"pending_list":pending_list,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches})
 def make_teacher(request):
 
 

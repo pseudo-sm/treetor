@@ -86,6 +86,8 @@ def find_user(uid):
 
 def home(request):
 
+    hits = db.child("hits").get().val()
+    db.update({"hits":hits+1})
     if auth.current_user is not None:
         user = find_user(auth.current_user["localId"])
         if user == "students":

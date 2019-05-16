@@ -18,6 +18,7 @@
         <script src="../static/js/higlight.js"></script>
         <script src="../static/js/theme.min.js"></script>
         <script src="../static/js/gtag.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/push.js/0.0.11/push.min.js"></script>
         <style>
              ::-webkit-scrollbar {
                 width: 5px;
@@ -63,10 +64,6 @@
                         },
                         dataType: 'json',
                         success: function (content) {
-                            $(".tool").append('<div class="geosuc" style="color:green;" >Successuflly updated location !</div>')
-                            setTimeout(function() {
-                                $('.geosuc').fadeOut('slow');
-                            }, 1000); // <-- time in milliseconds
                         }
 
 

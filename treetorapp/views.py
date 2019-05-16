@@ -10,6 +10,7 @@ from django.contrib import auth as authe
 from functools import wraps
 import requests
 import random
+from math import sin, cos, sqrt, atan2
 
 from django.urls import reverse
 config = {
@@ -86,8 +87,8 @@ def find_user(uid):
 
 def home(request):
 
-    hits = db.child("hits").get().val()
-    db.update({"hits":hits+1})
+    timestamp = int(datetime.now().timestamp())
+    db.child("hits").update({timestamp:0})
     if auth.current_user is not None:
         user = find_user(auth.current_user["localId"])
         if user == "students":
@@ -885,13 +886,44 @@ def geolocation(request):
         uid = auth.current_user["localId"]
         user_type = find_user(uid)
         if user_type == "institutes":
-            db.child("users").child("institutes").child(uid).child("gelocation").update({"latitude":lat,"longitude":lon})
+            db.child("users").child("institutes").child(uid).child("geolocation").update({"latitude":lat,"longitude":lon})
     else:
         timestamp = int(datetime.now().timestamp())
         db.child("visitors").child(timestamp).child("geolocation").update({"latitude":lat,"longitude":lon})
+        institutes = dict(db.child("users").child("institutes").get().val())
+        kms = {}
+        for institute in institutes :
+            if institutes[institute].get("geolocation") is not None:
+                i_lat = float(institutes[institute]["geolocation"]["latitude"])
+                i_lon = float(institutes[institute]["geolocation"]["longitude"])
+                R = 6373.0
+                lat = float(lat)
+                lon = float(lon)
+                dlon = i_lon - lon
+                dlat = i_lat - lat
+                a = (sin(dlat/2))**2 + cos(lat) * cos(i_lat) * (sin(dlon/2))**2
+                c = 2 * atan2(sqrt(a), sqrt(1-a))
+                distance = R * c
+                kms.update({institute:{"name":institutes[institute]["name"],"kms":distance}})
+                print(kms)
     content = True
     return JsonResponse(json.dumps(content),content_type="json/application",safe=False)
 
 def coming(request):
 
     return render(request,"comingsoon.html")
+
+
+def admin(request):
+    count = {}
+    hits = dict(db.child("hits").get().val())
+    for hit in hits:
+        date = datetime.fromtimestamp(int(hit)).date()
+        if count.get(str(date)) is None:
+            count.update({str(date):0})
+        else:
+            count[str(date)]+=1
+    row = ""
+    for date in count:
+        row+="<tr><td>"+date+"</td><td>"+str(count[date])+"</td></tr>"
+    return HttpResponse("<table cellspacing='2' border='2'><tr><th>Date</th><th>Hits</th></tr>"+row+"</table>")

@@ -100,6 +100,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+WEBPUSH_SETTINGS = {
+   "VAPID_PUBLIC_KEY": "BPO6sHyLWqgDVsVHxuCiURo2gnePPET0Pl_biCOd3ZuAmvgPiVss7IFp4_is6FSTepqJ1YlfnzD47gFVe0wan9s",
+   "VAPID_PRIVATE_KEY": "DFL2rjAABWzwL9zafemftn6g-5x31nuw4PmWuKD5Xug",
+   "VAPID_ADMIN_EMAIL": "care.treetor@gmail.com"
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/

@@ -66,7 +66,6 @@ def institute_login_required(function):
         else:
             id = auth.current_user["localId"]
             type = db.child("users").child("institutes").child(id).get().val()
-            print(type,id)
             if type is None:
 
                 return HttpResponseRedirect('/signin/')
@@ -186,7 +185,6 @@ def search(request):
     token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjY1NmMzZGQyMWQwZmVmODgyZTA5ZTBkODY5MWNhNWM3ZjJiMGQ2MjEiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vdHJlZXRvci03NWIxNCIsImF1ZCI6InRyZWV0b3ItNzViMTQiLCJhdXRoX3RpbWUiOjE1NTYwNjA0MDYsInVzZXJfaWQiOiJqRGRZY2FlQ2diVnVmRGF1UHo0ZlVkYlZpRW4yIiwic3ViIjoiakRkWWNhZUNnYlZ1ZkRhdVB6NGZVZGJWaUVuMiIsImlhdCI6MTU1NjA2MDQwNywiZXhwIjoxNTU2MDY0MDA3LCJlbWFpbCI6InRyaWRlbnRAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbInRyaWRlbnRAZ21haWwuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.TCFqZ_Z6DEp8a9yWxJx1w19dsxPR-0iuVdV3vfpZg1DI2Ss4N44Jph7YUrNNk3BFPHjY_Gp6wA5nxrNRZ2eB367sOyzXgyHAxDgOY-fyBI14xtIrV7xK6NZ1VfMG383Mcx6fEVatpZkx1O8XvZ0Ir-d_Fwz0Bw60hTuTLXu9WAjCH-lchnqMAO5qIvMN6Rx0Aay9vcFHJB7IVHgeKg-AWkh2pC1XYkT7jP45gT0BvudmRwH1QyVACsHFJQ6QQ1Gk6vgkW0UyaAr_N3Hz1Gj4T0QyWD0x7BO3fVwkpUQOa0lyE4GWl7o9Zw3UCk5NUI4fgLsm_rJ3IeYV5TIr7ImS9w"
     if search is not "":
         for institute in data:
-            print(institute)
             if difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["name"]).lower())).ratio() > 0.3 or difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["area"]).lower())).ratio() > 0.3 :
                 image = storage.child("users").child("institutes").child(institute).child(institute).get_url(token)
                 r = requests.get(image)
@@ -205,8 +203,6 @@ def search(request):
                 if data[institute].get("courses") is not None:
                     image = storage.child("users").child("institutes").child(institute).get_url(token)
                     r = requests.get(image)
-                    print(r.status_code)
-                    print(type(r.status_code))
                     if r.status_code == 404:
                         image = "../static/images/enterprise.png"
                     courses_res =  ",".join(list(data[institute]["courses"].keys()))
@@ -237,7 +233,6 @@ def search(request):
         empty_courses=1
     else:
         empty_courses=0
-    print(results)
     if auth.current_user is not None:
         user = find_user(auth.current_user["localId"])
         if user == "students":
@@ -364,7 +359,6 @@ def teacher_dashboard(request):
     teacher_name = this["name"]
     for inst in institutes:
         names.update({inst:institutes[inst]["name"]})
-    print(names)
     return render(request,"teacher_dashboard.html",{"names":names,"teacher_name":teacher_name,"also_inst":True})
 
 @teacher_login_required
@@ -550,13 +544,22 @@ def institution_profile(request):
     time = institution["signup time"]
     month = str(int(time[5:7])+6)
     time = time[:4]+"/"+month+"/"+time[8:] + " 00:00:00"
+    pending = institution["students"]
+    pending_count = 0
+    for student in pending:
+        if pending[student] == 0:
+            pending_count+=1
+    if pending_count == 0:
+        pending_students = ""
+    else:
+        pending_students = "( "+str(pending_count) + " )"
     if institution.get("students") is not None:
         for student in institution["students"]:
             if institution["students"][student] == 1:
                 students_context.update({student:all_students[student]["name"]})
-        return render(request,"institution_profile.html",{"time":time,"image":image,"institution":institution_data,"pending":pending,"pending_list":pending_list,"all_teachers":all_teachers_inst,"courses":courses_send,"done":done,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches})
+        return render(request,"institution_profile.html",{"pending_students":pending_students,"time":time,"image":image,"institution":institution_data,"pending":pending,"pending_list":pending_list,"all_teachers":all_teachers_inst,"courses":courses_send,"done":done,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches})
     else:
-        return render(request,"institution_profile.html",{"time":time,"image":image,"institution":institution_data,"done":done,"courses":courses_send,"pending":pending,"pending_list":pending_list,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches})
+        return render(request,"institution_profile.html",{"pending_students":pending_students,"time":time,"image":image,"institution":institution_data,"done":done,"courses":courses_send,"pending":pending,"pending_list":pending_list,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches})
 def make_teacher(request):
 
 
@@ -644,7 +647,6 @@ def all_students(request):
     try:
         this_students = dict(db.child("users").child("institutes").child(uid).child("students").get().val())
         for i in this_students:
-            print(i)
             if this_students[i] == 1:
                 ids.append(i)
                 names.append(students[i]["name"])
@@ -669,7 +671,6 @@ def all_students(request):
 def accept_students(request):
 
     id = request.GET.get("id")
-    print(id)
     uid = auth.current_user["localId"]
     db.child("users").child("institutes").child(uid).child("students").update({id:1})
     content = True
@@ -767,7 +768,6 @@ def view_courses(request):
     for i in courses:
         course_name.append(i)
         classes.append(list(courses[i]["class"].keys()))
-    print(course_name,classes)
     return render(request,"institution_courses.html")
 
 def apply(request):
@@ -863,7 +863,6 @@ def student_report(request):
                     if int(institute["attendance"][session][student]) == 1:
                         present+=1
             classes+=1
-            print(present,classes)
         percentage = (present/classes)*100
         content[student].update({"attendance":percentage})
 
@@ -872,7 +871,6 @@ def student_report(request):
 def reset_password(request):
 
     email = request.GET.get("email")
-    print(email)
     auth.send_password_reset_email(email)
     content = True
     return JsonResponse(json.dumps(content),content_type="json/application", safe=False)
@@ -905,9 +903,9 @@ def geolocation(request):
                 c = 2 * atan2(sqrt(a), sqrt(1-a))
                 distance = R * c
                 kms.update({institute:{"name":institutes[institute]["name"],"kms":distance}})
-                print(kms)
     content = True
     return JsonResponse(json.dumps(content),content_type="json/application",safe=False)
+
 
 def coming(request):
 

@@ -255,8 +255,8 @@
                         <div class="row">
                             
                             <div class="col-md-12 col-sm-12 col-lg-12"> <h2 class="text-green my-4" style="color: green;margin-left: 10%">
-                            <span class="display-5 font-weight-light">Welcome <stong style="color: yellow;text-shadow: 2px 2px grey">Mr. Annonymous</stong>
-                                <br/><strong style="font-size: 15px"><b>Your SCORE : </b></strong> <span style="color: yellow;text-shadow: 2px 2px grey">1600</span><strong style="font-size: 15px"> XP</strong></span>
+                            <span class="display-5 font-weight-light">Welcome <stong style="color: yellow;text-shadow: 2px 2px grey">{{details.name}}</stong>
+                                <br/><strong style="font-size: 15px"><b>Your SCORE : </b></strong> <span style="color: yellow;text-shadow: 2px 2px grey">{{details.score}}</span><strong style="font-size: 15px"> XP</strong></span>
                             </h2>
                            </div>
                                                     
@@ -276,7 +276,7 @@
                                 </div>
                             </div>
                                                       
-                            <div class=" col-lg-3 col-sm-12 col-md-3">
+                            <div class=" col-lg-3 col-sm-12 col-md-3"  data-toggle="modal" data-target="#report">
                                 <div class="container pt-lg pb-xl-md position-relative zindex-100 prop">
                                     <div data-toggle="hidden">
                                     <div class="card shadow animate-this animated fadeIn delay-2s">
@@ -284,11 +284,49 @@
                                             <img alt="" src="../static/images/percentage.png" class="img-saturate" style="width: 100px;">
                                         </div>
                                         <div class="px-4 pb-5 text-center">
-                                            <strong>Attendance</strong>
+                                            <strong>Report</strong>
                                         </div>
                                     </div>
                                 </div>
                                 </div>
+                            </div>
+
+                            <div class="modal fade" id="report" role="dialog">
+                            <!--modal-->
+                            <div class="modal-dialog">
+                              <!-- Modal content-->
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                 <button type="button" class="fas fa-times" data-dismiss="modal"></button>
+                                  <h4 class="modal-title">Student Report</h4>
+                                </div>
+                                <div class="modal-body report">
+                                    <table class="batches" cellspacing="2px" cellpadding="2px" border="2">
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>This Class</th>
+                                            <th>Next Class</th>
+                                            <th>Attendance</th>
+                                            <th>Rating</th>
+                                            <th>Review</th>
+                                        </tr>
+                                        {% for date,data in report.items %}
+                                            <tr>
+                                            <td>{{date}}</td>
+                                            <td>{{data.this}}</td>
+                                            <td>{{data.next}}</td>
+                                            <td>{{data.attendance}}</td>
+                                            <td>{{data.rating}}</td>
+                                            <td>{{data.review}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                  </div>
+                                </div>
+                                <div class="modal-footer">
+                                </div>
+                              </div>
+                                <!--MODAL-->
                             </div>
                                                       
                             <div class=" col-lg-3 col-sm-12 col-md-3">

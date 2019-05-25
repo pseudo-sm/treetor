@@ -342,9 +342,27 @@ def student_profile(request):
     data = {"name":name,"email":email,'gender':gender,'dob':dob,'languages':languages,'phone':phone,'address':address,'facebook':facebook,'hobbies':hobbies,'interests':interests,'sports':sports,'g_name':g_name,'g_mail':g_mail,'g_phone':g_phone,'g_dob':g_dob,'school':school,'relation':g_relation,'std':std,'percentage':percentage,'treetor_center':treetor_center,'subjects':subjects,'best_at':best_at,'weak_at':weak_at,'old':older_tuitions,'board':board,"count":count}
 
     return render(request,"student_profile.html",data)
+
+@student_login_required
 def student_dashboard(request):
 
-    return render(request,"student_dashboard.html")
+    uid = auth.current_user["localId"]
+    student = dict(db.child("users").child("students").child(uid).get().val())
+    institute = db.child("users").child("institutes").child(student["treetor center"]).get().val()
+    report = {}
+    for batch in institute["batches"]:
+        if uid in institute["batches"][batch]["students"]:
+            batch_id = batch
+    for session in institute["batches"][batch_id]["dailyreport"]:
+        if institute["batches"][batch_id]["dailyreport"][session][uid]["attendance"]==1:
+            attendance = "P"
+        else:
+            attendance="A"
+        date = datetime.fromtimestamp(int(session)/1000).date()
+        report.update({str(date):{"attendance":attendance,"this":institute["batches"][batch_id]["dailyreport"][session][uid]["today"],"next":institute["batches"][batch_id]["dailyreport"][session][uid]["tomorrow"],"rating":institute["batches"][batch_id]["dailyreport"][session][uid]["rating"],"review":institute["batches"][batch_id]["dailyreport"][session][uid]["review"]}})
+        details = {"name":student["name"],"score":student["score"]}
+    return render(request,"student_dashboard.html",{"report":report,"details":details})
+
 def student_schedule(request):
 
     return render(request,"student_schedule.html")
@@ -673,6 +691,7 @@ def accept_students(request):
     id = request.GET.get("id")
     uid = auth.current_user["localId"]
     db.child("users").child("institutes").child(uid).child("students").update({id:1})
+    db.child("users").child("students").child(id).update({"treetor center":uid})
     content = True
     return JsonResponse(json.dumps(content),safe=False,content_type="json/application")
 
@@ -854,17 +873,17 @@ def student_report(request):
     all_students = dict(db.child("users").child("students").get().val())
     for student in students:
         content.update({student:{"name":all_students[student]["name"]}})
-    if institute.get("attendance") is not None:
-        classes = 0
-        for session in institute["attendance"]:
-            for student in institute["attendance"][session]:
-                present = 0
-                for session in institute["attendance"]:
-                    if int(institute["attendance"][session][student]) == 1:
-                        present+=1
+
+    classes = 0
+    for session in institute["dailyreport"]:
+        for student in institute["dailyreport"][session]:
+            present = 0
+            for session in institute["dailyreport"]:
+                if int(institute["dailyreport"][session][student]["attendance"]) == 1:
+                    present+=1
             classes+=1
-        percentage = (present/classes)*100
-        content[student].update({"attendance":percentage})
+            percentage = (present/classes)*100
+            content[student].update({"attendance":percentage})
 
     return JsonResponse(json.dumps(content),content_type="json/application",safe=False)
 

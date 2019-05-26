@@ -195,8 +195,9 @@ def search(request):
                         courses_res =  ",".join(list(data[institute]["courses"].keys()))
                 geo = {}
                 if data[institute].get("geolocation") is not None:
-                    lat = data[institute]["geolocation"]["latitutde"]
-                    lon = data[institute]["geolocation"]["longiitutde"]
+                    print("----------------------------------------------------------")
+                    lat = data[institute]["geolocation"]["latitude"]
+                    lon = data[institute]["geolocation"]["longitude"]
                     geo.update({"lat":lat,"lon":lon})
                 results.append({"name":data[institute]["name"],"address":data[institute]["area"],"id":institute,"image":image,"courses":courses_res,"geo":geo})
             if search.lower() in str(data[institute]["name"]).lower() and {"name":data[institute]["name"],"address":data[institute]["area"]} not in results:

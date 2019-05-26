@@ -49,6 +49,14 @@
     </head>
     
     <body>
+
+        <script>
+            $(document).ready(function () {
+            $('html, body').animate({
+                scrollTop: $('#sct_page_examples').offset().top
+            }, 'slow');
+        });
+        </script>
         
         <header class="header-transparent" id="header-main">
         <!-- Topbar -->
@@ -244,7 +252,7 @@
                             {% ifequal empty_results 0 %}
                              <h1 style="color: ghostwhite;text-shadow:1px 2px 1px green;margin-left: 15px">Institutions</h1>
                             {% for i in results %}
-                            <div class="col-lg-12 mb-12 mb-lg-0">
+                            <div class="col-lg-12 mb-12 mb-lg-0 goto" id="{{i.id}}">
                                 <div data-animate-hover="1" data-toggle="hidden">
                                     <div class="card shadow animate-this">
                                         <div class="container">
@@ -360,6 +368,13 @@
                             <!--<h2 style="color:white;"> Sorry !! No Result Found :(</h2>-->
                             {% endifequal %}
                             </div>
+
+                            <script>
+                                $(".goto").click(function() {
+                                     id  = $(this).attr("id");
+                                     window.location = "../institute/"+id;
+                                });
+                            </script>
 
                             <!-- modal -->
 

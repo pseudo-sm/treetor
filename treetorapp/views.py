@@ -724,7 +724,94 @@ def demo_request(request):
     time = str(datetime.fromtimestamp(timestamp).time())
     timestamp = str(timestamp)
     db.child("Querries").child(timestamp).update({"date":date,"time":time,"name":name,"email":email,"wap":wap})
-    all = True
+    all = Truealso_teacher = False
+    done = True
+    uid = auth.current_user["localId"]
+    all_teachers = dict(db.child("users").child("teachers").get().val())
+    if uid in all_teachers:
+        also_teacher = True
+        done = False
+    institution = dict(db.child("users").child("institutes").child(uid).get().val())
+    users = dict(db.child("users").child("teachers").get().val())
+    image = storage.child("users").child("institutes").child(uid).child(uid).get_url(auth.current_user["idToken"])
+    r = requests.get(image)
+    if r.status_code == 404:
+        image = "../static/images/enterprise.png"
+    teachers_all = dict(db.child("users").child("teachers").get().val())
+    name = institution["name"]
+    classes = institution["classes"]
+    area = institution["area"]
+    teachers = institution["number teachers"]
+    students = institution["number students"]
+    email = institution["email"]
+    type1 = institution["type"]
+    subject_name = []
+    duration = []
+    off = []
+    hours = []
+    class_1 = []
+    time = []
+    price = []
+    subjects = []
+    pending = False
+    pending_list = {}
+    course_names = []
+    all_teachers_inst = {}
+    courses_context = {}
+    institution_data = {"name":name,"classes":classes,"area":area,"teachers":teachers,"students":students,"email":email,"type":type1}
+    if institution.get("courses") is not None:
+        courses = institution["courses"]
+        for course in courses:
+            duration.append(institution["courses"][course]["duration"])
+            course_names.append(course)
+            all_class =  list(institution["courses"][course]["class"].keys())
+            class_1.append(",".join(all_class))
+            off.append(institution["courses"][course]["off"])
+            price.append(institution["courses"][course]["price"])
+            all_subjects = list(institution["courses"][course]["subjects"].keys())
+            subjects.append(",".join(all_subjects))
+    courses_send = (zip(course_names,duration,off,class_1,price,subjects))
+
+    if institution.get("pending") is not None:
+        pl = list(institution["pending"].keys())
+        pending = len(pl)
+        for id in pl:
+            pending_list.update({id:teachers_all[id]["name"]})
+    if institution.get("teachers") is not None:
+        teacher_list = list(institution["teachers"].keys())
+        for teacher in teacher_list :
+            all_teachers_inst.update({teacher:teachers_all[teacher]["name"]})
+    btimes = []
+    bid = []
+    bcourse = []
+    if institution.get("batches") is not None:
+        for id in institution["batches"]:
+            btimes.append(institution["batches"][id]["time"])
+            bcourse.append(institution["batches"][id]["course"])
+            bid.append(id)
+    batches = zip(btimes,bcourse,bid)
+
+    students_context = {}
+    all_students = dict(db.child("users").child("students").get().val())
+    time = institution["signup time"]
+    month = str(int(time[5:7])+6)
+    time = time[:4]+"/"+month+"/"+time[8:] + " 00:00:00"
+    pending = institution["students"]
+    pending_count = 0
+    for student in pending:
+        if pending[student] == 0:
+            pending_count+=1
+    if pending_count == 0:
+        pending_students = ""
+    else:
+        pending_students = "( "+str(pending_count) + " )"
+    if institution.get("students") is not None:
+        for student in institution["students"]:
+            if institution["students"][student] == 1:
+                students_context.update({student:all_students[student]["name"]})
+        return render(request,"institution_profile.html",{"pending_students":pending_students,"time":time,"image":image,"institution":institution_data,"pending":pending,"pending_list":pending_list,"all_teachers":all_teachers_inst,"courses":courses_send,"done":done,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches})
+    else:
+        return render(request,"institution_profile.html",{"pending_students":pending_students,"time":time,"image":image,"institution":institution_data,"done":done,"courses":courses_send,"pending":pending,"pending_list":pending_list,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches})
     return HttpResponse(json.dumps(all),content_type='application/json')
 
 def institution_details(request):
@@ -944,3 +1031,91 @@ def admin(request):
     for date in count:
         row+="<tr><td>"+date+"</td><td>"+str(count[date])+"</td></tr>"
     return HttpResponse("<table cellspacing='2' border='2'><tr><th>Date</th><th>Hits</th></tr>"+row+"</table>")
+
+
+def institution_public(request,uid):
+
+    if auth.current_user is not None:
+        cid = auth.current_user["localId"]
+    all_teachers = dict(db.child("users").child("teachers").get().val())
+    institution = dict(db.child("users").child("institutes").child(uid).get().val())
+    token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjY1NmMzZGQyMWQwZmVmODgyZTA5ZTBkODY5MWNhNWM3ZjJiMGQ2MjEiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vdHJlZXRvci03NWIxNCIsImF1ZCI6InRyZWV0b3ItNzViMTQiLCJhdXRoX3RpbWUiOjE1NTYwNjA0MDYsInVzZXJfaWQiOiJqRGRZY2FlQ2diVnVmRGF1UHo0ZlVkYlZpRW4yIiwic3ViIjoiakRkWWNhZUNnYlZ1ZkRhdVB6NGZVZGJWaUVuMiIsImlhdCI6MTU1NjA2MDQwNywiZXhwIjoxNTU2MDY0MDA3LCJlbWFpbCI6InRyaWRlbnRAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbInRyaWRlbnRAZ21haWwuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.TCFqZ_Z6DEp8a9yWxJx1w19dsxPR-0iuVdV3vfpZg1DI2Ss4N44Jph7YUrNNk3BFPHjY_Gp6wA5nxrNRZ2eB367sOyzXgyHAxDgOY-fyBI14xtIrV7xK6NZ1VfMG383Mcx6fEVatpZkx1O8XvZ0Ir-d_Fwz0Bw60hTuTLXu9WAjCH-lchnqMAO5qIvMN6Rx0Aay9vcFHJB7IVHgeKg-AWkh2pC1XYkT7jP45gT0BvudmRwH1QyVACsHFJQ6QQ1Gk6vgkW0UyaAr_N3Hz1Gj4T0QyWD0x7BO3fVwkpUQOa0lyE4GWl7o9Zw3UCk5NUI4fgLsm_rJ3IeYV5TIr7ImS9w"
+    image = storage.child("users").child("institutes").child(uid).child(uid).get_url(token)
+    r = requests.get(image)
+    if r.status_code == 404:
+        image = "../static/images/enterprise.png"
+    teachers_all = dict(db.child("users").child("teachers").get().val())
+    name = institution["name"]
+    classes = institution["classes"]
+    area = institution["area"]
+    teachers = institution["number teachers"]
+    students = institution["number students"]
+    email = institution["email"]
+    type1 = institution["type"]
+    subject_name = []
+    duration = []
+    off = []
+    hours = []
+    class_1 = []
+    time = []
+    price = []
+    subjects = []
+    pending = False
+    pending_list = {}
+    course_names = []
+    all_teachers_inst = {}
+    courses_context = {}
+    institution_data = {"name":name,"classes":classes,"area":area,"teachers":teachers,"students":students,"email":email,"type":type1}
+    if institution.get("courses") is not None:
+        courses = institution["courses"]
+        for course in courses:
+            duration.append(institution["courses"][course]["duration"])
+            course_names.append(course)
+            all_class =  list(institution["courses"][course]["class"].keys())
+            class_1.append(",".join(all_class))
+            off.append(institution["courses"][course]["off"])
+            price.append(institution["courses"][course]["price"])
+            all_subjects = list(institution["courses"][course]["subjects"].keys())
+            subjects.append(",".join(all_subjects))
+    courses_send = (zip(course_names,duration,off,class_1,price,subjects))
+
+    if institution.get("pending") is not None:
+        pl = list(institution["pending"].keys())
+        pending = len(pl)
+        for id in pl:
+            pending_list.update({id:teachers_all[id]["name"]})
+    if institution.get("teachers") is not None:
+        teacher_list = list(institution["teachers"].keys())
+        for teacher in teacher_list :
+            all_teachers_inst.update({teacher:teachers_all[teacher]["name"]})
+    btimes = []
+    bid = []
+    bcourse = []
+    if institution.get("batches") is not None:
+        for id in institution["batches"]:
+            btimes.append(institution["batches"][id]["time"])
+            bcourse.append(institution["batches"][id]["course"])
+            bid.append(id)
+    batches = zip(btimes,bcourse,bid)
+
+    students_context = {}
+    all_students = dict(db.child("users").child("students").get().val())
+    time = institution["signup time"]
+    month = str(int(time[5:7])+6)
+    time = time[:4]+"/"+month+"/"+time[8:] + " 00:00:00"
+    pending = institution["students"]
+    pending_count = 0
+    for student in pending:
+        if pending[student] == 0:
+            pending_count+=1
+    if pending_count == 0:
+        pending_students = ""
+    else:
+        pending_students = "( "+str(pending_count) + " )"
+    if institution.get("students") is not None:
+        for student in institution["students"]:
+            if institution["students"][student] == 1:
+                students_context.update({student:all_students[student]["name"]})
+        return render(request,"institution_public.html",{"time":time,"image":image,"institution":institution_data,"all_teachers":all_teachers_inst,"courses":courses_send,"all_students":students_context,"all_course":course_names,"batches":batches})
+    else:
+        return render(request,"institution_public.html",{"time":time,"image":image,"institution":institution_data,"courses":courses_send,"all_students":students_context,"all_course":course_names,"batches":batches})

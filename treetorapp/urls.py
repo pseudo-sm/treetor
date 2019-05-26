@@ -20,6 +20,7 @@ from . import views
 
 urlpatterns = [
 
+    url(r'^institute/(?P<uid>[\w\-]+)',views.institution_public,name="institution_public"),
     url(r'^quiz-response/',views.quiz_response,name="quiz_response"),
     url(r'^geolocation/',views.geolocation,name="geolocation"),
     url(r'^temp/',views.coming,name="temp"),

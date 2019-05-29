@@ -919,7 +919,10 @@ def add_batch(request):
     teacher = request.GET.get("teacher")
     course = request.GET.get("course")
     students = request.GET.get("students")
-    students = students[2:len(students)-2].split(',')
+    import json
+    students = json.loads(students)
+    # students = students[2:len(students)-2].split(',')
+    print(students)
     batch_id = random.randint(100000,999999)
     db.child("users").child("institutes").child(uid).child("batches").child(batch_id).update({"time":time,"teacher":teacher,"course":course})
     for student in students:

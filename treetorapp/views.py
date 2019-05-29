@@ -11,6 +11,7 @@ from functools import wraps
 import requests
 import random
 from math import sin, cos, sqrt, atan2
+import json
 
 from django.urls import reverse
 config = {
@@ -354,14 +355,15 @@ def student_dashboard(request):
     for batch in institute["batches"]:
         if uid in institute["batches"][batch]["students"]:
             batch_id = batch
-    for session in institute["batches"][batch_id]["dailyreport"]:
-        if institute["batches"][batch_id]["dailyreport"][session][uid]["attendance"]==1:
-            attendance = "P"
-        else:
-            attendance="A"
-        date = datetime.fromtimestamp(int(session)/1000).date()
-        report.update({str(date):{"attendance":attendance,"this":institute["batches"][batch_id]["dailyreport"][session][uid]["today"],"next":institute["batches"][batch_id]["dailyreport"][session][uid]["tomorrow"],"rating":institute["batches"][batch_id]["dailyreport"][session][uid]["rating"],"review":institute["batches"][batch_id]["dailyreport"][session][uid]["review"]}})
-        details = {"name":student["name"],"score":student["score"]}
+    if institute["batches"][batch_id].get("dailyreport") is not None:
+        for session in institute["batches"][batch_id]["dailyreport"]:
+            if institute["batches"][batch_id]["dailyreport"][session].get(uid) is not None:
+                attendance = "P"
+            else:
+                attendance="A"
+            date = datetime.fromtimestamp(int(session)/1000).date()
+            report.update({str(date):{"attendance":attendance,"this":institute["batches"][batch_id]["dailyreport"][session][uid]["today"],"next":institute["batches"][batch_id]["dailyreport"][session][uid]["tomorrow"],"rating":institute["batches"][batch_id]["dailyreport"][session][uid]["rating"],"review":institute["batches"][batch_id]["dailyreport"][session][uid]["review"]}})
+            details = {"name":student["name"],"score":student["score"]}
     return render(request,"student_dashboard.html",{"report":report,"details":details})
 
 def student_schedule(request):
@@ -919,13 +921,17 @@ def add_batch(request):
     teacher = request.GET.get("teacher")
     course = request.GET.get("course")
     students = request.GET.get("students")
-    import json
+    timings = request.GET.get("timings")
+    timings = json.loads(timings)
     students = json.loads(students)
     # students = students[2:len(students)-2].split(',')
-    print(students)
     batch_id = random.randint(100000,999999)
-    db.child("users").child("institutes").child(uid).child("batches").child(batch_id).update({"time":time,"teacher":teacher,"course":course})
+    db.child("users").child("institutes").child(uid).child("batches").child(batch_id).update({"teacher":teacher,"course":course})
+    for weekday in timings:
+        if timings[weekday] is not "":
+            db.child("users").child("institutes").child(uid).child("batches").child(batch_id).child("timings").update({weekday:timings[weekday]})
     for student in students:
+        pass
         db.child("users").child("institutes").child(uid).child("batches").child(batch_id).child("students").update({student:0})
     content = True
     return JsonResponse(json.dumps(content),content_type="application/json",safe=False)

@@ -227,7 +227,7 @@
 
         <nav class="navbar navbar-main navbar-expand-lg navbar-sticky navbar-transparent navbar-dark bg-dark" id="navbar-main">
             <div class="container">
-                <a class="navbar-brand mr-lg-5" href="{url 'home                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    '}">
+                <a class="navbar-brand mr-lg-5" href="{url 'home'}">
                     <img alt="Image placeholder" src="../static/images/text.png" style="height: 50px;">
                 </a>
 
@@ -1090,7 +1090,6 @@
 
                   <div>
 
-                  Batch Time : <input type="time" class="form-control" id="time"><br>
                   <div class="coursedet">
 
                   Teacher : <select id="teacherbatch" class="form-control teacher">
@@ -1108,7 +1107,16 @@
                   </div>
 
                   <br>
-
+                  <div>
+                      <span>Timings</span><br>
+                      Sunday : <input type="time" class="form-control" id="sunday"><br>
+                      Monday : <input type="time" class="form-control" id="monday"><br>
+                      Tuesday : <input type="time" class="form-control" id="tuesday"><br>
+                      Wednessday : <input type="time" class="form-control" id="wednesday"><br>
+                      Thursday : <input type="time" class="form-control" id="thursday"><br>
+                      Friday : <input type="time" class="form-control" id="friday"><br>
+                      Saturday : <input type="time" class="form-control" id="saturday"><br>
+                  </div>
                   <div>
                       {% for id,name in all_students.items %}
                       <div>{{name}} <input type="checkbox" value="{{id}}" class="students"></div>
@@ -1263,20 +1271,30 @@
             });
 
             $("#batchsubmit").click(function() {
-                time = $("#time").val();
                 teacher = $("#teacherbatch").val();
                 course = $("#course").val();
+                sunday = $("#sunday").val();
+                tuesday = $("#tuesday").val();
+                wednesday = $("#wednesday").val();
+                thursday = $("#thursday").val();
+                friday = $("#friday").val();
+                saturday = $("#saturday").val();
+                monday = $("#monday").val();
                 var students = [];
                  $('.students').each(function() {
                     students.push($(this).val());
                  });
+                 console.log(sunday);
+                 console.log(monday);
+                 timings = {"monday":monday,"tuesday":tuesday,"wednesday":wednesday,"thursday":thursday,"friday":friday,"saturday":saturday,"sunday":sunday}
+                 console.log(timings);
                  $.ajax({
-                             url: '/add-batch/',
+                           url: '/add-batch/',
                            data: {
-                          'time':time,
                           'teacher':teacher,
                           'course':course,
                           'students':JSON.stringify(students),
+                          'timings' : JSON.stringify(timings)
 
                         },
                         dataType: 'json',

@@ -210,8 +210,9 @@ def search(request):
                     courses_res =  ",".join(list(data[institute]["courses"].keys()))
                     geo = {}
                     if data[institute].get("geolocation") is not None:
-                        lat = data[institute]["geolocation"]["latitutde"]
-                        lon = data[institute]["geolocation"]["longiitutde"]
+                        print(institute)
+                        lat = data[institute]["geolocation"]["latitude"]
+                        lon = data[institute]["geolocation"]["longitude"]
                         geo.update({"lat":lat,"lon":lon})
                     results.append({"image":image,"name":data[institute]["name"],"address":data[institute]["area"],"courses":courses_res,"id":institute,"geo":geo})
             if data[institute].get("courses"):
@@ -555,10 +556,9 @@ def institution_profile(request):
     bcourse = []
     if institution.get("batches") is not None:
         for id in institution["batches"]:
-            btimes.append(institution["batches"][id]["time"])
             bcourse.append(institution["batches"][id]["course"])
             bid.append(id)
-    batches = zip(btimes,bcourse,bid)
+    batches = zip(bcourse,bid)
 
     students_context = {}
     all_students = dict(db.child("users").child("students").get().val())
@@ -789,10 +789,9 @@ def demo_request(request):
     bcourse = []
     if institution.get("batches") is not None:
         for id in institution["batches"]:
-            btimes.append(institution["batches"][id]["time"])
             bcourse.append(institution["batches"][id]["course"])
             bid.append(id)
-    batches = zip(btimes,bcourse,bid)
+    batches = zip(bcourse,bid)
 
     students_context = {}
     all_students = dict(db.child("users").child("students").get().val())
@@ -954,9 +953,8 @@ def batches(request):
             bcourses.append(all_batches[id]["course"])
             teacher = all_batches[id]["teacher"]
             bteachers.append(teachers[teacher]["name"])
-            btimes.append(all_batches[id]["time"])
             bstudents.append(list(all_batches[id]["students"].keys()))
-    context_batches = zip(bids,bcourses,bteachers,btimes,bstudents)
+    context_batches = zip(bids,bcourses,bteachers)
     return render(request,"batches.html",{"batches":context_batches})
 
 
@@ -1103,10 +1101,9 @@ def institution_public(request,uid):
     bcourse = []
     if institution.get("batches") is not None:
         for id in institution["batches"]:
-            btimes.append(institution["batches"][id]["time"])
             bcourse.append(institution["batches"][id]["course"])
             bid.append(id)
-    batches = zip(btimes,bcourse,bid)
+    batches = zip(bcourse,bid)
 
     students_context = {}
     all_students = dict(db.child("users").child("students").get().val())

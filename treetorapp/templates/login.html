@@ -8,10 +8,17 @@
         <link rel="stylesheet" href="../static/css/atom-one-dark.css">
         <link rel="stylesheet" href="../static/css/theme.css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link rel="stylesheet" href="../fontawesome-free-5.6.3-web/css/all.min.css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800">
         <link rel="icon" href="../static/images/text.png" type="image/png">
         <style>
+
+                .modal {
+                    position:relative;
+                    width:auto;
+                    margin:10px;
+                }
+
              ::-webkit-scrollbar {
                 width: 5px;
             }
@@ -238,7 +245,44 @@
     </head>
     
     <body>
-        
+        <div class="modal fade" id="forgot" role="dialog" style="width:100%;">
+            <div class="modal-dialog">
+              <!-- Modal content-->
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Forgot Password?</h4>
+                 <button type="button" class="fas fa-times" data-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="email" placeholder="Enter Your Email" id="email">
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" id="forgotbtn">Submit</button>
+                    <script>
+                        $("#forgotbtn").click(function() {
+                             email = $("#email").val();
+                             console.log(email);
+                             $.ajax({
+                           url: '/reset-password/',
+                           data: {
+                          'email':email
+                        },
+                        dataType: 'json',
+                        success: function (content) {
+                            $(".modal").hide();
+                            $(".fade").hide();
+                            alert('Password Reset Link has Been Sent to Your Email');
+                        }
+
+
+                        });
+                        });
+                    </script>
+                </div>
+              </div>
+
+            </div>
+          </div>
         <header class="header-transparent" id="header-main">
 
         <!-- Search -->
@@ -452,12 +496,12 @@
                                                 </div>
                                                 <button class="signinBtn">Sign In</button>
                                             </form>
-                                            <a class="ancor a1" style="font-size:.8em"> New To Us?&nbsp; </a><a class="ancor" href="signup.html" style="color: blue;font-size: .8em"><u> Sign Up</u>  <a class="ancor a2" style="font-size:.8em"> &nbsp; here. </a></a><br/><br/><br/>
-                                            <div id="cuboid">                           
+                                            <a class="ancor a1" style="font-size:.8em"> New To Us?&nbsp; </a><a class="ancor" href="{% url 'signup' %}" style="color: blue;font-size: .8em"><u> Sign Up</u>  <a class="ancor a2" style="font-size:.8em"> &nbsp; here. </a></a><br/><br/><br/>
+                                            <div id="cuboid">
+                                                <button class="btn btn-link" data-toggle="modal" data-target="#forgot">Forgot Password?</button>
                                             </div>
                                         </div>
                                     </center>
-
                     </div>
                 </section> 
             </main>
@@ -466,7 +510,7 @@
         <div class="container">
             <div class="row pt-md">
                 <div class="col-lg-4 mb-5 mb-lg-0" style="margin-top: -10%">
-                    <a href="./index.html">
+                    <a href="{% url 'home' %}">
                         <img src="../static/images/text.png" alt="Footer logo" style="height: 70px;">
                     </a>
                     <p class="text-sm"><br>A unique solution for a flexible and modular search for tutions. A step to building the future of your dreams.</p>

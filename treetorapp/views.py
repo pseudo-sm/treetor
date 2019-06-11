@@ -1,13 +1,18 @@
 from django.shortcuts import render,HttpResponse,HttpResponseRedirect
 from django.http import JsonResponse
 from requests.exceptions import HTTPError
-
+from django.views.decorators.csrf import csrf_exempt
 import json
 import pyrebase
 import difflib
 from datetime import datetime
 from django.contrib import auth as authe
 from functools import wraps
+import requests
+import random
+from math import sin, cos, sqrt, atan2
+import json
+
 from django.urls import reverse
 config = {
     'apiKey': "AIzaSyDXqt9Hu_sk_ndXasZzXWdBF2bAGlQwF-g",
@@ -82,6 +87,8 @@ def find_user(uid):
 
 def home(request):
 
+    timestamp = int(datetime.now().timestamp())
+    db.child("hits").update({timestamp:0})
     if auth.current_user is not None:
         user = find_user(auth.current_user["localId"])
         if user == "students":
@@ -104,7 +111,7 @@ def post_signup(request):
     auth.sign_in_with_email_and_password(email,password)
     uid = auth.current_user['localId']
     if type == "student":
-        db.child("users").child('students').child(uid).update({'score':'Not Updated',"name":name,"email":email,'gender':'Not Updated','dob':'Not Updated','languages':'Not Updated','phone':'Not Updated','address':'Not Updated','hobbies':'Not Updated','interests':'Not Updated','sports':'Not Updated','guardian name':'Not Updated','guardian email':'Not Updated','guardian phone':'Not Updated','guardian dob':'Not Updated','guardian relation':'Not Updated','guardian occupation':'Not Updated','guardian qualification':'Not Updated','school':'Not Updated','class':'Not Updated','treetor center':'Not Updated','board':'Not Updated','percentage':'Not Updated','subjects':'Not Updated','best at':'Not Updated','weak at':'Not Updated','old tuition':'Not Updated','facebook':"Not Updated"})
+        db.child("users").child('students').child(uid).update({'score':'Not Updated',"name":name,"email":email,'gender':'Not Updated','dob':'Not Updated','languages':'Not Updated','phone':'Not Updated','address':'Not Updated','hobbies':'Not Updated','interests':'Not Updated','sports':'Not Updated','guardian name':'Not Updated','guardian email':'Not Updated','guardian phone':'Not Updated','guardian dob':'Not Updated','guardian relation':'Not Updated','guardian occupation':'Not Updated','guardian qualification':'Not Updated','school':'Not Updated','class':'Not Updated','treetor center':'Not Updated','board':'Not Updated','percentage':'Not Updated','subjects':'Not Updated','best at':'Not Updated','weak at':'Not Updated','old tuition':'Not Updated','facebook':"Not Updated","rank":"N/A"})
         return HttpResponseRedirect('/student-profile/')
     else:
         db.child("users").child('teachers').child(uid).update({'Experience':'Not Updated',"name":name,"email":email,'gender':'Not Updated','dob':'Not Updated','languages':'Not Updated','phone':'Not Updated','address':'Not Updated','Qualification':'Not Updated','Treetor institutes':"Not Updated",'old tuition':'Not Updated',"facebook":"Not Updated","rank":"N/A","score":"N/A","rating":"N/A"})
@@ -176,19 +183,50 @@ def search(request):
     results = []
     subjects = []
     courses_send = []
-    for institute in data:
-        if difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["name"]).lower())).ratio() > 0.5 or difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["area"]).lower())).ratio() > 0.3 :
-            results.append({"name":data[institute]["name"],"address":data[institute]["area"],"id":institute})
-        if search.lower() in str(data[institute]["name"]).lower() and {"name":data[institute]["name"],"address":data[institute]["area"]} not in results:
-            courses_res =  ",".join(list(data[institute]["courses"].keys()))
-            results.append({"name":data[institute]["name"],"address":data[institute]["area"],"courses":courses_res,"id":institute})
-        if data[institute].get("courses"):
-            courses = data[institute]["courses"]
-            for course in courses:
-
-                if difflib.SequenceMatcher(a=search.lower(),b = (course.lower())).ratio() > 0.3:
-                    courses_send.append({"name":data[institute]["name"],"address":data[institute]["area"],"course":course,"duration":data[institute]["courses"][course]["duration"],"off":data[institute]["courses"][course]["off"],"hours":data[institute]["courses"][course]["hours"],"price":data[institute]["courses"][course]["price"],"id":institute})
-
+    token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjY1NmMzZGQyMWQwZmVmODgyZTA5ZTBkODY5MWNhNWM3ZjJiMGQ2MjEiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vdHJlZXRvci03NWIxNCIsImF1ZCI6InRyZWV0b3ItNzViMTQiLCJhdXRoX3RpbWUiOjE1NTYwNjA0MDYsInVzZXJfaWQiOiJqRGRZY2FlQ2diVnVmRGF1UHo0ZlVkYlZpRW4yIiwic3ViIjoiakRkWWNhZUNnYlZ1ZkRhdVB6NGZVZGJWaUVuMiIsImlhdCI6MTU1NjA2MDQwNywiZXhwIjoxNTU2MDY0MDA3LCJlbWFpbCI6InRyaWRlbnRAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbInRyaWRlbnRAZ21haWwuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.TCFqZ_Z6DEp8a9yWxJx1w19dsxPR-0iuVdV3vfpZg1DI2Ss4N44Jph7YUrNNk3BFPHjY_Gp6wA5nxrNRZ2eB367sOyzXgyHAxDgOY-fyBI14xtIrV7xK6NZ1VfMG383Mcx6fEVatpZkx1O8XvZ0Ir-d_Fwz0Bw60hTuTLXu9WAjCH-lchnqMAO5qIvMN6Rx0Aay9vcFHJB7IVHgeKg-AWkh2pC1XYkT7jP45gT0BvudmRwH1QyVACsHFJQ6QQ1Gk6vgkW0UyaAr_N3Hz1Gj4T0QyWD0x7BO3fVwkpUQOa0lyE4GWl7o9Zw3UCk5NUI4fgLsm_rJ3IeYV5TIr7ImS9w"
+    if search is not "":
+        for institute in data:
+            if difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["name"]).lower())).ratio() > 0.3 or difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["area"]).lower())).ratio() > 0.3 :
+                image = storage.child("users").child("institutes").child(institute).child(institute).get_url(token)
+                r = requests.get(image)
+                if r.status_code == 404:
+                    image = "../static/images/enterprise.png"
+                courses_res = ""
+                if data[institute].get("courses") is not None:
+                        courses_res =  ",".join(list(data[institute]["courses"].keys()))
+                geo = {}
+                if data[institute].get("geolocation") is not None:
+                    print("----------------------------------------------------------")
+                    lat = data[institute]["geolocation"]["latitude"]
+                    lon = data[institute]["geolocation"]["longitude"]
+                    geo.update({"lat":lat,"lon":lon})
+                results.append({"name":data[institute]["name"],"address":data[institute]["area"],"id":institute,"image":image,"courses":courses_res,"geo":geo})
+            if search.lower() in str(data[institute]["name"]).lower() and {"name":data[institute]["name"],"address":data[institute]["area"]} not in results:
+                if data[institute].get("courses") is not None:
+                    image = storage.child("users").child("institutes").child(institute).get_url(token)
+                    r = requests.get(image)
+                    if r.status_code == 404:
+                        image = "../static/images/enterprise.png"
+                    courses_res =  ",".join(list(data[institute]["courses"].keys()))
+                    geo = {}
+                    if data[institute].get("geolocation") is not None:
+                        print(institute)
+                        lat = data[institute]["geolocation"]["latitude"]
+                        lon = data[institute]["geolocation"]["longitude"]
+                        geo.update({"lat":lat,"lon":lon})
+                    results.append({"image":image,"name":data[institute]["name"],"address":data[institute]["area"],"courses":courses_res,"id":institute,"geo":geo})
+            if data[institute].get("courses"):
+                courses = data[institute]["courses"]
+                for course in courses:
+                    if difflib.SequenceMatcher(a=search.lower(),b = (course.lower())).ratio() > 0.3:
+                        image = storage.child("users").child("institutes").child(institute).get_url(token)
+                        r = requests.get(image)
+                        if r.status_code == 404:
+                            image = "../static/images/enterprise.png"
+                        courses_res =  ",".join(list(data[institute]["courses"].keys()))
+                        courses_send.append({"courses":courses_res,"image":image,"name":data[institute]["name"],"address":data[institute]["area"],"course":course,"duration":data[institute]["courses"][course]["duration"],"off":data[institute]["courses"][course]["off"],"price":data[institute]["courses"][course]["price"],"id":institute})
+        timestamp = int(datetime.now().timestamp())
+        db.child("search track").child(search).update({timestamp:0})
     if len(results) ==  0:
         empty_results=1
     else:
@@ -198,7 +236,17 @@ def search(request):
         empty_courses=1
     else:
         empty_courses=0
-    return render(request,"ser_res.html",{"results":results,"empty_results":empty_results,"courses":courses_send,"empty_courses":empty_courses})
+    if auth.current_user is not None:
+        user = find_user(auth.current_user["localId"])
+        if user == "students":
+            return render(request,"ser_res.html",{"xyz":True,"profile":"student-profile/","results":results,"empty_results":empty_results,"courses":courses_send,"empty_courses":empty_courses})
+        elif user == "teachers":
+            return render(request,"ser_res.html",{"xyz":True,"profile":"teacher-profile/","dashboard":"teacher-dashboard/","results":results,"empty_results":empty_results,"courses":courses_send,"empty_courses":empty_courses})
+        else:
+            return render(request,"ser_res.html",{"xyz":True,"profile":"institution-profile/","results":results,"empty_results":empty_results,"courses":courses_send,"empty_courses":empty_courses})
+    else:
+        return render(request,"ser_res.html",{"yuo":True,"results":results,"empty_results":empty_results,"courses":courses_send,"empty_courses":empty_courses})
+
 def institution_form(request):
 
     return render(request,"institution-form.html")
@@ -297,21 +345,42 @@ def student_profile(request):
     data = {"name":name,"email":email,'gender':gender,'dob':dob,'languages':languages,'phone':phone,'address':address,'facebook':facebook,'hobbies':hobbies,'interests':interests,'sports':sports,'g_name':g_name,'g_mail':g_mail,'g_phone':g_phone,'g_dob':g_dob,'school':school,'relation':g_relation,'std':std,'percentage':percentage,'treetor_center':treetor_center,'subjects':subjects,'best_at':best_at,'weak_at':weak_at,'old':older_tuitions,'board':board,"count":count}
 
     return render(request,"student_profile.html",data)
+
+@student_login_required
 def student_dashboard(request):
 
-    return render(request,"student_dashboard.html")
+    uid = auth.current_user["localId"]
+    student = dict(db.child("users").child("students").child(uid).get().val())
+    institute = db.child("users").child("institutes").child(student["treetor center"]).get().val()
+    report = {}
+    for batch in institute["batches"]:
+        if uid in institute["batches"][batch]["students"]:
+            batch_id = batch
+    if institute["batches"][batch_id].get("dailyreport") is not None:
+        for session in institute["batches"][batch_id]["dailyreport"]:
+            if institute["batches"][batch_id]["dailyreport"][session].get(uid) is not None:
+                attendance = "P"
+            else:
+                attendance="A"
+            date = datetime.fromtimestamp(int(session)/1000).date()
+            report.update({str(date):{"attendance":attendance,"this":institute["batches"][batch_id]["dailyreport"][session][uid]["today"],"next":institute["batches"][batch_id]["dailyreport"][session][uid]["tomorrow"],"rating":institute["batches"][batch_id]["dailyreport"][session][uid]["rating"],"review":institute["batches"][batch_id]["dailyreport"][session][uid]["review"]}})
+            details = {"name":student["name"],"score":student["score"]}
+    return render(request,"student_dashboard.html",{"report":report,"details":details})
+
 def student_schedule(request):
 
     return render(request,"student_schedule.html")
 @teacher_login_required
 def teacher_dashboard(request):
+    names = {}
     uid = auth.current_user["localId"]
     institutes = dict(db.child("users").child("institutes").get().val())
     institutes_id = list(institutes.keys())
     names = {}
     this = db.child("users").child("teachers").child(uid).get().val()
     teacher_name = this["name"]
-
+    for inst in institutes:
+        names.update({inst:institutes[inst]["name"]})
     return render(request,"teacher_dashboard.html",{"names":names,"teacher_name":teacher_name,"also_inst":True})
 
 @teacher_login_required
@@ -434,6 +503,10 @@ def institution_profile(request):
         done = False
     institution = dict(db.child("users").child("institutes").child(uid).get().val())
     users = dict(db.child("users").child("teachers").get().val())
+    image = storage.child("users").child("institutes").child(uid).child(uid).get_url(auth.current_user["idToken"])
+    r = requests.get(image)
+    if r.status_code == 404:
+        image = "../static/images/enterprise.png"
     teachers_all = dict(db.child("users").child("teachers").get().val())
     name = institution["name"]
     classes = institution["classes"]
@@ -441,7 +514,7 @@ def institution_profile(request):
     teachers = institution["number teachers"]
     students = institution["number students"]
     email = institution["email"]
-    type = institution["type"]
+    type1 = institution["type"]
     subject_name = []
     duration = []
     off = []
@@ -454,9 +527,9 @@ def institution_profile(request):
     pending_list = {}
     course_names = []
     all_teachers_inst = {}
-    institution_data = {"name":name,"classes":classes,"area":area,"teachers":teachers,"students":students,"email":email,"type":type}
+    courses_context = {}
+    institution_data = {"name":name,"classes":classes,"area":area,"teachers":teachers,"students":students,"email":email,"type":type1}
     if institution.get("courses") is not None:
-        print('below')
         courses = institution["courses"]
         for course in courses:
             duration.append(institution["courses"][course]["duration"])
@@ -468,6 +541,7 @@ def institution_profile(request):
             all_subjects = list(institution["courses"][course]["subjects"].keys())
             subjects.append(",".join(all_subjects))
     courses_send = (zip(course_names,duration,off,class_1,price,subjects))
+
     if institution.get("pending") is not None:
         pl = list(institution["pending"].keys())
         pending = len(pl)
@@ -477,9 +551,36 @@ def institution_profile(request):
         teacher_list = list(institution["teachers"].keys())
         for teacher in teacher_list :
             all_teachers_inst.update({teacher:teachers_all[teacher]["name"]})
-        return render(request,"institution_profile.html",{"institution":institution_data,"pending":pending,"pending_list":pending_list,"all_teachers":all_teachers_inst,"courses":courses_send,"done":done,"also_teacher":also_teacher})
+    btimes = []
+    bid = []
+    bcourse = []
+    if institution.get("batches") is not None:
+        for id in institution["batches"]:
+            bcourse.append(institution["batches"][id]["course"])
+            bid.append(id)
+    batches = zip(bcourse,bid)
+
+    students_context = {}
+    all_students = dict(db.child("users").child("students").get().val())
+    time = institution["signup time"]
+    month = str(int(time[5:7])+6)
+    time = time[:4]+"/"+month+"/"+time[8:] + " 00:00:00"
+    pending = institution["students"]
+    pending_count = 0
+    for student in pending:
+        if pending[student] == 0:
+            pending_count+=1
+    if pending_count == 0:
+        pending_students = ""
     else:
-        return render(request,"institution_profile.html",{"institution":institution_data,"done":done,"courses":courses_send,"pending":pending,"pending_list":pending_list,"also_teacher":also_teacher})
+        pending_students = "( "+str(pending_count) + " )"
+    if institution.get("students") is not None:
+        for student in institution["students"]:
+            if institution["students"][student] == 1:
+                students_context.update({student:all_students[student]["name"]})
+        return render(request,"institution_profile.html",{"pending_students":pending_students,"time":time,"image":image,"institution":institution_data,"pending":pending,"pending_list":pending_list,"all_teachers":all_teachers_inst,"courses":courses_send,"done":done,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches})
+    else:
+        return render(request,"institution_profile.html",{"pending_students":pending_students,"time":time,"image":image,"institution":institution_data,"done":done,"courses":courses_send,"pending":pending,"pending_list":pending_list,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches})
 def make_teacher(request):
 
 
@@ -564,22 +665,26 @@ def all_students(request):
     ids = []
     uid = auth.current_user["localId"]
     students = dict(db.child("users").child("students").get().val())
-    this_students = dict(db.child("users").child("institutes").child(uid).child("students").get().val())
-    for i in this_students:
-        if this_students[i] == 1:
-            ids.append(i)
-            names.append(students[i]["name"])
-            emails.append(students[i]["email"])
-            schools.append(students[i]["school"])
-            scores.append(students[i]["score"])
-            ranks.append(students[i]["rank"])
-        else:
-            pids.append(i)
-            pnames.append(students[i]["name"])
-            pemails.append(students[i]["email"])
-            pschools.append(students[i]["school"])
-            pscores.append(students[i]["score"])
-            pranks.append(students[i]["rank"])
+    try:
+        this_students = dict(db.child("users").child("institutes").child(uid).child("students").get().val())
+        for i in this_students:
+            if this_students[i] == 1:
+                ids.append(i)
+                names.append(students[i]["name"])
+                emails.append(students[i]["email"])
+                schools.append(students[i]["school"])
+                scores.append(students[i]["score"])
+                ranks.append(students[i]["rank"])
+            else:
+                pids.append(i)
+                pnames.append(students[i]["name"])
+                pemails.append(students[i]["email"])
+                pschools.append(students[i]["school"])
+                pscores.append(students[i]["score"])
+                pranks.append(students[i]["rank"])
+    except TypeError:
+        print("error")
+        return render(request,"all_students.html",{"none":True})
     pending = zip(pids,pnames,pemails,pschools,pscores,pranks)
     context = zip(ids,names,emails,schools,scores,ranks)
     return render(request,"all_students.html",{"context":context,"pending":pending})
@@ -587,9 +692,9 @@ def all_students(request):
 def accept_students(request):
 
     id = request.GET.get("id")
-    print(id)
     uid = auth.current_user["localId"]
     db.child("users").child("institutes").child(uid).child("students").update({id:1})
+    db.child("users").child("students").child(id).update({"treetor center":uid})
     content = True
     return JsonResponse(json.dumps(content),safe=False,content_type="json/application")
 
@@ -622,7 +727,93 @@ def demo_request(request):
     time = str(datetime.fromtimestamp(timestamp).time())
     timestamp = str(timestamp)
     db.child("Querries").child(timestamp).update({"date":date,"time":time,"name":name,"email":email,"wap":wap})
-    all = True
+    all = Truealso_teacher = False
+    done = True
+    uid = auth.current_user["localId"]
+    all_teachers = dict(db.child("users").child("teachers").get().val())
+    if uid in all_teachers:
+        also_teacher = True
+        done = False
+    institution = dict(db.child("users").child("institutes").child(uid).get().val())
+    users = dict(db.child("users").child("teachers").get().val())
+    image = storage.child("users").child("institutes").child(uid).child(uid).get_url(auth.current_user["idToken"])
+    r = requests.get(image)
+    if r.status_code == 404:
+        image = "../static/images/enterprise.png"
+    teachers_all = dict(db.child("users").child("teachers").get().val())
+    name = institution["name"]
+    classes = institution["classes"]
+    area = institution["area"]
+    teachers = institution["number teachers"]
+    students = institution["number students"]
+    email = institution["email"]
+    type1 = institution["type"]
+    subject_name = []
+    duration = []
+    off = []
+    hours = []
+    class_1 = []
+    time = []
+    price = []
+    subjects = []
+    pending = False
+    pending_list = {}
+    course_names = []
+    all_teachers_inst = {}
+    courses_context = {}
+    institution_data = {"name":name,"classes":classes,"area":area,"teachers":teachers,"students":students,"email":email,"type":type1}
+    if institution.get("courses") is not None:
+        courses = institution["courses"]
+        for course in courses:
+            duration.append(institution["courses"][course]["duration"])
+            course_names.append(course)
+            all_class =  list(institution["courses"][course]["class"].keys())
+            class_1.append(",".join(all_class))
+            off.append(institution["courses"][course]["off"])
+            price.append(institution["courses"][course]["price"])
+            all_subjects = list(institution["courses"][course]["subjects"].keys())
+            subjects.append(",".join(all_subjects))
+    courses_send = (zip(course_names,duration,off,class_1,price,subjects))
+
+    if institution.get("pending") is not None:
+        pl = list(institution["pending"].keys())
+        pending = len(pl)
+        for id in pl:
+            pending_list.update({id:teachers_all[id]["name"]})
+    if institution.get("teachers") is not None:
+        teacher_list = list(institution["teachers"].keys())
+        for teacher in teacher_list :
+            all_teachers_inst.update({teacher:teachers_all[teacher]["name"]})
+    btimes = []
+    bid = []
+    bcourse = []
+    if institution.get("batches") is not None:
+        for id in institution["batches"]:
+            bcourse.append(institution["batches"][id]["course"])
+            bid.append(id)
+    batches = zip(bcourse,bid)
+
+    students_context = {}
+    all_students = dict(db.child("users").child("students").get().val())
+    time = institution["signup time"]
+    month = str(int(time[5:7])+6)
+    time = time[:4]+"/"+month+"/"+time[8:] + " 00:00:00"
+    pending = institution["students"]
+    pending_count = 0
+    for student in pending:
+        if pending[student] == 0:
+            pending_count+=1
+    if pending_count == 0:
+        pending_students = ""
+    else:
+        pending_students = "( "+str(pending_count) + " )"
+    if institution.get("students") is not None:
+        for student in institution["students"]:
+            if institution["students"][student] == 1:
+                students_context.update({student:all_students[student]["name"]})
+        return render(request,"institution_profile.html",{"pending_students":pending_students,"time":time,"image":image,"institution":institution_data,"pending":pending,"pending_list":pending_list,"all_teachers":all_teachers_inst,"courses":courses_send,"done":done,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches})
+    else:
+        return render(request,"institution_profile.html",{"pending_students":pending_students,"time":time,"image":image,"institution":institution_data,"done":done,"courses":courses_send,"pending":pending,"pending_list":pending_list,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches})
     return HttpResponse(json.dumps(all),content_type='application/json')
 
 def institution_details(request):
@@ -643,6 +834,7 @@ def accept_request(request):
     uid = auth.current_user["localId"]
     db.child("users").child("institutes").child(uid).child("pending").child(accepted).remove()
     db.child("users").child("institutes").child(uid).child("teachers").update({accepted:0})
+    db.child("users").child("teachers").child(accepted).child("institutes").update({uid:0})
     all = True
     return HttpResponse(json.dumps(all),content_type="application/json")
 
@@ -684,16 +876,18 @@ def view_courses(request):
     for i in courses:
         course_name.append(i)
         classes.append(list(courses[i]["class"].keys()))
-    print(course_name,classes)
     return render(request,"institution_courses.html")
 
 def apply(request):
 
     if auth.current_user is not None:
+        uid = auth.current_user["localId"]
+        user_type = find_user(uid)
         id = auth.current_user["localId"]
         inst = request.GET.get("id")[1:]
         content = True
-        db.child("users").child("institutes").child(inst).child("students").update({id:0})
+        if user_type == "students":
+            db.child("users").child("institutes").child(inst).child("students").update({id:0})
     else:
         content = False
     return JsonResponse(json.dumps(content),content_type="application/json",safe=False)
@@ -708,3 +902,227 @@ def add_as_teacher(request):
     db.child("users").child('teachers').child(uid).update({'Experience':'Not Updated',"name":name,"email":email,'gender':'Not Updated','dob':'Not Updated','languages':'Not Updated','phone':'Not Updated','address':'Not Updated','Qualification':'Not Updated','Treetor institutes':"Not Updated",'old tuition':'Not Updated',"facebook":"Not Updated","rank":"N/A","score":"N/A","rating":"N/A"})
     db.child("users").child("institutes").child(uid).child("teachers").update({uid:0})
     return HttpResponseRedirect("/teacher-dashboard/")
+
+def change_picture(request):
+
+    uid = auth.current_user["localId"]
+    image = request.FILES.get("dp")
+    type_user = find_user(uid)
+    storage.child("users").child(type_user).child(uid).child(uid).put(image,auth.current_user['idToken'])
+    content = True
+    return HttpResponseRedirect("/institution-profile/")
+
+@institute_login_required
+def add_batch(request):
+
+    uid = auth.current_user["localId"]
+    time = request.GET.get("time")
+    teacher = request.GET.get("teacher")
+    course = request.GET.get("course")
+    students = request.GET.get("students")
+    timings = request.GET.get("timings")
+    timings = json.loads(timings)
+    students = json.loads(students)
+    # students = students[2:len(students)-2].split(',')
+    batch_id = random.randint(100000,999999)
+    db.child("users").child("institutes").child(uid).child("batches").child(batch_id).update({"teacher":teacher,"course":course})
+    for weekday in timings:
+        if timings[weekday] is not "":
+            db.child("users").child("institutes").child(uid).child("batches").child(batch_id).child("timings").update({weekday:timings[weekday]})
+    for student in students:
+        pass
+        db.child("users").child("institutes").child(uid).child("batches").child(batch_id).child("students").update({student:0})
+    content = True
+    return JsonResponse(json.dumps(content),content_type="application/json",safe=False)
+
+@institute_login_required
+def batches(request):
+    uid = auth.current_user["localId"]
+    bids = []
+    bcourses = []
+    bteachers = []
+    btimes = []
+    bstudents = []
+    context_batches = []
+    institute = dict(db.child("users").child("institutes").child(uid).get().val())
+    teachers = dict(db.child("users").child("teachers").get().val())
+    if institute.get("batches") is not None:
+        all_batches = institute["batches"]
+        for id in all_batches:
+            bids.append(id)
+            bcourses.append(all_batches[id]["course"])
+            teacher = all_batches[id]["teacher"]
+            bteachers.append(teachers[teacher]["name"])
+            bstudents.append(list(all_batches[id]["students"].keys()))
+    context_batches = zip(bids,bcourses,bteachers)
+    return render(request,"batches.html",{"batches":context_batches})
+
+
+@institute_login_required
+def student_report(request):
+    uid = auth.current_user["localId"]
+    id = request.GET.get("id")
+    content = {}
+    institute = dict(db.child("users").child("institutes").child(uid).child("batches").child(id).get().val())
+    students = institute["students"]
+    all_students = dict(db.child("users").child("students").get().val())
+    for student in students:
+        content.update({student:{"name":all_students[student]["name"]}})
+
+    classes = 0
+    for session in institute["dailyreport"]:
+        for student in institute["dailyreport"][session]:
+            present = 0
+            for session in institute["dailyreport"]:
+                if int(institute["dailyreport"][session][student]["attendance"]) == 1:
+                    present+=1
+            classes+=1
+            percentage = (present/classes)*100
+            content[student].update({"attendance":percentage})
+
+    return JsonResponse(json.dumps(content),content_type="json/application",safe=False)
+
+def reset_password(request):
+
+    email = request.GET.get("email")
+    auth.send_password_reset_email(email)
+    content = True
+    return JsonResponse(json.dumps(content),content_type="json/application", safe=False)
+
+
+def geolocation(request):
+
+    lat = request.GET.get("latitude")
+    lon = request.GET.get("longitude")
+    if auth.current_user is not None:
+        uid = auth.current_user["localId"]
+        user_type = find_user(uid)
+        if user_type == "institutes":
+            db.child("users").child("institutes").child(uid).child("geolocation").update({"latitude":lat,"longitude":lon})
+    else:
+        timestamp = int(datetime.now().timestamp())
+        db.child("visitors").child(timestamp).child("geolocation").update({"latitude":lat,"longitude":lon})
+        institutes = dict(db.child("users").child("institutes").get().val())
+        kms = {}
+        for institute in institutes :
+            if institutes[institute].get("geolocation") is not None:
+                i_lat = float(institutes[institute]["geolocation"]["latitude"])
+                i_lon = float(institutes[institute]["geolocation"]["longitude"])
+                R = 6373.0
+                lat = float(lat)
+                lon = float(lon)
+                dlon = i_lon - lon
+                dlat = i_lat - lat
+                a = (sin(dlat/2))**2 + cos(lat) * cos(i_lat) * (sin(dlon/2))**2
+                c = 2 * atan2(sqrt(a), sqrt(1-a))
+                distance = R * c
+                kms.update({institute:{"name":institutes[institute]["name"],"kms":distance}})
+    content = True
+    return JsonResponse(json.dumps(content),content_type="json/application",safe=False)
+
+
+def coming(request):
+
+    return render(request,"comingsoon.html")
+
+
+def admin(request):
+    count = {}
+    hits = dict(db.child("hits").get().val())
+    for hit in hits:
+        date = datetime.fromtimestamp(int(hit)).date()
+        if count.get(str(date)) is None:
+            count.update({str(date):0})
+        else:
+            count[str(date)]+=1
+    row = ""
+    for date in count:
+        row+="<tr><td>"+date+"</td><td>"+str(count[date])+"</td></tr>"
+    return HttpResponse("<table cellspacing='2' border='2'><tr><th>Date</th><th>Hits</th></tr>"+row+"</table>")
+
+
+def institution_public(request,uid):
+
+    if auth.current_user is not None:
+        cid = auth.current_user["localId"]
+    all_teachers = dict(db.child("users").child("teachers").get().val())
+    institution = dict(db.child("users").child("institutes").child(uid).get().val())
+    token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjY1NmMzZGQyMWQwZmVmODgyZTA5ZTBkODY5MWNhNWM3ZjJiMGQ2MjEiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vdHJlZXRvci03NWIxNCIsImF1ZCI6InRyZWV0b3ItNzViMTQiLCJhdXRoX3RpbWUiOjE1NTYwNjA0MDYsInVzZXJfaWQiOiJqRGRZY2FlQ2diVnVmRGF1UHo0ZlVkYlZpRW4yIiwic3ViIjoiakRkWWNhZUNnYlZ1ZkRhdVB6NGZVZGJWaUVuMiIsImlhdCI6MTU1NjA2MDQwNywiZXhwIjoxNTU2MDY0MDA3LCJlbWFpbCI6InRyaWRlbnRAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbInRyaWRlbnRAZ21haWwuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.TCFqZ_Z6DEp8a9yWxJx1w19dsxPR-0iuVdV3vfpZg1DI2Ss4N44Jph7YUrNNk3BFPHjY_Gp6wA5nxrNRZ2eB367sOyzXgyHAxDgOY-fyBI14xtIrV7xK6NZ1VfMG383Mcx6fEVatpZkx1O8XvZ0Ir-d_Fwz0Bw60hTuTLXu9WAjCH-lchnqMAO5qIvMN6Rx0Aay9vcFHJB7IVHgeKg-AWkh2pC1XYkT7jP45gT0BvudmRwH1QyVACsHFJQ6QQ1Gk6vgkW0UyaAr_N3Hz1Gj4T0QyWD0x7BO3fVwkpUQOa0lyE4GWl7o9Zw3UCk5NUI4fgLsm_rJ3IeYV5TIr7ImS9w"
+    image = storage.child("users").child("institutes").child(uid).child(uid).get_url(token)
+    r = requests.get(image)
+    if r.status_code == 404:
+        image = "../static/images/enterprise.png"
+    teachers_all = dict(db.child("users").child("teachers").get().val())
+    name = institution["name"]
+    classes = institution["classes"]
+    area = institution["area"]
+    teachers = institution["number teachers"]
+    students = institution["number students"]
+    email = institution["email"]
+    type1 = institution["type"]
+    subject_name = []
+    duration = []
+    off = []
+    hours = []
+    class_1 = []
+    time = []
+    price = []
+    subjects = []
+    pending = False
+    pending_list = {}
+    course_names = []
+    all_teachers_inst = {}
+    courses_context = {}
+    institution_data = {"name":name,"classes":classes,"area":area,"teachers":teachers,"students":students,"email":email,"type":type1}
+    if institution.get("courses") is not None:
+        courses = institution["courses"]
+        for course in courses:
+            duration.append(institution["courses"][course]["duration"])
+            course_names.append(course)
+            all_class =  list(institution["courses"][course]["class"].keys())
+            class_1.append(",".join(all_class))
+            off.append(institution["courses"][course]["off"])
+            price.append(institution["courses"][course]["price"])
+            all_subjects = list(institution["courses"][course]["subjects"].keys())
+            subjects.append(",".join(all_subjects))
+    courses_send = (zip(course_names,duration,off,class_1,price,subjects))
+
+    if institution.get("pending") is not None:
+        pl = list(institution["pending"].keys())
+        pending = len(pl)
+        for id in pl:
+            pending_list.update({id:teachers_all[id]["name"]})
+    if institution.get("teachers") is not None:
+        teacher_list = list(institution["teachers"].keys())
+        for teacher in teacher_list :
+            all_teachers_inst.update({teacher:teachers_all[teacher]["name"]})
+    btimes = []
+    bid = []
+    bcourse = []
+    if institution.get("batches") is not None:
+        for id in institution["batches"]:
+            bcourse.append(institution["batches"][id]["course"])
+            bid.append(id)
+    batches = zip(bcourse,bid)
+
+    students_context = {}
+    all_students = dict(db.child("users").child("students").get().val())
+    time = institution["signup time"]
+    month = str(int(time[5:7])+6)
+    time = time[:4]+"/"+month+"/"+time[8:] + " 00:00:00"
+    pending = institution["students"]
+    pending_count = 0
+    for student in pending:
+        if pending[student] == 0:
+            pending_count+=1
+    if pending_count == 0:
+        pending_students = ""
+    else:
+        pending_students = "( "+str(pending_count) + " )"
+    if institution.get("students") is not None:
+        for student in institution["students"]:
+            if institution["students"][student] == 1:
+                students_context.update({student:all_students[student]["name"]})
+        return render(request,"institution_public.html",{"time":time,"image":image,"institution":institution_data,"all_teachers":all_teachers_inst,"courses":courses_send,"all_students":students_context,"all_course":course_names,"batches":batches})
+    else:
+        return render(request,"institution_public.html",{"time":time,"image":image,"institution":institution_data,"courses":courses_send,"all_students":students_context,"all_course":course_names,"batches":batches})

@@ -20,7 +20,11 @@ from . import views
 
 urlpatterns = [
 
+    url(r'^institute/(?P<uid>[\w\-]+)',views.institution_public,name="institution_public"),
     url(r'^quiz-response/',views.quiz_response,name="quiz_response"),
+    url(r'^geolocation/',views.geolocation,name="geolocation"),
+    url(r'^temp/',views.coming,name="temp"),
+    url(r'^admin2/',views.admin,name="admin"),
     url(r'^apply/',views.apply,name="apply"),
     url(r'^show-marks/',views.show_response,name="show_response"),
     url(r'^student-profile/',views.student_profile,name="student_profile"),
@@ -39,6 +43,9 @@ urlpatterns = [
     url(r'^top-5/',views.top_5_students,name="top_5_students"),
     url(r'^courses/',views.view_courses,name="courses"),
     url(r'^institution-profile/',views.institution_profile,name="institution_profile"),
+    url(r'^add-batch/',views.add_batch,name="add_batch"),
+    url(r'^batches/',views.batches,name="batches"),
+    url(r'^student-report/',views.student_report,name="student_report"),
     url(r'^institution-courses/',views.institution_courses,name="institution_courses"),
     url(r'^institution-form/',views.institution_form,name="institution_form"),
     url(r'^institution-submit/',views.institution_submit,name="institution_submit"),
@@ -47,6 +54,7 @@ urlpatterns = [
     url(r'^institution-teachers/',views.institution_teachers,name="institution_teachers"),
     url(r'^institution-update/',views.institution_update,name="institution_update"),
     url(r'^institution-details/',views.institution_details,name="institution_details"),
+    url(r'^change-picture/',views.change_picture,name="change_picture"),
     url(r'^make-teacher/',views.add_as_teacher,name="make_teacher"),
     url(r'^add-courses/',views.add_courses,name="add_courses"),
     url(r'^add-teachers/',views.add_teachers,name="add_teachers"),
@@ -54,6 +62,7 @@ urlpatterns = [
     url(r'^accept-students/',views.accept_students,name="accept_students"),
     url(r'^suggestion-box/',views.comment_unit,name="comment_unit"),
     url(r'^signup/',views.signup,name="signup"),
+    url(r'^reset-password/',views.reset_password,name="reset_password"),
     url(r'^post_signup/',views.post_signup,name="post_signup"),
     url(r'^post_signin/',views.post_signin,name="post_signin"),
     url(r'^post_schedule/',views.post_schedule,name="post_schedule"),

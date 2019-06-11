@@ -2,10 +2,11 @@
     
     <head>
         
-       {% load static %}
+         {% load static %}
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/atom-one-dark.css' %}">
     <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800">
     <link rel="icon" href="{% static 'images/text.png" type="image/png">
@@ -33,6 +34,11 @@
             -webkit-animation-delay: 0.5s;
             -webkit-animation-iteration-count: infinite;
         }
+        .batches {
+              font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+              border-collapse: collapse;
+              width: 100%;
+            }
             
         </style>
         <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
@@ -105,7 +111,7 @@
 
         <nav class="navbar navbar-main navbar-expand-lg navbar-sticky navbar-transparent navbar-dark bg-dark" id="navbar-main">
             <div class="container">
-                <a class="navbar-brand mr-lg-5" href="{% url 'home' %}">
+                <a class="navbar-brand mr-lg-5" href="./index.html">
                     <img alt="Image placeholder" src="../static/images/text.png" style="height: 50px;">
                 </a>
 
@@ -116,7 +122,7 @@
                 <div class="collapse navbar-collapse" id="navbar-main-collapse">
                     <ul class="navbar-nav align-items-lg-center">
                         <li class="nav-item active">
-                            <a class="nav-link" href="#">Treetor</a>
+                            <a class="nav-link" href="{% url 'home' %}">Treetor</a>
                         </li>
                         
                     </ul>
@@ -250,77 +256,89 @@
 
                         </figure>
                     </div>
-                         
                     <div class="container">
                         
-                        <div class="row">
+                        <div class="row pending">
                             
-                            <div class="col-md-4 col-sm-12 col-lg-4">
-                                <div class="py-5 text-center">
-                                    <img alt="" src="../static/images/enterprise.png" class="img-saturate" style="width: 100px;height: 100px;">
-                                </div>
-                            </div>
-                            
-                            <div class="col-md-8 col-sm-12 col-lg-8"> <h2 class="text-green my-4" style="color: green;margin-left: 10%">
-                            <span class="display-5 font-weight-light"> <stong style="color: yellow;text-shadow: 2px 2px grey">Trident Academy of Technology</stong>
-                                <br/><strong style="font-size: 15px"><b>SCORE : </b></strong> <span style="color: yellow;text-shadow: 2px 2px grey">1600</span><strong style="font-size: 15px"> XP</strong></span>
+                            <div class="col-md-12 col-sm-12 col-lg-12"> <h2 class="text-green my-4" style="color: green;margin-left: 10%">
+                            <span class="display-5 font-weight-light"><stong style="color: yellow;text-shadow: 2px 2px grey">All</stong> Students.</span>
                             </h2>
-                           </div>
-                                                     
-                            <div class="col-sm-12 col-md-4 col-lg-4">
-                                <div class="container pt-lg pb-xl-md position-relative zindex-100 prop">
-                            
-                            <div data-animate-hover="2" data-toggle="hidden">
-                                    <div class="card shadow animate-this animated fadeIn delay-2s">
-                                        <div class="py-5 text-center">
-                                            <img alt="" src="../static/images/usericon.png" class="img-saturate" style="width: 100px;border: 1px solid grey;border-radius: 50px">
-                                        </div>
-                                        <div class="px-4 pb-5 text-center">
-                                            <strong>Prof. Jethalal Gada</strong><br/><small>Subject: </small><b>Chemistry</b><br><small>Experiance: <b>N/A</b></small><br><small>Ratings: <b>4/5</b></small><br><small>Score: <b>1600xp</b></small><br>
-                                        </div>
-                                    </div>
-                                </div>
-                            
+                            <center>
 
-                        </div>
-                            </div>
-                            <div class="col-sm-12 col-md-4 col-lg-4">
-                                <div class="container pt-lg pb-xl-md position-relative zindex-100 prop">
-                            
-                            <div data-animate-hover="2" data-toggle="hidden">
-                                    <div class="card shadow animate-this animated fadeIn delay-2s">
-                                        <div class="py-5 text-center">
-                                            <img alt="" src="../static/images/usericon.png" class="img-saturate" style="width: 100px;border: 1px solid grey;border-radius: 50px">
-                                        </div>
-                                        <div class="px-4 pb-5 text-center">
-                                            <strong>Prof. Jethalal Gada</strong><br/><small>Subject: </small><b>Chemistry</b><br><small>Experiance: <b>N/A</b></small><br><small>Ratings: <b>4/5</b></small><br><small>Score: <b>1600xp</b></small><br>
-                                        </div>
-                                    </div>
-                                </div>
-                            
-
-                        </div>
-                            </div>
-                            <div class="col-sm-12 col-md-4 col-lg-4">
-                                <div class="container pt-lg pb-xl-md position-relative zindex-100 prop">
-                            
-                            <div data-animate-hover="2" data-toggle="hidden">
-                                    <div class="card shadow animate-this animated fadeIn delay-2s">
-                                        <div class="py-5 text-center">
-                                            <img alt="" src="../static/images/usericon.png" class="img-saturate" style="width: 100px;border: 1px solid grey;border-radius: 50px">
-                                        </div>
-                                        <div class="px-4 pb-5 text-center">
-                                            <strong>Prof. Jethalal Gada</strong><br/><small>Subject: </small><b>Chemistry</b><br><small>Experiance: <b>N/A</b></small><br><small>Ratings: <b>4/5</b></small><br><small>Score: <b>1600xp</b></small><br>
-                                        </div>
-                                    </div>
-                                </div>
-                            
-
-                        </div>
-                            </div>
-             
+                                <input type="text" placeholder="Search Here" style="outline: none;padding-left: 20px; width:60%;line-height: 34px;font-size: 15px;border: solid 1px;border-radius: 20px;border-color: grey" >
                     
+                                <button class="searchBtn animated pulse " style="width:70px;height: 70px;border: solid 0px;border-radius:70px;margin-left: -35px;background-color: #FFE667;"><i class="fas fa-search fa-2x"></i></button>
+                                </center></div>
+                            {% for id,course,teacher,time,students in batches %}
+                            <div class="d-md-none d-sm-none col-lg-3 d-lg-block" id="h{{id}}">
+                                <div class="container pt-lg pb-xl-md position-relative zindex-100 prop">
+                                    <div data-toggle="hidden">
+                                    <div class="card shadow animate-this animated fadeIn delay-2s">
+                                        <div class="py-5 text-center">
+                                            <img alt="" src="../static/images/learning.png" class="img-saturate" style="width: 100px;border: 1px solid grey;border-radius: 50px">
+                                        </div>
+                                        <div class="px-4 pb-5 text-center">
+                                            <strong>{{id}}</strong><br/><small>{{course}}</small><br><small>{{teacher}}</small><br><small>Time:</small><strong>{{time}}</strong><br>
+
+                                            <br/>
+                                            <br/>
+                                            <button class="btn btn-dark view" id="{{id}}">View Students</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                             <!-- dummy Details Ends-->
+                            <script>
+                                $('.view').click(function() {
+                                    id = $(this).attr('id');
+                                    console.log(id);
+                                    $.ajax({
+                                         url: '/student-report/',
+                                       data: {
+                                      'id':id,
+                                    },
+                                    dataType: 'json',
+                                    success: function (content) {
+                                        $("#trigger").click();
+                                       var obj = jQuery.parseJSON(content);
+                                        $.each(obj, function(key,value) {
+                                          $(".batches").empty();
+                                          $(".batches").append('<tr><td>'+key+'</td><td>'+value.name+'</td><td>'+value.attendance+'%</td><tr>');
+                                        });
+                                    }
+
+                                    });
+                                });
+                            </script>
+                            <button style="display:none;" id="trigger" data-toggle="modal" data-target="#demoModal"></button>
+                             <div class="modal fade" id="demoModal" role="dialog">
+                                <div class="modal-dialog">
+                                  <!-- Modal content-->
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                     <button type="button" class="fas fa-times" data-dismiss="modal"></button>
+                                      <h4 class="modal-title">Student Report</h4>
+                                    </div>
+                                    <div class="modal-body report">
+                                        <table class="batches" cellspacing="2px" cellpadding="2px">
+                                            <tr>
+                                                <th>Id</th>
+                                                <th>Student</th>
+                                                <th>Attendance</th>
+                                            </tr>
+                                        </table>
+                                      </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
                         </div>
+
+
                     </div>
                       
                 </section>
@@ -413,8 +431,7 @@
             gtag('js', new Date());
 
             gtag('config', 'UA-104437451-1');
-        </script>
-        
+        </script>  
     </body>
     
 </html>

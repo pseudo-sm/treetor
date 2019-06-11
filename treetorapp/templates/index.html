@@ -40,6 +40,47 @@
                 display : none;
             }
         </style>
+        <style>
+            .dropbtn {
+              background-color:transparent;
+              color: white;
+              padding: 16px;
+              font-size: 16px;
+              border: none;
+            }
+            
+            .dropdown {
+              position: relative;
+              display: inline-block;
+            }
+            
+            .dropdown-content {
+                margin-top: 60px;
+              display: none;
+              position: absolute;
+              background-color: #f1f1f1;
+              min-width: 160px;
+              box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+              z-index: 1;
+              border-radius: 10px;
+            }
+            
+            .dropdown-content a {
+              color: #28a745;
+              padding: 12px 16px;
+              text-decoration: none;
+              display: block;
+              border-radius: 10px;
+            }
+            
+            .dropdown-content a:hover {background-color: #ddd;}
+            
+            .dropdown:hover .dropdown-content {display: block;}
+            
+            .dropdown:hover .dropbtn {
+                
+            }
+            </style>
             
     </head>
     
@@ -60,11 +101,25 @@
 
                                 <div class="container">
 
+                                <div class="dropdown"> 
+                                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-main-collapse" aria-controls="navbar-main-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                                        <span class="navbar-toggler-icon"></span>
+                                    </button>
+                                    <div class="dropdown-content">
+                                        {% if xyz %}
+                                            <a href={{profile}}>Profile</a>
+                                            {% if dashboard %}
+                                                <a href={{dashboard}}>Dashboard</a>
+                                            {% endif %}
 
-                                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-main-collapse" aria-controls="navbar-main-collapse" aria-expanded="false" aria-label="Toggle navigation">
-                                    <span class="navbar-toggler-icon"></span>
-
-                                </button>
+                                            <a href="{% url 'logout' %}"><i class="fa fa-sign-out"></i>Logout</a>
+                                        {% endif %}
+                                        {% if yuo %}
+                                            <a href="{% url 'signin' %}">Log In</a>
+                                            <a href="{% url 'signup' %}">Register</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
 
                                 <div class="collapse navbar-collapse" id="navbar-main-collapse">
 
@@ -72,48 +127,8 @@
                                         <li class="nav-item mr-0 prsec">
                                             <!-- <span class="btn-icon d-none d-lg-inline-flex" style="float:right"><i class="fas fa-user-circle fa-2x" style="color:white;"></i><br></span> -->
 
-                                            <style>
-                                                .dropbtn {
-                                                  background-color:transparent;
-                                                  color: white;
-                                                  padding: 16px;
-                                                  font-size: 16px;
-                                                  border: none;
-                                                }
-                                                
-                                                .dropdown {
-                                                  position: relative;
-                                                  display: inline-block;
-                                                }
-                                                
-                                                .dropdown-content {
-                                                    margin-top: 60px;
-                                                  display: none;
-                                                  position: absolute;
-                                                  background-color: #f1f1f1;
-                                                  min-width: 160px;
-                                                  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-                                                  z-index: 1;
-                                                  border-radius: 10px;
-                                                }
-                                                
-                                                .dropdown-content a {
-                                                  color: #28a745;
-                                                  padding: 12px 16px;
-                                                  text-decoration: none;
-                                                  display: block;
-                                                  border-radius: 10px;
-                                                }
-                                                
-                                                .dropdown-content a:hover {background-color: #ddd;}
-                                                
-                                                .dropdown:hover .dropdown-content {display: block;}
-                                                
-                                                .dropdown:hover .dropbtn {
-                                                    
-                                                }
-                                                </style>
-                                                <div class="dropdown d-lg-inline-flex">
+                                            
+                                                <!-- <div class="dropdown d-lg-inline-flex">
                                                     <button class="dropbtn"><i class="fas fa-user-circle fa-2x d-none d-lg-inline-flex"></i></button>
                                                     <div class="dropdown-content">
 
@@ -130,7 +145,7 @@
                                                           <a href="{% url 'signup' %}">Register</a>
                                                         {% endif %}
                                                     </div>
-                                                  </div>
+                                                  </div> -->
                                         </li>
                                         &nbsp;&nbsp;
                                         <li class="nav-item mr-1">

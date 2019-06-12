@@ -49,119 +49,45 @@
     </head>
     
     <body>
-
-        <script>
-            $(document).ready(function () {
-            $('html, body').animate({
-                scrollTop: $('#sct_page_examples').offset().top
-            }, 'slow');
-        });
-        </script>
         
         <header class="header-transparent" id="header-main">
+
+        <!-- Search -->
+        <div id="search-main" class="navbar-search">
+            <div class="container">
+                <!-- Search form -->
+                <form class="navbar-search-form" role="form">
+                    <div class="form-group">
+                        <div class="input-group input-group-transparent">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="far fa-search"></i></span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Type and hit enter ...">
+                        </div>
+                    </div>
+                </form>
+                <div class="navbar-search-suggestions">
+                    
+                </div>
+            </div>
+        </div>
+
+
+
         <!-- Topbar -->
         <div id="navbar-top-main" class="navbar-top  navbar-dark bg-dark border-bottom">
             <div class="container">
                 <div class="navbar-nav align-items-center">
-                    <a class="navbar-brand mr-lg-5" href="{% url 'home' %}">
-                    <img alt="Image placeholder" src="../static/images/treetor.png" style="height: 60px;">
-                </a>
-
+                    <div class="d-none d-lg-inline-block">
+                        <span class="navbar-text mr-3">Hi, There.</span>
+                    </div>
+                    
                     <div class="ml-auto">
                         <ul class="nav">
-                            <nav class="navbar navbar-main navbar-expand-lg navbar-sticky navbar-transparent navbar-dark bg-dark" id="navbar-main">
-
-                                <div class="container">
-
-
-                                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-main-collapse" aria-controls="navbar-main-collapse" aria-expanded="false" aria-label="Toggle navigation">
-                                    <span class="navbar-toggler-icon"></span>
-
-                                </button>
-
-                                <div class="collapse navbar-collapse" id="navbar-main-collapse">
-
-                                    <ul class="navbar-nav align-items-lg-center ml-lg-auto">
-                                        <li class="nav-item mr-0 prsec">
-                                            <!-- <span class="btn-icon d-none d-lg-inline-flex" style="float:right"><i class="fas fa-user-circle fa-2x" style="color:white;"></i><br></span> -->
-
-                                            <style>
-                                                .dropbtn {
-                                                  background-color:transparent;
-                                                  color: white;
-                                                  padding: 16px;
-                                                  font-size: 16px;
-                                                  border: none;
-                                                }
-
-                                                .dropdown {
-                                                  position: relative;
-                                                  display: inline-block;
-                                                }
-
-                                                .dropdown-content {
-                                                    margin-top: 60px;
-                                                  display: none;
-                                                  position: absolute;
-                                                  background-color: #f1f1f1;
-                                                  min-width: 160px;
-                                                  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-                                                  z-index: 1;
-                                                  border-radius: 10px;
-                                                }
-
-                                                .dropdown-content a {
-                                                  color: #28a745;
-                                                  padding: 12px 16px;
-                                                  text-decoration: none;
-                                                  display: block;
-                                                  border-radius: 10px;
-                                                }
-
-                                                .dropdown-content a:hover {background-color: #ddd;}
-
-                                                .dropdown:hover .dropdown-content {display: block;}
-
-                                                .dropdown:hover .dropbtn {
-
-                                                }
-                                                </style>
-                                                <div class="dropdown d-lg-inline-flex">
-                                                    <button class="dropbtn"><i class="fas fa-user-circle fa-2x d-none d-lg-inline-flex"></i></button>
-                                                    <div class="dropdown-content">
-
-                                                        {% if xyz %}
-                                                            <a href={{profile}}>Profile</a>
-                                                            {% if dashboard %}
-                                                                <a href={{dashboard}}>Dashboard</a>
-                                                            {% endif %}
-
-                                                            <a href="{% url 'logout' %}"><i class="fa fa-sign-out"></i>Logout</a>
-                                                        {% endif %}
-                                                        {% if yuo %}
-                                                          <a href="{% url 'signin' %}">Log In</a>
-                                                          <a href="{% url 'signup' %}">Register</a>
-                                                        {% endif %}
-                                                    </div>
-                                                  </div>
-                                        </li>
-                                        &nbsp;&nbsp;
-                                        <li class="nav-item mr-1">
-                                        {% if xyz %}
-                                            <a href="{% url 'student_profile' %}" class="nav-link d-lg-none">Profile</a>
-                                            <a href="{% url 'logout' %}" class="nav-link d-lg-none"><i class="fa fa-sign-out"></i>Logout</a>
-                                        {% endif %}
-                                        {% if yuo %}
-                                          <a href="{% url 'signin' %}" class="nav-link d-lg-none">Log In</a>
-                                          <a href="{% url 'signup' %}" class="nav-link d-lg-none">Register</a>
-                                        {% endif %}
-
-                                        </li>
-                                    </ul>
-
-                                </div>
-                            </div>
-                        </nav>
+                            
+                            <!--<li class="nav-item">-->
+                                <!--<a class="nav-link" href=" ">Profile <i class="far fa-user-circle"></i></a>-->
+                            <!--</li>-->
                         </ul>
                     </div>
                 </div>
@@ -170,6 +96,54 @@
 
 
         <!-- Main navbar -->
+
+        <nav class="navbar navbar-main navbar-expand-lg navbar-sticky navbar-transparent navbar-dark bg-dark" id="navbar-main">
+            <div class="container">
+                <a class="navbar-brand mr-lg-5" href="./index.html">
+                    <img alt="Image placeholder" src="../static/images/text.png" style="height: 50px;">
+                </a>
+
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-main-collapse" aria-controls="navbar-main-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbar-main-collapse">
+                    <ul class="navbar-nav align-items-lg-center">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="#"></a>
+                        </li>
+                        
+                    </ul>
+                    <ul class="navbar-nav align-items-lg-center ml-lg-auto">
+                        <li class="nav-item mr-0">
+                            <a class="btn btn-sm btn-white btn-circle btn-icon d-none d-lg-inline-flex" href="{% url 'signin' %}">
+                                <span class="btn-inner--text" style="text-align: center;font-size: 20px">Log in</span>
+                            </a>
+                        </li>
+                        &nbsp;&nbsp;
+                        <li class="nav-item mr-1">
+                            <a class="btn btn-sm btn-white btn-circle btn-icon d-none d-lg-inline-flex" href="{% url 'signup' %}">
+                                <span class="btn-inner--text" style="text-align: center;font-size: 20px">Register</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <!--<ul class="navbar-nav align-items-lg-center ml-lg-auto">-->
+                        <!--<li class="nav-item">-->
+                            <!--<a class="nav-link" href="#" target="_blank">Terms & Conditions</a>-->
+                        <!--</li>-->
+                        <!---->
+                        <!--<li class="nav-item mr-0">-->
+                            <!--<a href=""  class="nav-link d-lg-none">Home</a>-->
+                            <!--<a class="btn btn-sm btn-white btn-circle btn-icon d-none d-lg-inline-flex">-->
+                                <!--<span class="btn-inner&#45;&#45;icon"><i class="fas fa-sign-out-alt fa-2x"></i></span>-->
+                                <!--<span class="btn-inner&#45;&#45;text" style="text-align: center;font-size: 20px">Log Out</span>-->
+                            <!--</a>-->
+                        <!--</li>-->
+                    <!--</ul>-->
+
+                </div>
+            </div>
+        </nav>
 
     </header>
         
@@ -247,19 +221,48 @@
                 </section>
 
                 <section id="sct_page_examples" class="slice" style="margin-top: -15%;background: transparent">
-                    <div class="container">
+                        <style>
+                                /* .con > .horscr {
+                                    overflow-x: auto;
+                                    white-space: nowrap;
+                                } */
+                                .con > .horscr > .qw{
+                                    display: inline-block;
+                                    float: none;
+                                }
+                            </style>
+                    <h1 style="color: ghostwhite;text-shadow:1px 2px 1px green;margin-left: 10%">Recomended for You</h1>
+                    <div class="container con">
+                            <div class="row text-center horscr" style="margin-bottom:1%;overflow-x: auto;white-space: nowrap;display: inline-block;width: 100%">
+                                    <div class="col-lg-4 col-md-3 col-sm-8 qw text-center" style="margin-bottom: 1%;">
+                                                    <div style="width:80%;box-shadow: 1px 1px 10px green;border-radius: 5px" >
+                                                        <center><img alt="treetor" src="https://i.redd.it/1lw8ul3iq3211.jpg" class="img-saturate" style="border-radius: 5px;z-index: -1;width:100%;height:50%;text-align: center;align-content: center"><br/><br/>
+                                                            <button style="float:left;margin-top:-45px;position: absolute;margin-left: -30%;color:white;background-color: #28a745;border:none;border-radius:5px"><b>4.5<i class="far fa-star" style="color: white"></i></b></button><br/>
+                                                            <div style="width: 100%">
+                                                            <strong style="text-align: center">Trident Academy Of Technology</strong><br/>
+                                                            <small>Infocity,Bhubaneswar</small><br/>
+                                                            <strong>Course: </strong> B-tech<br/><br/>
+                                                            <button type="submit" class="btn btn-dark">Free Class</button>
+                                                            <button type="submit" class="btn btn-dark">Apply</button>
+                                                            <br/><br/>
+                                                            </div>
+                                                        </center> 
+                                                    </div>
+                                            </div> 
+                                                          
+                            </div>
                         <div class="row">
                             {% ifequal empty_results 0 %}
                              <h1 style="color: ghostwhite;text-shadow:1px 2px 1px green;margin-left: 15px">Institutions</h1>
                             {% for i in results %}
-                            <div class="col-lg-12 mb-12 mb-lg-0 goto" id="{{i.id}}">
+                            <div class="col-lg-12 mb-12 mb-lg-0">
                                 <div data-animate-hover="1" data-toggle="hidden">
                                     <div class="card shadow animate-this">
                                         <div class="container">
                                             <div class="row">
                                                 <div class="col-1"></div>
                                                 <div class="col-3 py-5 pb-5">
-                                                    <center><img alt="treetor" src="{{i.image}}" class="img-saturate" style="width: 100px;height: 100px; text-align: center;align-content: center"><br/><br/>
+                                                    <center><img alt="treetor" src="../static/images/enterprise.png" class="img-saturate" style="width: 100px;height: 100px; text-align: center;align-content: center"><br/><br/>
                                                         <strong style="text-align: center">{{i.name}}</strong>   </center>
                                                 </div>
                                                 <div class="col-1"></div>
@@ -299,7 +302,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <br>
                             {% endfor %}
                             {% else %}
                             <!--<h2 style="color:white;"> Sorry !! No Result Found :(</h2>-->
@@ -317,7 +319,7 @@
                                             <div class="row">
                                                 <div class="col-1"></div>
                                                 <div class="col-3 py-5 pb-5">
-                                                    <center><img alt="treetor" src="{{i.image}}" class="img-saturate" style="width: 100px;height: 100px; text-align: center;align-content: center"><br/><br/>
+                                                    <center><img alt="treetor" src="../static/images/enterprise.png" class="img-saturate" style="width: 100px;height: 100px; text-align: center;align-content: center"><br/><br/>
                                                         <strong style="text-align: center">{{i.name}}</strong>   </center>
                                                 </div>
                                                 <div class="col-1"></div>
@@ -331,30 +333,10 @@
                                                     <strong>Course Price: </strong>{{i.price}}<br/>
                                                     <!--<strong>Rating: </strong>{{i.rating}}<strong>/5</strong>-->
                                                 </div>
-                                                <div class="col-lg-2 col-sm-12 col-md-12 py-5"><center><button id="democlass" data-toggle="modal" data-target="#demoModal" class="btn btn-dark">Free Class</button><button style="margin:5%" class="btn btn-dark apply" id="k{{i.id}}">Apply </button></center></div>
+                                                <div class="col-lg-2 col-sm-12 col-md-12 py-5"><center><button id="democlass" data-toggle="modal" data-target="#demoModal" class="btn btn-dark">Free Class</button><button style="margin:5%" class="btn btn-dark apply" id="{{i.id}}">Apply </button></center></div>
                                                 <script>
-                                                    $(".apply").click(function() {
-                                                            var  id = $(this).attr('id');
-                                                            $.ajax({
-                                                             url: '/apply/',
-                                                           data: {
-                                                          'id':id,
-                                                        },
-                                                        dataType: 'json',
-                                                        success: function (content) {
-                                                        console.log(content);
-                                                        if(content == 'false')
-                                                        if(content == 'false')
-                                                        {
-                                                            window.location="/signin/"
-                                                        }
-                                                        else {
-                                                        alert("Your application has been submitted , the institute will shortly respond !!");
-
-                                                        }
-                                                    }
-
-                                                        });
+                                                    $("#{{i.id}}").click(function() {
+                                                            console.log('clickedrrrrr!!');
                                                     });
                                                 </script>
                                             </div>
@@ -362,19 +344,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <br>
                             {% endfor %}
                             {% else %}
                             <!--<h2 style="color:white;"> Sorry !! No Result Found :(</h2>-->
                             {% endifequal %}
                             </div>
-
-                            <script>
-                                $(".goto").click(function() {
-                                     id  = $(this).attr("id");
-                                     window.location = "../institute/"+id;
-                                });
-                            </script>
 
                             <!-- modal -->
 
@@ -451,7 +425,7 @@
         <div class="container">
             <div class="row pt-md">
                 <div class="col-lg-4 mb-5 mb-lg-0">
-                    <a href="{% url 'home' %}">
+                    <a href="./index.html">
                         <img src="../static/images/text.png" alt="Footer logo" style="height: 70px;">
                     </a>
                     <p class="text-sm"><br>A unique solution for a flexible and modular search for tutions. A step to building the future of your dreams.</p>

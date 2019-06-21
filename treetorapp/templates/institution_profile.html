@@ -9,7 +9,8 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800">
         <link rel="icon" href="{% static 'images/text.svg' %}" type="image/png">
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+        <script src="../static/js/ajax.js"></script>
+        <script src="../static/js/jQuery.3.3.1.js"></script>
 <!--        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajaxy/1.6.1/scripts/jquery/ajaxy.js" ></script>-->
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
@@ -154,7 +155,6 @@
         <script src="../static/js/bootstrap.bundle.min.js"></script>
         <script src="../static/js/bootstrap.min.js"></script>
         <script src="../static/js/ajax.js"></script>
-        <script src="../static/js/jQuery.3.3.1.js"></script>
         <script src="../static/js/in-view-min.js"></script>
         <script src="../static/js/higlight.js"></script>
         <script src="../static/js/theme.min.js"></script>
@@ -256,7 +256,6 @@
         <script src="../static/js/bootstrap.bundle.min.js"></script>
         <script src="../static/js/bootstrap.min.js"></script>
         <script src="../static/js/ajax.js"></script>
-        <script src="../static/js/jQuery.3.3.1.js"></script>
         <script src="../static/js/in-view-min.js"></script>
         <script src="../static/js/higlight.js"></script>
         <script src="../static/js/theme.min.js"></script>
@@ -531,7 +530,6 @@
 
                                                     $("#fileInput").change(function() {
                                                       readURL(this);
-                                                      console.log('sasasasasas');
                                                       $("#subm").click();
                                                     });
                                                 </script>
@@ -774,7 +772,7 @@
                                                                         <th align="center">Subjects</th>
                                                                     </tr>
                                                                         {% for course_names,duration,off,class_1,price,subjects in courses %}
-                                                                         <tr>
+                                                                         <tr class="edit-row" id="{{course_names}}">
                                                                             <td>{{course_names}}</td>
                                                                             <td>{{duration}}</td>
                                                                             <td>{{off}}</td>
@@ -783,6 +781,42 @@
                                                                             <td>{{subjects}}</td>
                                                                           </tr>
                                                                         {% endfor %}
+                                                                    <script>
+                                                                        $(".edit-row").click(function(){
+                                                                            course_name = $(this).attr('id');
+                                                                            $.ajax({
+                                                                               url: '/edit-course/',
+                                                                               async:false,
+                                                                               data: {
+                                                                              'course_name':course_name
+                                                                            },
+                                                                            dataType: 'json',
+                                                                            success: function (content) {
+                                                                                content = JSON.parse(content);
+                                                                                $("#acourses").modal('toggle');
+                                                                                $("#name").val(course_name);
+                                                                                $("#duration").val(content["duration"]);
+                                                                                $("#off").val(content["off"]);
+                                                                                $(".classext").empty();
+                                                                                $(".coursedet").empty();
+                                                                                for(key in content["class"]){
+                                                                                    $(".classext").append('<input type="text" class="form-control class" value="'+key+'"><br>');
+                                                                                }
+
+                                                                                for(key in content["subjects"]){
+                                                                                    console.log(key)
+                                                                                    $(".coursedet").append('<div><div style="border:1px;border-color:rgb(255,0,0,0.3);border-style:solid;padding:5%;"><button class="fa fa-times cross" style="float:right;background-color:Transparent;outline:none;"></button><br>Subject Name : <input type="text" class="form-control subject" id="new_subject" value="'+key+'">Daily Hours : <input type="text" id="hours" class="form-control hours" value="'+content["subjects"][key]["hours"]+'">Teacher : <select id="teacher'+key+'" class="form-control teacher" ><option>Unassigned</option>{% for id,name in all_teachers.items %}<option value={{id}}>{{name}}</option>{% endfor %}</select></div><br></div>');
+                                                                                    $("#teacher"+key).val(content["subjects"][key]["teacher"]);
+                                                                                }
+                                                                                $("#price").val(content["price"]);
+                                                                                changes = true;
+                                                                            }
+
+
+                                                                            });
+
+                                                                        });
+                                                                    </script>
 
                                                                 </table>
                                                               {% endif %}
@@ -1090,18 +1124,16 @@
 
                   <div>
 
-                  <div class="coursedet">
+                  <div class="coursedet-batch">
 
                   Teacher : <select id="teacherbatch" class="form-control teacher">
                                 {% for id,name in all_teachers.items %}
                                 <option value={{id}}>{{name}}</option>
                                 {% endfor %}
                             </select>
-                  </div>
-                  <div class="coursedet">
-                      Course : <select id="course" class="form-control teacher">
+                   Course : <select id="course" class="form-control teacher">
                                     {% for course in all_course %}
-                                    <option value={{course}}>{{course}}</option>
+                                    <option value='{{course}}'>{{course}}</option>
                                     {% endfor %}
                                 </select>
                   </div>
@@ -1110,12 +1142,19 @@
                   <div>
                       <span>Timings</span><br>
                       Sunday : <input type="time" class="form-control" id="sunday"><br>
+                      Sunday : <input type="time" class="form-control" id="end-sunday"><br>
                       Monday : <input type="time" class="form-control" id="monday"><br>
+                      Monday : <input type="time" class="form-control" id="end-monday"><br>
                       Tuesday : <input type="time" class="form-control" id="tuesday"><br>
+                      Tuesday : <input type="time" class="form-control" id="end-tuesday"><br>
                       Wednessday : <input type="time" class="form-control" id="wednesday"><br>
+                      Wednessday : <input type="time" class="form-control" id="end-wednesday"><br>
                       Thursday : <input type="time" class="form-control" id="thursday"><br>
+                      Thursday : <input type="time" class="form-control" id="end-thursday"><br>
                       Friday : <input type="time" class="form-control" id="friday"><br>
+                      Friday : <input type="time" class="form-control" id="end-friday"><br>
                       Saturday : <input type="time" class="form-control" id="saturday"><br>
+                      Saturday : <input type="time" class="form-control" id="end-saturday"><br>
                   </div>
                   <div>
                       {% for id,name in all_students.items %}
@@ -1260,8 +1299,15 @@
                             console.log($('#acourses'));
                             $('.modal').hide();
                             $('.fade').hide();
-                            $('#courses-table').append('<tr><td>'+name+'</td><td>'+duration+'</td><td>'+off+'</td><td>'+price+'</td><td>'+subjects+'</td><td>'+class1+'</td></tr>');
+                            if(!changes){
+                            $('#courses-table').append('<tr class="edit-row" id="'+name+'"><td>'+name+'</td><td>'+duration+'</td><td>'+off+'</td><td>'+price+'</td><td>'+subjects+'</td><td>'+class1+'</td></tr>');
+                            }
+                            else{
+                                $("[id='"+name+"']").remove();
+                                $('#courses-table').append('<tr class="edit-row" id="'+name+'"><td>'+name+'</td><td>'+duration+'</td><td>'+off+'</td><td>'+price+'</td><td>'+subjects+'</td><td>'+class1+'</td></tr>');
 
+
+                            }
 
                         }
 
@@ -1280,13 +1326,19 @@
                 friday = $("#friday").val();
                 saturday = $("#saturday").val();
                 monday = $("#monday").val();
+                endsunday = $("#end-sunday").val();
+                endtuesday = $("#end-tuesday").val();
+                endwednesday = $("#end-wednesday").val();
+                endthursday = $("#end-thursday").val();
+                endfriday = $("#end-friday").val();
+                endsaturday = $("#end-saturday").val();
+                endmonday = $("#end-monday").val();
                 var students = [];
                  $('.students').each(function() {
                     students.push($(this).val());
                  });
-                 console.log(sunday);
-                 console.log(monday);
                  timings = {"monday":monday,"tuesday":tuesday,"wednesday":wednesday,"thursday":thursday,"friday":friday,"saturday":saturday,"sunday":sunday}
+                 endtimings = {"monday":endmonday,"tuesday":endtuesday,"wednesday":endwednesday,"thursday":endthursday,"friday":endfriday,"saturday":endsaturday,"sunday":endsunday}
                  console.log(timings);
                  $.ajax({
                            url: '/add-batch/',
@@ -1294,12 +1346,12 @@
                           'teacher':teacher,
                           'course':course,
                           'students':JSON.stringify(students),
-                          'timings' : JSON.stringify(timings)
+                          'timings' : JSON.stringify(timings),
+                          'endtimings' : JSON.stringify(timings)
 
                         },
                         dataType: 'json',
                         success: function (content) {
-                            console.log($('#acourses'));
                             $('.modal').hide();
                             $('.fade').hide();
                             $('#batch-table').append('<tr><td>'+course+'</td><td>'+time+'</td></tr>');

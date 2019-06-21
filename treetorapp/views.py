@@ -196,7 +196,6 @@ def search(request):
                         courses_res =  ",".join(list(data[institute]["courses"].keys()))
                 geo = {}
                 if data[institute].get("geolocation") is not None:
-                    print("----------------------------------------------------------")
                     lat = data[institute]["geolocation"]["latitude"]
                     lon = data[institute]["geolocation"]["longitude"]
                     geo.update({"lat":lat,"lon":lon})
@@ -585,7 +584,7 @@ def make_teacher(request):
 
 
     uid = auth.current_user["localId"]
-    db.child("users").child("institutes").child(uid).child("teacher").update({'score':'Not Updated','teacher name':"Not Updated",'gender':'Not Updated','dob':'Not Updated','languages':'Not Updated','phone':'Not Updated','address':'Not Updated','hobbies':'Not Updated','interests':'Not Updated','sports':'Not Updated','guardian name':'Not Updated','guardian email':'Not Updated','guardian phone':'Not Updated','guardian dob':'Not Updated','guardian relation':'Not Updated','guardian occupation':'Not Updated','guardian qualification':'Not Updated','school':'Not Updated','class':'Not Updated','treetor center':'Not Updated','board':'Not Updated','percentage':'Not Updated','subjects':'Not Updated','best at':'Not Updated','weak at':'Not Updated','old tuition':'Not Updated','facebook':"Not Updated","institutes":uid})
+    db.child("users").child("institutes").child(uid).child("teacher").update({'score':'Not Updated','teacher name':"Not Updated",'gender':'Not Updated','dob':'Not Updated','languages':'Not Updated','phone':'Not Updated','address':'Not Updated','hobbies':'Not Updated','interests':'Not Updated','sports':'Not Updated','guardian name':'Not Updated','guardian email':'Not Updated','guardian phone':'Not Updated','guardian dob':'Not Updated','guardian relation':'Not Updated','guardian occupation':'Not Updated','guardian qualification':'Not Updated','school':'Not Updated','class':'Not Updated','treetor center':'Not Updated','board':'Not Updated','percentage':'Not Updated','subjects':'Not Updated','best at':'Not Updated','weak at':'Not Updated','old tuition':'Not Updated','facebook':"Not Updated"})
     all = True
     return HttpResponse(json.dumps(all), content_type='application/json')
 
@@ -616,26 +615,23 @@ def add_courses(request):
     hours_list= []
     teachers_list = []
     class_list = []
-    subj = subject[1:len(subject)-1].split(',')
-    t = teachers[1:len(teachers)-1].split(',')
-    h = hours[1:len(hours)-1].split(',')
-    p = std[1:len(std)-1].split(',')
-    for i in subj:
-        subjects.append(i[1:len(i)-1])
-    for i in h:
-        hours_list.append(i[1:len(i)-1])
-    for i in t:
-        teachers_list.append(i[1:len(i)-1])
-    for i in p:
-        class_list.append(i[1:len(i)-1])
+    subj = json.loads(subject)
+    t = json.loads(teachers)
+    h = json.loads(hours)
+    class_list = json.loads(std)
+    subjects = list(dict.fromkeys(subj))
+    for i in range(len(subjects)):
+        teachers_list.append(t[i])
+        hours_list.append(h[i])
+    print(subjects,teachers_list,hours,class_list)
 
     db.child("users").child("institutes").child(uid).child("courses").child(name).update({"duration":duration,"price":price,"time":time,"off":off,"class":std})
-    for i in range(len(subj)):
+    for i in range(len(subjects)):
         db.child("users").child("institutes").child(uid).child("courses").child(name).child("subjects").child(subjects[i]).update({"teacher":teachers_list[i],"hours":hours_list[i]})
     for i in range(len(class_list)):
         db.child("users").child("institutes").child(uid).child("courses").child(name).child("class").update({class_list[i]:0})
     all=True
-    return HttpResponse(json.dumps(all),content_type='application/json')
+    return JsonResponse(json.dumps(all),content_type='application/json',safe=False)
 
 def add_teachers(request):
 
@@ -921,16 +917,17 @@ def add_batch(request):
     course = request.GET.get("course")
     students = request.GET.get("students")
     timings = request.GET.get("timings")
+    endtimings = request.GET.get("endtimings")
     timings = json.loads(timings)
+    endtimings = json.loads(endtimings)
     students = json.loads(students)
     # students = students[2:len(students)-2].split(',')
     batch_id = random.randint(100000,999999)
     db.child("users").child("institutes").child(uid).child("batches").child(batch_id).update({"teacher":teacher,"course":course})
     for weekday in timings:
-        if timings[weekday] is not "":
-            db.child("users").child("institutes").child(uid).child("batches").child(batch_id).child("timings").update({weekday:timings[weekday]})
+        if timings[weekday] is not "" and endtimings[weekday] is not "":
+            db.child("users").child("institutes").child(uid).child("batches").child(batch_id).child("timings").child(weekday).update({timings[weekday]:endtimings[weekday]})
     for student in students:
-        pass
         db.child("users").child("institutes").child(uid).child("batches").child(batch_id).child("students").update({student:0})
     content = True
     return JsonResponse(json.dumps(content),content_type="application/json",safe=False)
@@ -1126,3 +1123,11 @@ def institution_public(request,uid):
         return render(request,"institution_public.html",{"time":time,"image":image,"institution":institution_data,"all_teachers":all_teachers_inst,"courses":courses_send,"all_students":students_context,"all_course":course_names,"batches":batches})
     else:
         return render(request,"institution_public.html",{"time":time,"image":image,"institution":institution_data,"courses":courses_send,"all_students":students_context,"all_course":course_names,"batches":batches})
+
+
+def edit_course(request):
+
+    uid = auth.current_user["localId"]
+    course = request.GET.get("course_name")
+    content = dict(db.child("users").child("institutes").child(uid).child("courses").child(course).get().val())
+    return JsonResponse(json.dumps(content),content_type="json/application",safe=False)

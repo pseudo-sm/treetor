@@ -46,6 +46,7 @@ urlpatterns = [
     url(r'^add-batch/',views.add_batch,name="add_batch"),
     url(r'^batches/',views.batches,name="batches"),
     url(r'^student-report/',views.student_report,name="student_report"),
+    url(r'^edit-course/',views.edit_course,name="edit_course"),
     url(r'^institution-courses/',views.institution_courses,name="institution_courses"),
     url(r'^institution-form/',views.institution_form,name="institution_form"),
     url(r'^institution-submit/',views.institution_submit,name="institution_submit"),

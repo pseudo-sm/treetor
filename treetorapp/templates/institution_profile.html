@@ -1347,6 +1347,7 @@
                  timings = {"monday":monday,"tuesday":tuesday,"wednesday":wednesday,"thursday":thursday,"friday":friday,"saturday":saturday,"sunday":sunday}
                  endtimings = {"monday":endmonday,"tuesday":endtuesday,"wednesday":endwednesday,"thursday":endthursday,"friday":endfriday,"saturday":endsaturday,"sunday":endsunday}
                  console.log(timings);
+                 console.log(endtimings);
                  $.ajax({
                            url: '/add-batch/',
                            data: {
@@ -1354,7 +1355,7 @@
                           'course':course,
                           'students':JSON.stringify(students),
                           'timings' : JSON.stringify(timings),
-                          'endtimings' : JSON.stringify(timings)
+                          'endtimings' : JSON.stringify(endtimings)
 
                         },
                         dataType: 'json',

@@ -3,7 +3,7 @@
 {% endif %}
 <html>
     <head>
-        
+        {% load static %}
         <link rel="stylesheet" href="../static/css/bootstrap.min.css">
         <link rel="stylesheet" href="../static/css/atom-one-dark.css">
         <link rel="stylesheet" href="../static/css/theme.css">
@@ -479,7 +479,7 @@
                                     <center>
 
                                         <div class="login">
-                                            <h3 class="h31" style="margin-top:5%">treetor</h3>
+                                            <h3 class="h31" style="margin-top:5%"><img src="{% static 'images/treetor.png' %}" width="50%"></h3>
                                             <hr/>
                                             <form action="{% url 'post_signin' %}" method="post">
                                                 {% csrf_token %}

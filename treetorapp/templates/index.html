@@ -91,8 +91,55 @@
             .dropdown:hover .dropbtn {
                 
             }
+
+
+            #floating-button{
+              width: 55px;
+              height: 55px;
+              border-radius: 50%;
+              background: #093a23;
+              position: fixed;
+              bottom: 30px;
+              right: 30px;
+              cursor: pointer;
+              box-shadow: 0px 2px 5px #666;
+            }
+
+
+            @-webkit-keyframes bounce {
+                0% {
+            transform: scale(1,1) translate(0px, 0px);
+          }
+
+          30%{
+            transform: scale(1,0.8) translate(0px, 10px);
+          }
+
+          75%{
+            transform: scale(1,1.1) translate(0px, -25px);
+          }
+
+         100% {
+            transform: scale(1,1) translate(0px, 0px);
+          }
+        }
+
+        .bounce {
+              text-align:center;
+              margin:0 auto;
+              margin-top:100px;
+              height:20px;
+              width:150px;
+              padding:20px;
+              background:tomato;
+             -webkit-animation: bounce 1.0s infinite;
+        }
+
+
+
+
             </style>
-            
+
     </head>
     
     <body>
@@ -229,7 +276,7 @@
                                     <form action="{% url 'search' %}" >
                                       <div class="form-row">
 
-                                        
+
                                           <div class="col-sm-12 col-md-7" style="margin-top:2%">
                                           <input type="text" name="search" class="form-control" placeholder="Search for Tutors, Tutions and Schools.">
                                         </div>
@@ -264,8 +311,20 @@
                     </div>
                 </section>
             </main>
+                  <div style="margin-top:10%;">
+                  <div id="floating-button" class="bounce" data-toggle="tooltip" data-placement="left" data-original-title="Create" >
+                        <li class="dropdown-header" style="color:white"></li>
+                  </div>
+                  </div>
+                    <script>
+                        $("#floating-button").click(function() {
+                            $('html, body').animate({
+                            scrollTop: $(".con").offset().top
+                        }, 1000);
 
-                <section class="slice bg-gradient-secondary overflow-hidden">
+                        });
+                    </script>
+                      <section class="slice bg-gradient-secondary overflow-hidden">
                     <div class="bg-absolute-cover bg-size--contain d-flex align-items-center">
                         <figure class="w-100">
 
@@ -289,11 +348,11 @@
                                 <!-- Repeat From here -->
                                     <div class="col-lg-4 col-md-3 col-sm-12 qw text-center" style="margin-bottom: 1%;">
                                                     <div style="width:80%;box-shadow: 1px 1px 10px green;border-radius: 5px" >
-                                                        <center><img alt="treetor" src="https://i.redd.it/1lw8ul3iq3211.jpg" class="img-saturate" style="border-radius: 5px;z-index: -1;width:100%;height:18%;text-align: center;align-content: center"><br/><br/>
+                                                        <center><img alt="treetor" src="https://firebasestorage.googleapis.com/v0/b/treetor-75b14.appspot.com/o/users%2Finstitutes%2Fdl72aTOMksVltNh2y95O8yD2SV92%2Fdl72aTOMksVltNh2y95O8yD2SV92?alt=media&token=114bba55-95e6-4ae2-abd8-353d672d00fe" class="img-saturate" style="border-radius: 5px;z-index: -1;width:100%;height:18%;text-align: center;align-content: center"><br/><br/>
                                                             <button style="float:left;margin-top:-45px;position: absolute;margin-left: -30%;color:white;background-color: #28a745;border:none;border-radius:5px"><b>4.5<i class="far fa-star" style="color: white"></i></b></button><br/>
                                                             <div style="width: 100%">
-                                                            <strong style="text-align: center">Trident Academy Of Technology</strong><br/>
-                                                            <small>Infocity,Bhubaneswar</small><br/>
+                                                            <strong style="text-align: center">The Physics Center</strong><br/>
+                                                            <small>Sailashree Vihar Rd, Sailashree Vihar<br> Chandrasekharpur, Bhubaneswar<br> Odisha 751021</small><br/>
                                                             <strong>Course: </strong> B-tech<br/><br/>
                                                             <button type="submit" class="btn btn-dark">Free Class</button>
                                                             <button type="submit" class="btn btn-dark">Apply</button>
@@ -311,8 +370,8 @@
                                                         <center><img alt="treetor" src="https://i.redd.it/1lw8ul3iq3211.jpg" class="img-saturate" style="border-radius: 5px;z-index: -1;width:100%;height:18%;text-align: center;align-content: center"><br/><br/>
                                                             <button style="float:left;margin-top:-45px;position: absolute;margin-left: -30%;color:white;background-color: #28a745;border:none;border-radius:5px"><b>4.5<i class="far fa-star" style="color: white"></i></b></button><br/>
                                                             <div style="width: 100%">
-                                                            <strong style="text-align: center">Trident Academy Of Technology</strong><br/>
-                                                            <small>Infocity,Bhubaneswar</small><br/>
+                                                            <strong style="text-align: center">Achievers of Modern Era</strong><br/>
+                                                            <small>HIG-18/1 Housing Board Colony<br> CSPur BBSR - 751016</small><br/>
                                                             <strong>Course: </strong> B-tech<br/><br/>
                                                             <button type="submit" class="btn btn-dark">Free Class</button>
                                                             <button type="submit" class="btn btn-dark">Apply</button>
@@ -326,8 +385,8 @@
                                                         <center><img alt="treetor" src="https://i.redd.it/1lw8ul3iq3211.jpg" class="img-saturate" style="border-radius: 5px;z-index: -1;width:100%;height:18%;text-align: center;align-content: center"><br/><br/>
                                                             <button style="float:left;margin-top:-45px;position: absolute;margin-left: -30%;color:white;background-color: #28a745;border:none;border-radius:5px"><b>4.5<i class="far fa-star" style="color: white"></i></b></button><br/>
                                                             <div style="width: 100%">
-                                                            <strong style="text-align: center">Trident Academy Of Technology</strong><br/>
-                                                            <small>Infocity,Bhubaneswar</small><br/>
+                                                            <strong style="text-align: center">Prism Animation College</strong><br/>
+                                                            <small>Plot no: MIG(s),Pragati  Enclave <br>Niladari Vihar Road, C.S Pur, Bhubneswar</small><br/>
                                                             <strong>Course: </strong> B-tech<br/><br/>
                                                             <button type="submit" class="btn btn-dark">Free Class</button>
                                                             <button type="submit" class="btn btn-dark">Apply</button>
@@ -336,65 +395,7 @@
                                                         </center> 
                                                     </div>
                                             </div>
-                                            <div class="col-lg-4 col-md-3 col-sm-12 qw text-center" style="margin-bottom: 1%;">
-                                                    <div style="width:80%;box-shadow: 1px 1px 10px green;border-radius: 5px" >
-                                                        <center><img alt="treetor" src="https://i.redd.it/1lw8ul3iq3211.jpg" class="img-saturate" style="border-radius: 5px;z-index: -1;width:100%;height:18%;text-align: center;align-content: center"><br/><br/>
-                                                            <button style="float:left;margin-top:-45px;position: absolute;margin-left: -30%;color:white;background-color: #28a745;border:none;border-radius:5px"><b>4.5<i class="far fa-star" style="color: white"></i></b></button><br/>
-                                                            <div style="width: 100%">
-                                                            <strong style="text-align: center">Trident Academy Of Technology</strong><br/>
-                                                            <small>Infocity,Bhubaneswar</small><br/>
-                                                            <strong>Course: </strong> B-tech<br/><br/>
-                                                            <button type="submit" class="btn btn-dark">Free Class</button>
-                                                            <button type="submit" class="btn btn-dark">Apply</button>
-                                                            <br/><br/>
-                                                            </div>
-                                                        </center> 
-                                                    </div>
-                                            </div>
-                                            <div class="col-lg-4 col-md-3 col-sm-12 qw text-center" style="margin-bottom: 1%;">
-                                                    <div style="width:80%;box-shadow: 1px 1px 10px green;border-radius: 5px" >
-                                                        <center><img alt="treetor" src="https://i.redd.it/1lw8ul3iq3211.jpg" class="img-saturate" style="border-radius: 5px;z-index: -1;width:100%;height:18%;text-align: center;align-content: center"><br/><br/>
-                                                            <button style="float:left;margin-top:-45px;position: absolute;margin-left: -30%;color:white;background-color: #28a745;border:none;border-radius:5px"><b>4.5<i class="far fa-star" style="color: white"></i></b></button><br/>
-                                                            <div style="width: 100%">
-                                                            <strong style="text-align: center">Trident Academy Of Technology</strong><br/>
-                                                            <small>Infocity,Bhubaneswar</small><br/>
-                                                            <strong>Course: </strong> B-tech<br/><br/>
-                                                            <button type="submit" class="btn btn-dark">Free Class</button>
-                                                            <button type="submit" class="btn btn-dark">Apply</button>
-                                                            <br/><br/>
-                                                            </div>
-                                                        </center> 
-                                                    </div>
-                                            </div>
-                                            <div class="col-lg-4 col-md-3 col-sm-12 qw text-center" style="margin-bottom: 1%;">
-                                                    <div style="width:80%;box-shadow: 1px 1px 10px green;border-radius: 5px" >
-                                                        <center><img alt="treetor" src="https://i.redd.it/1lw8ul3iq3211.jpg" class="img-saturate" style="border-radius: 5px;z-index: -1;width:100%;height:18%;text-align: center;align-content: center"><br/><br/>
-                                                            <button style="float:left;margin-top:-45px;position: absolute;margin-left: -30%;color:white;background-color: #28a745;border:none;border-radius:5px"><b>4.5<i class="far fa-star" style="color: white"></i></b></button><br/>
-                                                            <div style="width: 100%">
-                                                            <strong style="text-align: center">Trident Academy Of Technology</strong><br/>
-                                                            <small>Infocity,Bhubaneswar</small><br/>
-                                                            <strong>Course: </strong> B-tech<br/><br/>
-                                                            <button type="submit" class="btn btn-dark">Free Class</button>
-                                                            <button type="submit" class="btn btn-dark">Apply</button>
-                                                            <br/><br/>
-                                                            </div>
-                                                        </center> 
-                                                    </div>
-                                            </div>
-                                            <div class="col-lg-4 col-md-3 col-sm-12 qw text-center" style="margin-bottom: 1%;">
-                                                    <div style="width:80%;box-shadow: 1px 1px 10px green;border-radius: 5px" >
-                                                        <center><img alt="treetor" src="https://i.redd.it/1lw8ul3iq3211.jpg" class="img-saturate" style="border-radius: 5px;z-index: -1;width:100%;height:18%;text-align: center;align-content: center"><br/><br/>
-                                                            <button style="float:left;margin-top:-45px;position: absolute;margin-left: -30%;color:white;background-color: #28a745;border:none;border-radius:5px"><b>4.5<i class="far fa-star" style="color: white"></i></b></button><br/>
-                                                            <div style="width: 100%">
-                                                            <strong style="text-align: center">Trident Academy Of Technology</strong><br/>
-                                                            <small>Infocity,Bhubaneswar</small><br/>
-                                                            <strong>Course: </strong> B-tech<br/><br/>
-                                                            <button type="submit" class="btn btn-dark">Free Class</button>
-                                                            <button type="submit" class="btn btn-dark">Apply</button>
-                                                            <br/><br/>
-                                                            </div>
-                                                        </center> 
-                                                    </div>
+
                                             </div>
 
                                             <!-- extra ends here -->

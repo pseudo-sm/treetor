@@ -585,6 +585,7 @@ def make_teacher(request):
 
     uid = auth.current_user["localId"]
     db.child("users").child("institutes").child(uid).child("teacher").update({'score':'Not Updated','teacher name':"Not Updated",'gender':'Not Updated','dob':'Not Updated','languages':'Not Updated','phone':'Not Updated','address':'Not Updated','hobbies':'Not Updated','interests':'Not Updated','sports':'Not Updated','guardian name':'Not Updated','guardian email':'Not Updated','guardian phone':'Not Updated','guardian dob':'Not Updated','guardian relation':'Not Updated','guardian occupation':'Not Updated','guardian qualification':'Not Updated','school':'Not Updated','class':'Not Updated','treetor center':'Not Updated','board':'Not Updated','percentage':'Not Updated','subjects':'Not Updated','best at':'Not Updated','weak at':'Not Updated','old tuition':'Not Updated','facebook':"Not Updated"})
+    db.child("users").child("teachers").child(uid).child("institutes").update({uid:0})
     all = True
     return HttpResponse(json.dumps(all), content_type='application/json')
 

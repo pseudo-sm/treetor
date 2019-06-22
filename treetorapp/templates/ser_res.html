@@ -94,6 +94,14 @@
             </div>
         </div>
 
+        <script>
+            function scrollresult() {
+                $('html, body').animate({
+                            scrollTop: $("#results").offset().top
+                        }, 1000);
+            }
+            setTimeout(scrollresult,1000);
+        </script>
 
         <!-- Main navbar -->
 
@@ -191,29 +199,49 @@
                     <!-- Hero container -->
                     <div class="container pt-lg pb-xl-md position-relative zindex-100">
                         <div class="row">
-                            <div class="col">
-                                <h2 class="text-white my-4">
-                                <span class="display-4 font-weight-light">treetor</span>
-                                <span class="d-block">A Purpose <strong class="font-weight-light">To Justify Your Purpose.<br/></strong></span>
-                            </h2>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12 text-center text-lg-left">
+                            <div class="col-lg-9 text-center text-lg-left">
 
                                 <div class="">
-                                    <form action="{% url 'search' %}">
+                                    <h2 class="text-white my-4">
+                                <span class="display-4 font-weight-light" style="font-size:1em">Find Your Perfect Subject Mentor!</span>
+                                <span class="d-block" style="font-size:.5em">Teach. Track. Triumph.</span>
+                            </h2>
+                                    <p class="lead text-white"style="font-size:.8em">A unique solution for a flexible and easy search for a mentor. A small step towards building the future of your dreams.</p>
+
+
+
+                                    <form action="{% url 'search' %}" >
                                       <div class="form-row">
 
-                                        
-                                          <div class="col-lg-8 col-xl-8 col-md-8 col-sm-12"style="margin-bottom: 10px">
+
+                                          <div class="col-sm-12 col-md-7" style="margin-top:2%">
                                           <input type="text" name="search" class="form-control" placeholder="Search for Tutors, Tutions and Schools.">
                                         </div>
-                                        <div class="col-lg-2 col-md-2 col-xl-2 col-sm-12">
-                                          <button type="submit"  class="btn btn-dark mb-2" style="width:100%">Search</button>
+                                        <div class="col-md-2 col-sm-12" style="margin-top:2%;width:100% important!">
+                                          <button type="submit" class="btn btn-dark mb-2" style="width:100%">Search</button>
                                         </div>
                                       </div>
                                     </form>
+                                    <style>
+                                        .tongue-rot{
+                                            -ms-transform: rotate(360deg); /* IE 9 */
+                                          -webkit-transform: rotate(360deg); /* Safari */
+                                          transform: rotate(360deg);
+                                        }
+                                    </style>
+
+                                    <div class="mt-5">
+        <!--
+                                        <a href="#sct_page_examples" class="btn btn-dark btn-circle btn-translate--hover btn-icon mr-sm-4 scroll-me">
+                                            <span class="btn-inner--text">Page Examples</span>
+                                            <span class="btn-inner--icon"><i class="fas fa-angle-right"></i></span>
+                                        </a>
+        -->
+                                        <a href="#sct_features" class="btn btn-outline-white btn-circle btn-translate--hover btn-icon d-none d-xl-inline-block scroll-me">
+                                            <span class="btn-inner--icon"><i class="fas fa-file-alt"></i></span>
+                                            <span class="btn-inner--text">Explore Features</span>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -224,7 +252,7 @@
                         
                     <div class="container">
                             
-                        <div class="row">
+                        <div class="row" id="results">
                             {% ifequal empty_results 0 %}
                              <h1 style="color: ghostwhite;text-shadow:1px 2px 1px green;margin-left: 15px">Institutions</h1>
                             {% for i in results %}
@@ -234,7 +262,7 @@
                                         <div class="container">
                                             <div class="row">
                                                 <div class="col-lg-5 col-md-12 col-sm-12 py-3 pb-3">
-                                                    <center><img alt="treetor" src="../static/images/enterprise.png" class="img-saturate" style="width: 80%;height:25%;object-fit: cover;text-align: center;align-content: center;border-radius: 5px;border:none"><br/><br/>
+                                                    <center><img alt="treetor" src="{{i.image}}" class="img-saturate" style="width: 80%;height:25%;object-fit: cover;text-align: center;align-content: center;border-radius: 5px;border:none"><br/><br/>
                                                         <strong style="text-align: center">{{i.name}}</strong>   </center>
                                                 </div>
                                                 <div class="col-lg-5 col-md-12 col-sm-12 py-3 pb-3 ">

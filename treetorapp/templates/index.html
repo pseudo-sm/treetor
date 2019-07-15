@@ -102,7 +102,6 @@
               bottom: 30px;
               right: 30px;
               cursor: pointer;
-              box-shadow: 0px 2px 5px #666;
             }
 
 
@@ -256,7 +255,7 @@
                                 <path class="shape-fill-red" d="M 1084.395 506.137 C 1084.908 504.812 1086.09 503.861 1087.494 503.643 L 1100.645 501.6 C 1102.049 501.381 1103.463 501.929 1104.354 503.036 L 1112.699 513.403 C 1113.59 514.51 1113.823 516.009 1113.31 517.334 L 1108.504 529.744 C 1107.99 531.07 1106.809 532.02 1105.405 532.239 L 1092.254 534.282 C 1090.85 534.5 1089.436 533.953 1088.545 532.845 L 1080.2 522.478 C 1079.309 521.371 1079.076 519.873 1079.589 518.547 L 1084.395 506.137 Z"></path>
                             </svg>
 
-
+<div id="abcd"></div>
                         </figure>
                     </div>
                     <!-- Hero container -->
@@ -311,15 +310,19 @@
                     </div>
                 </section>
             </main>
-                  <div style="margin-top:10%;">
+                  <div style="margin-top:0%;">
+<!--                      <span style="width:500px">Just for You</span>-->
+
                   <div id="floating-button" class="bounce" data-toggle="tooltip" data-placement="left" data-original-title="Create" >
-                        <li class="dropdown-header" style="color:white"></li>
+                       <i class="fas fa-chevron-down" style="color:white"></i><br/><br/>
+                      <span style="float:right;width:90px;margin-right:-35px;color:white">Just for You</span>
+
                   </div>
                   </div>
                     <script>
                         $("#floating-button").click(function() {
                             $('html, body').animate({
-                            scrollTop: $(".con").offset().top
+                            scrollTop: $("#abcd").offset().top
                         }, 1000);
 
                         });
@@ -341,8 +344,10 @@
 
                         </figure>
                     </div>
-                    <div class="container position-relative zindex-100 con">
-                            <h3 style="color: ghostwhite;text-shadow:1px 2px 1px green;margin-left: 10%">Recomended for You</h3>
+
+                    <div class="container position-relative zindex-100 con" style="margin-top:0%">
+                        <strong class="font-weight-700" style="font-size:2em">Recomended for You</strong>
+<!--                            <h3 style="color: ghostwhite;text-shadow:1px 2px 1px green;margin-left: 10%;">Recomended for You</h3>-->
                             <div class="row text-center horscr" style="margin-bottom:1%;overflow-x: auto;white-space: nowrap;display: inline-block;width: 100%">
 
                                 <!-- Repeat From here -->

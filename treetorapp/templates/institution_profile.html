@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="{% static 'css/theme.css' %}">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="icon" href="{% static 'images/text.svg' %}" type="image/png">
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <script src="../static/js/ajax.js"></script>
@@ -171,6 +172,23 @@
             li{
                 margin-top: 10px;
             }
+        </style>
+         <style>
+            .subject-button{
+                background-color:#28a745;
+                border-color:#28CD4E;
+                height:8%;
+                width:10%;
+                margin-left:3%;
+                border-radius:.25em;
+            }
+            .subject-field {
+                border:none;
+                border-bottom:1.5px solid #093a23;
+                padding:2px;
+                box-shadow:2px;
+            }
+
         </style>
 
             
@@ -612,7 +630,7 @@
                                                 <div class="card-header" id="headingTwo">
                                                   <h5 class="mb-0">
                                                     <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                                      Courses
+                                                      Subjects
                                                     </button>
                                                   </h5>
                                                 </div>
@@ -756,32 +774,39 @@
                                                                <div class="px-3 pb-2 text-center">
                                                                     <strong>Subject</strong>
                                                                 </div><hr/>
-                                                                <center>
-                                                                <div data-animate-hover="2">
-                                                                    <button data-toggle="modal" data-target="#acourses"  class="card shadow animate-this animated fadeIn delay-2s add">Add Courses</button>
-                                                                </div>
-                                                                </center>
-                                                              {% if courses %}
-                                                                <table class="courses" id="courses-table" border="2">
-                                                                    <tr>
-                                                                        <th align="center">Course Name</th>
-                                                                        <th align="center">Duration</th>
-                                                                        <th align="center">Weekly Off</th>
-                                                                        <th align="center">Classes</th>
-                                                                        <th align="center">Monthly Fees</th>
-                                                                        <th align="center">Subjects</th>
-                                                                    </tr>
-                                                                        {% for course_names,duration,off,class_1,price,subjects in courses %}
-                                                                         <tr class="edit-row" id="{{course_names}}">
-                                                                            <td>{{course_names}}</td>
-                                                                            <td>{{duration}}</td>
-                                                                            <td>{{off}}</td>
-                                                                            <td>{{class_1}}</td>
-                                                                            <td>{{price}}</td>
-                                                                            <td>{{subjects}}</td>
-                                                                          </tr>
-                                                                        {% endfor %}
-                                                                    <script>
+
+
+                                                                        <div class="subject-form">
+
+                                                                        Subject <input type="text" class="subject-field" important>
+                                                                        for Standard
+                                                                        <select class="standard" important>
+                                                                            <option value="I">I</option>
+                                                                            <option value="II">II</option>
+                                                                            <option value="III">III</option>
+                                                                            <option value="ALL">ALL</option>
+                                                                        </select>
+
+                                                                        </div>
+                                                                        <button class="subject-button add more"><i class="fa fa-plus" style="color:white" aria-hidden="true"></i></button>
+                                                                        <button class="subject-button subject-add"><i class="fa fa-check" style="color:white" aria-hidden="true"></i></button>
+                                                              <table class="courses" id="courses-table" border="2">
+                                                                  <tr>
+                                                                      <th align="center">Id</th>
+                                                                      <th align="center">Subject</th>
+                                                                      <th align="center">Standard</th>
+                                                                  </tr>
+                                                                  <div id="dj-data">
+                                                                  {% for id,subject,standard in subjects %}
+
+                                                                  <tr class="edit-row" id="{{id}}">
+                                                                      <td>{{id}}</td>
+                                                                      <td class="subject-item">{{subject}}</td>
+                                                                      <td class="standard-item">{{standard}}</td>
+                                                                  </tr>
+                                                                  {% endfor %}
+                                                                  </div>
+                                                                      <script>
                                                                         $(".edit-row").click(function(){
                                                                             course_name = $(this).attr('id');
                                                                             $.ajax({
@@ -824,7 +849,44 @@
                                                                         });
                                                                     </script>
 
-                                                                </table>
+                                                              </table>
+                                                              <script>
+                                                                        $(".subject-add").click(function() {
+
+                                                                             subjects = []
+                                                                             standard = []
+                                                                              $('.subject-field').each(function() {
+                                                                                subjects.push($(this).val());
+                                                                             });
+                                                                             $('.standard').each(function() {
+                                                                                standard.push($(this).val());
+                                                                             });
+                                                                             console.log(subjects);
+                                                                             console.log(standard);
+                                                                             $.ajax({
+                                                                                     url: '/add-subjects/',
+                                                                                   data: {
+                                                                                  'subjects':JSON.stringify(subjects),
+                                                                                  'standard':JSON.stringify(standard)
+                                                                                },
+                                                                                dataType: 'json',
+                                                                                success: function (content) {
+
+                                                                                        }
+
+
+                                                                                });
+
+                                                                            });
+                                                                            $(".add, .more").click(function() {
+                                                                                    $(".subject-form").append('<br>Subject <input type="text" class="subject-field" important>for Standard<select class="standard" important><option value="I">I</option><option value="II">II</option><option value="III">III</option><option value="ALL">ALL</option></select>');
+                                                                            })
+                                                                        </script>
+
+                                                              {% if subjects %}
+                                                                <div data-animate-hover="2">
+                                                                    <button data-toggle="modal" data-target="#acourses"  class="card shadow animate-this animated fadeIn delay-2s add">Add Courses</button>
+                                                                </div>
                                                               {% endif %}
                                                           </div>
                                                         </div>
@@ -843,15 +905,31 @@
                                                               {% if batches %}
                                                                 <table class="courses" id="batch-table" border="2">
                                                                     <tr>
-                                                                        <th align="center">Course</th>
-                                                                        <th align="center">Time</th>
+                                                                        <th align="center">Id</th>
+                                                                        <th align="center">Subject</th>
+                                                                        <th align="center">Students</th>
                                                                     </tr>
-                                                                        {% for course,id in batches %}
-                                                                         <tr>
-                                                                            <td>{{course}}</td>
-                                                                            <td>{{time}}</td>
+                                                                        {% for id,subjects,students in batches %}
+                                                                         <tr class="edit-batch-row" id="{{id}}">
+                                                                            <td>{{id}}</td>
+                                                                            {% for subject in subjects %}
+                                                                             <td class="subject-table">{{subject}}</td>
+                                                                             {% endfor %}
+                                                                            <td>{{count}}</td>
                                                                           </tr>
                                                                         {% endfor %}
+                                                                    <script>
+                                                                        $("#edit-batch-row").click(function() {
+                                                                            id = $(this).attr('id');
+
+                                                                        });
+                                                                    </script>
+                                                                    <script>
+                                                                     $(".subject-table").click(function() {
+                                                                           id = $(this).parent().attr("id");
+                                                                           $("#timings,.modal").modal('show');
+                                                                     });
+                                                                 </script>
 
                                                                 </table>
                                                               {% endif %}
@@ -1064,33 +1142,44 @@
             </div>
         </div>
     </footer>
-        <!--modal-->
-        <div class="modal fade" id="acourses" role="dialog">
+
+        <!-- bataches modal-->
+        <div class="modal fade" id="abatches" role="dialog">
             <div class="modal-dialog">
               <!-- Modal content-->
               <div class="modal-content">
                 <div class="modal-header">
-                  <h4 class="modal-title">Fill Subject Information</h4>
+                  <h4 class="modal-title">Fill Batch Information</h4>
                  <button type="button" class="fas fa-times" data-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
 
                   <div>
 
-                  Course Name : <input type="text" class="form-control" id="name"><br>
+                    <div>
+
+
                   Course Duration : <input type="text" class="form-control" id="duration"><br>
                   Weekly Off : <input type="text" id="off" class="form-control"><br>
-                   <div class="classext">
-                        Class : <input type="text" class="form-control class"><br>
-                  </div>
-                      <button class="btn btn-default more" id="addclass">Add Class</button>
-                      <script>
-                      $('#addclass').click(function() {
-                            $('.classext').append('<input type="text" class="form-control class"><br>');
-                      });
-                      </script>
+
                   <div class="coursedet">
-                  Subject Name : <input type="text" class="form-control subject" id="new_subject">
+                      Subject  :
+                      <select class="form-control subject options" id="">
+
+                              <option value="unassigned">Unassigned</option>
+
+                          <script>
+                            function getSubjects() {
+                              $(".edit-row").each(function() {
+                                    id = $(this).attr("id");
+                                    subject = $(this).find('.subject-item').html();
+                                    std = $(this).children('.standard-item').html();
+                                    $(".subject , .options").append("<option value='"+id+"'>"+subject+" ("+std+")"+"</option>");
+                                  });
+                                  }
+                               getSubjects();
+                          </script>
+                      </select>
                   Daily Hours : <input type="text" id="hours" class="form-control hours"><br>
                   Teacher : <select id="teacher" class="form-control teacher">
                                 <option value="unassigned">Unassigned</option>
@@ -1098,82 +1187,17 @@
                                 <option value={{id}}>{{name}}</option>
                                 {% endfor %}
                             </select>
-                  </div><br>
+                     <br>
                   <button id="more" class="form-control more">Add More</button><br>
-                  Monthly Price : <input type="number" class="form-control" id="price"><br>
-                      <!--Teacher : <select  id="new_teacher" >-->
-                                <!--<option>&#45;&#45;/&#45;&#45;</option>-->
-                                <!--{% for i in institution.t_name %}-->
-                                <!--<option>{{i}}</option>-->
-                                <!--{% endfor %}-->
-                              <!--</select><br>-->
                   </div>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-default" id="subjectsubmit">Submit</button>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        <!-- Request modal-->
-        <!-- bataches modal-->
-        <div class="modal fade" id="abatches" role="dialog">
-            <div class="modal-dialog">
-              <!-- Modal content-->
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h4 class="modal-title">Fill Subject Information</h4>
-                 <button type="button" class="fas fa-times" data-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-
-                  <div>
-
-                  <div class="coursedet-batch">
-
-                  Teacher : <select id="teacherbatch" class="form-control teacher">
-                                {% for id,name in all_teachers.items %}
-                                <option value={{id}}>{{name}}</option>
-                                {% endfor %}
-                            </select>
-                   Course : <select id="course" class="form-control teacher">
-                                    {% for course in all_course %}
-                                    <option value='{{course}}'>{{course}}</option>
-                                    {% endfor %}
-                                </select>
-                  </div>
-
                   <br>
-                  <div>
-                      <span>Timings</span><br>
-                      Sunday <br>
-                      Start : <input type="time" class="form-control" id="sunday"><br>
-                      end : <input type="time" class="form-control" id="end-sunday"><br>
-                      Monday :<br>
-                      Start : <input type="time" class="form-control" id="monday"><br>
-                      End : <input type="time" class="form-control" id="end-monday"><br>
-                      Tuesday : <br>
-                      Start :<input type="time" class="form-control" id="tuesday"><br>
-                      End : <input type="time" class="form-control" id="end-tuesday"><br>
-                      Wednessday <br>
-                      Start : <input type="time" class="form-control" id="wednesday"><br>
-                      End : <input type="time" class="form-control" id="end-wednesday"><br>
-                      Thursday <br>
-                      Start : <input type="time" class="form-control" id="thursday"><br>
-                      End : <input type="time" class="form-control" id="end-thursday"><br>
-                      Friday <br>
-                      Start : <input type="time" class="form-control" id="friday"><br>
-                      End : <input type="time" class="form-control" id="end-friday"><br>
-                      Saturday <br>
-                      Start : <input type="time" class="form-control" id="saturday"><br>
-                      End : <input type="time" class="form-control" id="end-saturday"><br>
-                  </div>
+
                   <div>
                       {% for id,name in all_students.items %}
                       <div>{{name}} <input type="checkbox" value="{{id}}" class="students"></div>
                       {% endfor %}
                   </div>
+                      Monthly Price : <input type="number" class="form-control" id="price"><br>
 
                   </div>
                 </div>
@@ -1231,8 +1255,8 @@
         <script>
             $("#more").click(function() {
 
-                $(".coursedet").append('<div><div style="border:1px;border-color:rgb(255,0,0,0.3);border-style:solid;padding:5%;"><button class="fa fa-times cross" style="float:right;background-color:Transparent;outline:none;"></button><br>Subject Name : <input type="text" class="form-control subject" id="new_subject">Daily Hours : <input type="text" id="hours" class="form-control hours">Teacher : <select id="teacher" class="form-control teacher"><option>Unassigned</option>{% for id,name in all_teachers.items %}<option value={{id}}>{{name}}</option>{% endfor %}</select></div><br></div>');
-
+                $(".coursedet").append('<div><div style="border:1px;border-color:rgb(255,0,0,0.3);border-style:solid;padding:5%;"><button class="fa fa-times cross" style="float:right;background-color:Transparent;outline:none;"></button><br>Subject : <select class="form-control subject options" id=""><option value="unassigned">Unassigned</option></select>Daily Hours : <input type="text" id="hours" class="form-control hours">Teacher : <select id="teacher" class="form-control teacher"><option>Unassigned</option>{% for id,name in all_teachers.items %}<option value={{id}}>{{name}}</option>{% endfor %}</select></div><br></div>');
+                getSubjects();
                  $(".cross").click(function() {
                 console.log("clicked");
                 $(this).parent().parent().remove();
@@ -1271,67 +1295,13 @@
             gtag('config', 'UA-104437451-1');
         </script>
         <script>
-            $("#subjectsubmit").click(function() {
 
-                     var duration = $("#duration").val();
-                     var hours = $("#hours").val();
-                     var off = $("#off").val();
-                     var price = $("#price").val();
-                     var name = $("#name").val();
-                     var class1 = []
-                     $('.class').each(function() {
-                        class1.push($(this).val());
-                     });
-                     var hours_all = [];
-                     $('.hours').each(function() {
-                        hours_all.push($(this).val());
-                     });
-                     var subjects = [];
-                     $('.subject').each(function() {
-                        subjects.push($(this).val());
-                     });
-                     var teachers = [];
-                     $('.teacher').each(function() {
-                        teachers.push($(this).val());
-                     });
-                     $.ajax({
-                             url: '/add-courses/',
-                           data: {
-                          'duration':duration,
-                          'hours':hours,
-                          'off':off,
-                          'name':name,
-                          'price':price,
-                          'class':JSON.stringify(class1),
-                          'subjects':JSON.stringify(subjects),
-                          'hours':JSON.stringify(hours_all),
-                          'teachers':JSON.stringify(teachers)
-                        },
-                        dataType: 'json',
-                        success: function (content) {
-                            console.log($('#acourses'));
-                            $('.modal').hide();
-                            $('.fade').hide();
-                            if(!changes){
-                            $('#courses-table').append('<tr class="edit-row" id="'+name+'"><td>'+name+'</td><td>'+duration+'</td><td>'+off+'</td><td>'+price+'</td><td>'+subjects+'</td><td>'+class1+'</td></tr>');
-                            }
-                            else{
-                                $("[id='"+name+"']").remove();
-                                $('#courses-table').append('<tr class="edit-row" id="'+name+'"><td>'+name+'</td><td>'+duration+'</td><td>'+off+'</td><td>'+price+'</td><td>'+subjects+'</td><td>'+class1+'</td></tr>');
-
-
-                            }
-
-                        }
-
-
-                        });
-
-            });
 
             $("#batchsubmit").click(function() {
-                teacher = $("#teacherbatch").val();
-                course = $("#course").val();
+                subjects = [];
+                $(".subject, .options").each(function() { subjects.push($(this).val()); });
+                teachers = [];
+                $(".teacher").each(function() { teachers.push($(this).val()); });
                 sunday = $("#sunday").val();
                 tuesday = $("#tuesday").val();
                 wednesday = $("#wednesday").val();
@@ -1350,25 +1320,25 @@
                  $('.students').each(function() {
                     students.push($(this).val());
                  });
-                 timings = {"monday":monday,"tuesday":tuesday,"wednesday":wednesday,"thursday":thursday,"friday":friday,"saturday":saturday,"sunday":sunday}
-                 endtimings = {"monday":endmonday,"tuesday":endtuesday,"wednesday":endwednesday,"thursday":endthursday,"friday":endfriday,"saturday":endsaturday,"sunday":endsunday}
-                 console.log(timings);
-                 console.log(endtimings);
+                 //timings = {"monday":monday,"tuesday":tuesday,"wednesday":wednesday,"thursday":thursday,"friday":friday,"saturday":saturday,"sunday":sunday}
+                 //endtimings = {"monday":endmonday,"tuesday":endtuesday,"wednesday":endwednesday,"thursday":endthursday,"friday":endfriday,"saturday":endsaturday,"sunday":endsunday}
+
                  $.ajax({
                            url: '/add-batch/',
                            data: {
-                          'teacher':teacher,
-                          'course':course,
+                          'teachers':JSON.stringify(teachers),
+                          'subjects':JSON.stringify(subjects),
                           'students':JSON.stringify(students),
-                          'timings' : JSON.stringify(timings),
-                          'endtimings' : JSON.stringify(endtimings)
+                          //'timings' : JSON.stringify(timings)
+                          //'endtimings' : JSON.stringify(endtimings)
 
                         },
                         dataType: 'json',
                         success: function (content) {
                             $('.modal').hide();
                             $('.fade').hide();
-                            $('#batch-table').append('<tr><td>'+course+'</td><td>'+time+'</td></tr>');
+                            count=students.length;
+                            $('#batch-table').append('<tr><td>'+content+'</td><td>'+course+'</td><td>'+count+'</td></tr>');
 
 
                         }
@@ -1400,7 +1370,96 @@
 
             });
         </script>
+            <div class="modal fade" id="timings" role="dialog">
+            <div class="modal-dialog">
+              <!-- Modal content-->
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Fill Subject Information</h4>
+                 <button type="button" class="fas fa-times dissmiss"  data-dismiss="modal"></button>
+                </div>
+                  <select name="edit-timings" class="timings">
 
+                  </select>
+                  <script>
+                      $(".subject-table").each(function () {
+                            $(".timings").append("<option>"+$(this).html()+"</option>");
+                      });
+                      $(".dissmiss").click(function() {
+                        $(".modal, #timings").modal("toggle");
+                      });
+                  </script>
+                <div  class="modal-body">
+                    <div>
+                        <span>Timings</span><br>
+                        Sunday <br>
+                        Start : <input type="time" class="form-control" id="sunday"><br>
+                        end : <input type="time" class="form-control" id="end-sunday"><br>
+                        Monday :<br>
+                        Start : <input type="time" class="form-control" id="monday">
+                        <br>End : <input type="time" class="form-control" id="end-monday"><br>
+                        Tuesday : <br>
+                        Start :<input type="time" class="form-control" id="tuesday"><br>
+                        End : <input type="time" class="form-control" id="end-tuesday"><br>
+                        Wednessday <br>
+                        Start : <input type="time" class="form-control" id="wednesday"><br>
+                        End : <input type="time" class="form-control" id="end-wednesday"><br>
+                        Thursday <br>Start : <input type="time" class="form-control" id="thursday"><br>
+                        End : <input type="time" class="form-control" id="end-thursday"><br>
+                        Friday <br>
+                        Start : <input type="time" class="form-control" id="friday"><br>
+                        End : <input type="time" class="form-control" id="end-friday"><br>
+                        Saturday <br>
+                        Start : <input type="time" class="form-control" id="saturday"><br>
+                        End : <input type="time" class="form-control" id="end-saturday"><br>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" id="timingsubmit">Submit</button>
+                </div>
+              </div>
+                <script>
+                        $("#timingsubmit").click(function() {
+                        sunday = $("#sunday").val();
+                        tuesday = $("#tuesday").val();
+                        wednesday = $("#wednesday").val();
+                        thursday = $("#thursday").val();
+                        friday = $("#friday").val();
+                        saturday = $("#saturday").val();
+                        monday = $("#monday").val();
+                        endsunday = $("#end-sunday").val();
+                        endtuesday = $("#end-tuesday").val();
+                        endwednesday = $("#end-wednesday").val();
+                        endthursday = $("#end-thursday").val();
+                        endfriday = $("#end-friday").val();
+                        endsaturday = $("#end-saturday").val();
+                        endmonday = $("#end-monday").val();
+                        timings = {"monday":monday,"tuesday":tuesday,"wednesday":wednesday,"thursday":thursday,"friday":friday,"saturday":saturday,"sunday":sunday}
+                        endtimings = {"monday":endmonday,"tuesday":endtuesday,"wednesday":endwednesday,"thursday":endthursday,"friday":endfriday,"saturday":endsaturday,"sunday":endsunday}
+                        subject = $(".timings").val();
+                        $.ajax({
+                             url: '/edit-timings/',
+                           data: {
+                           'batch':id,
+                          'subject':subject,
+                          'timings':JSON.stringify(timings),
+                          'endtimings':JSON.stringify(endtimings)
+                        },
+                        dataType: 'json',
+                        success: function (content) {
+                            $('.modal').hide();
+                            $('.fade').hide();
+
+                        }
+
+
+                        });
+
+                        });
+                  </script>
+            </div>
+          </div>
+        </div>
     </body>
     
 </html>

@@ -20,6 +20,7 @@ from . import views
 
 urlpatterns = [
 
+    url(r'^edit-timings',views.batch_timings,name="batch_timings"),
     url(r'^institute/(?P<uid>[\w\-]+)',views.institution_public,name="institution_public"),
     url(r'^quiz-response/',views.quiz_response,name="quiz_response"),
     url(r'^geolocation/',views.geolocation,name="geolocation"),
@@ -57,7 +58,7 @@ urlpatterns = [
     url(r'^institution-details/',views.institution_details,name="institution_details"),
     url(r'^change-picture/',views.change_picture,name="change_picture"),
     url(r'^make-teacher/',views.add_as_teacher,name="make_teacher"),
-    url(r'^add-courses/',views.add_courses,name="add_courses"),
+    url(r'^add-subjects/',views.add_subjects,name="aqdd_subjects"),
     url(r'^add-teachers/',views.add_teachers,name="add_teachers"),
     url(r'^students/',views.all_students,name="all_students"),
     url(r'^accept-students/',views.accept_students,name="accept_students"),

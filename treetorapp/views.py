@@ -525,21 +525,19 @@ def institution_profile(request):
     pending = False
     pending_list = {}
     course_names = []
+    subject_id = []
+    standards = []
     all_teachers_inst = {}
     courses_context = {}
     institution_data = {"name":name,"classes":classes,"area":area,"teachers":teachers,"students":students,"email":email,"type":type1}
-    if institution.get("courses") is not None:
-        courses = institution["courses"]
-        for course in courses:
-            duration.append(institution["courses"][course]["duration"])
-            course_names.append(course)
-            all_class =  list(institution["courses"][course]["class"].keys())
-            class_1.append(",".join(all_class))
-            off.append(institution["courses"][course]["off"])
-            price.append(institution["courses"][course]["price"])
-            all_subjects = list(institution["courses"][course]["subjects"].keys())
-            subjects.append(",".join(all_subjects))
-    courses_send = (zip(course_names,duration,off,class_1,price,subjects))
+    if institution.get("subjects") is not None:
+        subjects = institution["subjects"]
+        for subject in subjects:
+            subject_id.append(subject)
+            subject_name.append(subjects[subject]["subject"])
+            standards.append(subjects[subject]["standard"])
+
+    courses_send = (zip(subject_id,subject_name,standards))
 
     if institution.get("pending") is not None:
         pl = list(institution["pending"].keys())
@@ -550,14 +548,6 @@ def institution_profile(request):
         teacher_list = list(institution["teachers"].keys())
         for teacher in teacher_list :
             all_teachers_inst.update({teacher:teachers_all[teacher]["name"]})
-    btimes = []
-    bid = []
-    bcourse = []
-    if institution.get("batches") is not None:
-        for id in institution["batches"]:
-            bcourse.append(institution["batches"][id]["course"])
-            bid.append(id)
-    batches = zip(bcourse,bid)
 
     students_context = {}
     all_students = dict(db.child("users").child("students").get().val())
@@ -573,13 +563,26 @@ def institution_profile(request):
         pending_students = ""
     else:
         pending_students = "( "+str(pending_count) + " )"
+    batches = []
+    batch_subjects = []
+    students_batch = []
+    if institution.get("batches") is not None:
+        for batch in institution["batches"]:
+            batches.append(batch)
+            subj = []
+            for subject in institution["batches"][batch]["subjects"]:
+                subj.append(subject)
+            batch_subjects.append(subj)
+        for student in institution["students"]:
+            students_batch.append(student)
+        batches_send = zip(batches,batch_subjects,students_batch)
     if institution.get("students") is not None:
         for student in institution["students"]:
             if institution["students"][student] == 1:
                 students_context.update({student:all_students[student]["name"]})
-        return render(request,"institution_profile.html",{"pending_students":pending_students,"time":time,"image":image,"institution":institution_data,"pending":pending,"pending_list":pending_list,"all_teachers":all_teachers_inst,"courses":courses_send,"done":done,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches})
+        return render(request,"institution_profile.html",{"pending_students":pending_students,"time":time,"image":image,"institution":institution_data,"pending":pending,"pending_list":pending_list,"all_teachers":all_teachers_inst,"subjects":courses_send,"done":done,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches_send})
     else:
-        return render(request,"institution_profile.html",{"pending_students":pending_students,"time":time,"image":image,"institution":institution_data,"done":done,"courses":courses_send,"pending":pending,"pending_list":pending_list,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches})
+        return render(request,"institution_profile.html",{"pending_students":pending_students,"time":time,"image":image,"institution":institution_data,"done":done,"subjects":courses_send,"pending":pending,"pending_list":pending_list,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches_send})
 def make_teacher(request):
 
 
@@ -600,38 +603,18 @@ def institution_update(request):
     db.child("users").child("institutes").child(uid).update({"area":area,"classes":classes,"number students":students,"number teachers":teachers,"type":type})
     return HttpResponse(json.dumps(all),content_type='application/json')
 
-def add_courses(request):
+def add_subjects(request):
 
     uid = auth.current_user["localId"]
-    duration = request.GET.get("duration")
-    off = request.GET.get("off")
-    hours = request.GET.get("hours")
-    name = request.GET.get("name")
-    time = request.GET.get("time")
-    price = request.GET.get("price")
-    subject = request.GET.get("subjects")
-    teachers = request.GET.get("teachers","not assigned")
-    std = request.GET.get("class")
-    subjects = []
-    hours_list= []
-    teachers_list = []
-    class_list = []
-    subj = json.loads(subject)
-    t = json.loads(teachers)
-    h = json.loads(hours)
-    class_list = json.loads(std)
-    subjects = list(dict.fromkeys(subj))
+    subjects = request.GET.get("subjects")
+    standard = request.GET.get("standard")
+    subjects = json.loads(subjects)
+    standard = json.loads(standard)
     for i in range(len(subjects)):
-        teachers_list.append(t[i])
-        hours_list.append(h[i])
-    print(subjects,teachers_list,hours,class_list)
-
-    db.child("users").child("institutes").child(uid).child("courses").child(name).update({"duration":duration,"price":price,"time":time,"off":off,"class":std})
-    for i in range(len(subjects)):
-        db.child("users").child("institutes").child(uid).child("courses").child(name).child("subjects").child(subjects[i]).update({"teacher":teachers_list[i],"hours":hours_list[i]})
-    for i in range(len(class_list)):
-        db.child("users").child("institutes").child(uid).child("courses").child(name).child("class").update({class_list[i]:0})
-    all=True
+        subject_id = random.randint(100000,999999)
+        db.child("users").child("institutes").child(uid).child("subjects").child(subject_id).update({"subject":subjects[i]})
+        db.child("users").child("institutes").child(uid).child("subjects").child(subject_id).update({"standard":standard[i]})
+    all = True
     return JsonResponse(json.dumps(all),content_type='application/json',safe=False)
 
 def add_teachers(request):
@@ -914,23 +897,22 @@ def add_batch(request):
 
     uid = auth.current_user["localId"]
     time = request.GET.get("time")
-    teacher = request.GET.get("teacher")
-    course = request.GET.get("course")
+    subjects = request.GET.get("subjects")
     students = request.GET.get("students")
-    timings = request.GET.get("timings")
-    endtimings = request.GET.get("endtimings")
-    timings = json.loads(timings)
-    endtimings = json.loads(endtimings)
+    subjects = json.loads(subjects)
+    teachers = json.loads(request.GET.get("teachers"))
+    # timings = request.GET.get("timings")
+    # endtimings = request.GET.get("endtimings")
+   # timings = json.loads(timings)
+   # endtimings = json.loads(endtimings)
     students = json.loads(students)
-    # students = students[2:len(students)-2].split(',')
     batch_id = random.randint(100000,999999)
-    db.child("users").child("institutes").child(uid).child("batches").child(batch_id).update({"teacher":teacher,"course":course})
-    for weekday in timings:
-        if timings[weekday] is not "" and endtimings[weekday] is not "":
-            db.child("users").child("institutes").child(uid).child("batches").child(batch_id).child("timings").child(weekday).update({timings[weekday]:endtimings[weekday]})
+
     for student in students:
         db.child("users").child("institutes").child(uid).child("batches").child(batch_id).child("students").update({student:0})
-    content = True
+    for i in range(len(subjects)):
+        db.child("users").child("institutes").child(uid).child("batches").child(batch_id).child("subjects").child(subjects[i]).update({"teacher":teachers[i]})
+    content = batch_id
     return JsonResponse(json.dumps(content),content_type="application/json",safe=False)
 
 @institute_login_required
@@ -1131,4 +1113,25 @@ def edit_course(request):
     uid = auth.current_user["localId"]
     course = request.GET.get("course_name")
     content = dict(db.child("users").child("institutes").child(uid).child("courses").child(course).get().val())
+    return JsonResponse(json.dumps(content),content_type="json/application",safe=False)
+
+
+def fetch_batch(request):
+
+    
+    content = True
+    return JsonResponse(json.dumps(content),content_type="json/application",safe=False)
+
+def batch_timings(request):
+
+    uid = auth.current_user["localId"]
+    batch = request.GET.get("batch")
+    subject = request.GET.get("subject")
+    timings = json.loads(request.GET.get("timings"))
+    endtimings = json.loads(request.GET.get("endtimings"))
+    for i in (timings):
+        if timings[i] is not "":
+            db.child("users").child("institutes").child(uid).child("batches").child(batch).child("subjects").child(subject).child("timings").child(i).update({timings[i]:endtimings[i]})
+
+    content = True
     return JsonResponse(json.dumps(content),content_type="json/application",safe=False)

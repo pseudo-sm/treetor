@@ -327,6 +327,17 @@
                                                                 </div><hr/>
                                                                 <table style="width: 70%">
                                                                 <tr style="height: 45px">
+                                                                    <td ><b>Name:</b></td>
+                                                                    <td id="name"><data class="rawdataBasic">{{name}}</data>
+                                                                    <div class="editBasic" style="display: none;margin-left: 30px">
+                                                                        <div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%">
+                                                                          <input class="text-center" name="name" type="text" style="border-radius: 20px">
+                                                                            <button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button>
+                                                                        </div>
+                                                                    </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr style="height: 45px">
                                                                     <td><b>Gender:</b></td>
                                                                     <td><data id="gender" class="rawdataBasic">{{gender}}</data>
                                                                     <div class="editBasic" style="display: none;margin-left: 30px">
@@ -350,7 +361,7 @@
                                                                     <td id="dob"><data class="rawdataBasic">{{dob}}</data>
                                                                     <div class="editBasic" style="display: none;margin-left: 30px">
                                                                         <div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%">
-                                                                          <input class="text-center" name="dob" type="date" style="border-radius: 20px">
+                                                                          <input class="text-center" name="dob" value="{{dob}}" type="date" style="border-radius: 20px">
                                                                             <button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button>
                                                                         </div>
                                                                     </div>
@@ -483,15 +494,18 @@
                                                             var gender = $("input[name=gender]").val();
                                                           var languages = $("input[name=languages]").val();
                                                           var dob = $("input[name=dob]").val();
+                                                          var name = $("input[name=name]").val();
                                                             $.ajax({
                                                                    url: '/basic-update/',
                                                                    data: {
+                                                                    'name':name,
                                                                      'gender': gender,
                                                                       'languages':languages,
                                                                         'dob':dob
                                                                     },
                                                                    dataType: 'json',
                                                                     success: function (content) {
+                                                                        $('#name').html('<data class="rawdataBasic" >'+name+'</data><div id="editBasic" class="editBasic" style="display: none;margin-left: 30px"><div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"><input type="text" name="languages" style="border-radius: 20px;padding: 5px"><button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button></div></div>');
                                                                         $('#languages').html('<data class="rawdataBasic" >'+languages+'</data><div id="editBasic" class="editBasic" style="display: none;margin-left: 30px"><div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"><input type="text" name="languages" style="border-radius: 20px;padding: 5px"><button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button></div></div>');
                                                                         $('#dob').html('<data class="rawdataBasic">'+dob+'</data><div class="editBasic" style="display: none;margin-left: 30px"><div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%"><input class="text-center" name="dob" type="date" style="border-radius: 20px"><button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button></div></div>');
                                                                         $('#gender').html('<data class="rawdataBasic" >'+gender+'</data>');

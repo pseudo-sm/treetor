@@ -414,10 +414,11 @@ def basic_update(request):
     else:
         user = "students"
 
+    name = request.GET.get("name")
     gender = request.GET.get("gender")
     dob = request.GET.get("dob")
     languages = request.GET.get("languages")
-    db.child("users").child(user).child(uid).update({"gender":gender,"dob":dob,"languages":languages})
+    db.child("users").child(user).child(uid).update({"gender":gender,"dob":dob,"languages":languages,"name":name})
     all = True
     return HttpResponse(json.dumps(all), content_type='application/json')
 def career_update(request):
@@ -566,6 +567,7 @@ def institution_profile(request):
     batches = []
     batch_subjects = []
     students_batch = []
+    batches_send = []
     if institution.get("batches") is not None:
         for batch in institution["batches"]:
             batches.append(batch)

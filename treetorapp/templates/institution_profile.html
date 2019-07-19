@@ -12,7 +12,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <script src="../static/js/ajax.js"></script>
         <script src="../static/js/jQuery.3.3.1.js"></script>
-<!--        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajaxy/1.6.1/scripts/jquery/ajaxy.js" ></script>-->
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inview/1.0.0/jquery.inview.min.js"></script>
@@ -677,7 +676,7 @@
                                                             <div class="card-body">
                                                                 <div class="px-3 pb-2 text-center tool">
                                                                     <strong>Basic Info</strong>
-                                                                    <button id="instbasic"style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 20px" onclick="editBasic(event);"><i id="basic2" class="fas fa-pen"></i></button>
+                                                                    <button id="instbasic"style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 20px" id="edit"><i id="basic2" class="fas fa-pen"></i></button>
                                                                     <button id="gps"style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 20px"><i class="fas fa-map-marker" style="color:#093A23"></i></button>
                                                                     <script>
                                                                         $("#gps").click(function () {
@@ -707,6 +706,11 @@
                                                                             console.log("Browser doesn't support geolocation!");
                                                                         }
                                                                     });
+
+                                                                    $("#basic2").click(function() {
+                                                                        $(".rawdataBasic").css("visibility","hidden");
+                                                                        $(".editBasic").css("display","block");
+                                                                    });
                                                                     </script>
                                                                 </div><hr/>
                                                                 <table style="width: 70%">
@@ -715,7 +719,7 @@
                                                                     <td id="area"><data class="rawdataBasic">{{institution.area}}</data>
                                                                     <div  class="editBasic" style="display: none;margin-left: 30px">
                                                                         <div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%">
-                                                                          <input type="text" placeholder="Enter Languages Known" name="area" style="border-radius: 20px;padding: 5px">
+                                                                          <input type="text" placeholder="Enter Languages Known" value="{{institution.area}}" name="area" style="border-radius: 20px;padding: 5px">
                                                                             <button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button>
                                                                         </div>
                                                                     </div>    
@@ -726,7 +730,7 @@
                                                                         <td id="classes"><data class="rawdataBasic">{{institution.classes}}</data>
                                                                     <div  class="editBasic" style="display: none;margin-left: 30px">
                                                                         <div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%">
-                                                                          <input type="text" placeholder="Enter Languages Known" name="classes" style="border-radius: 20px;padding: 5px">
+                                                                          <input type="text" placeholder="Enter Languages Known" value="{{institution.classes}}" name="classes" style="border-radius: 20px;padding: 5px">
                                                                             <button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button>
                                                                         </div>
                                                                     </div>    
@@ -737,7 +741,7 @@
                                                                         <td id="students"><data class="rawdataBasic">{{institution.students}}</data>
                                                                     <div class="editBasic" style="display: none;margin-left: 30px">
                                                                         <div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%">
-                                                                          <input type="text" placeholder="Enter Languages Known" name="students" style="border-radius: 20px;padding: 5px">
+                                                                          <input type="text" placeholder="Enter Languages Known" value="{{institution.students}}" name="students" style="border-radius: 20px;padding: 5px">
                                                                             <button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button>
                                                                         </div>
                                                                     </div>    
@@ -747,8 +751,8 @@
                                                                     <td><b>Teachers:</b></td>
                                                                         <td id="teachers"><data class="rawdataBasic">{{institution.teachers}}</data>
                                                                     <div  class="editBasic" style="display: none;margin-left: 30px">
-                                                                        <div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%">
-                                                                          <input type="text" placeholder="Enter Languages Known" name="teachers" style="border-radius: 20px;padding: 5px">
+                                                                        <div class="btn-group btn-group-toggle"  data-toggle="buttons" style="width: 100%">
+                                                                          <input type="text" placeholder="Enter Languages Known" value="{{institution.teachers}}" name="teachers" style="border-radius: 20px;padding: 5px">
                                                                             <button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button>
                                                                         </div>
                                                                     </div>
@@ -759,7 +763,7 @@
                                                                         <td id="type"><data class="rawdataBasic">{{institution.type}}</data>
                                                                     <div  class="editBasic" style="display: none;margin-left: 30px">
                                                                         <div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%">
-                                                                          <input type="text" placeholder="Enter Languages Known" name="type" style="border-radius: 20px;padding: 5px">
+                                                                          <input type="text" placeholder="Enter Languages Known" value="{{institution.type}}" name="type" style="border-radius: 20px;padding: 5px">
                                                                             <button style="float: right;color: dimgrey;height: 30px;width: 30px;border-radius: 50px;margin-left: 30px"><i class="fas fa-check"></i></button>
                                                                         </div>
                                                                     </div>

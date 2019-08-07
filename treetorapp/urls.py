@@ -17,9 +17,11 @@ from django.contrib import admin
 from django.conf.urls import include
 from django.conf.urls import url
 from . import views
-
 urlpatterns = [
-
+    #mobile APIs
+    url(r'^get-batches/',views.batches,name="batches"),
+    url(r'^get-batch-students/',views.batch_students,name="batch_students"),
+    #Mobile APis
     url(r'^edit-timings',views.batch_timings,name="batch_timings"),
     url(r'^institute/(?P<uid>[\w\-]+)',views.institution_public,name="institution_public"),
     url(r'^quiz-response/',views.quiz_response,name="quiz_response"),
@@ -81,3 +83,5 @@ urlpatterns = [
 
 
 ]
+from . import views
+

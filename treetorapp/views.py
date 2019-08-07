@@ -183,10 +183,12 @@ def search(request):
     results = []
     subjects = []
     courses_send = []
+    from operator import itemgetter
     token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjY1NmMzZGQyMWQwZmVmODgyZTA5ZTBkODY5MWNhNWM3ZjJiMGQ2MjEiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vdHJlZXRvci03NWIxNCIsImF1ZCI6InRyZWV0b3ItNzViMTQiLCJhdXRoX3RpbWUiOjE1NTYwNjA0MDYsInVzZXJfaWQiOiJqRGRZY2FlQ2diVnVmRGF1UHo0ZlVkYlZpRW4yIiwic3ViIjoiakRkWWNhZUNnYlZ1ZkRhdVB6NGZVZGJWaUVuMiIsImlhdCI6MTU1NjA2MDQwNywiZXhwIjoxNTU2MDY0MDA3LCJlbWFpbCI6InRyaWRlbnRAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbInRyaWRlbnRAZ21haWwuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.TCFqZ_Z6DEp8a9yWxJx1w19dsxPR-0iuVdV3vfpZg1DI2Ss4N44Jph7YUrNNk3BFPHjY_Gp6wA5nxrNRZ2eB367sOyzXgyHAxDgOY-fyBI14xtIrV7xK6NZ1VfMG383Mcx6fEVatpZkx1O8XvZ0Ir-d_Fwz0Bw60hTuTLXu9WAjCH-lchnqMAO5qIvMN6Rx0Aay9vcFHJB7IVHgeKg-AWkh2pC1XYkT7jP45gT0BvudmRwH1QyVACsHFJQ6QQ1Gk6vgkW0UyaAr_N3Hz1Gj4T0QyWD0x7BO3fVwkpUQOa0lyE4GWl7o9Zw3UCk5NUI4fgLsm_rJ3IeYV5TIr7ImS9w"
     if search is not "":
         for institute in data:
             if difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["name"]).lower())).ratio() > 0.3 or difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["area"]).lower())).ratio() > 0.3 :
+                match = difflib.SequenceMatcher(a=search.lower(),b = (str(data[institute]["name"]).lower())).ratio()
                 image = storage.child("users").child("institutes").child(institute).child(institute).get_url(token)
                 r = requests.get(image)
                 if r.status_code == 404:
@@ -199,8 +201,9 @@ def search(request):
                     lat = data[institute]["geolocation"]["latitude"]
                     lon = data[institute]["geolocation"]["longitude"]
                     geo.update({"lat":lat,"lon":lon})
-                results.append({"name":data[institute]["name"],"address":data[institute]["area"],"id":institute,"image":image,"courses":courses_res,"geo":geo})
+                results.append({"match":match,"name":data[institute]["name"],"address":data[institute]["area"],"id":institute,"image":image,"courses":courses_res,"geo":geo})
             if search.lower() in str(data[institute]["name"]).lower() and {"name":data[institute]["name"],"address":data[institute]["area"]} not in results:
+                match = 0.1
                 if data[institute].get("courses") is not None:
                     image = storage.child("users").child("institutes").child(institute).get_url(token)
                     r = requests.get(image)
@@ -213,7 +216,7 @@ def search(request):
                         lat = data[institute]["geolocation"]["latitude"]
                         lon = data[institute]["geolocation"]["longitude"]
                         geo.update({"lat":lat,"lon":lon})
-                    results.append({"image":image,"name":data[institute]["name"],"address":data[institute]["area"],"courses":courses_res,"id":institute,"geo":geo})
+                    results.append({"match":match,"image":image,"name":data[institute]["name"],"address":data[institute]["area"],"courses":courses_res,"id":institute,"geo":geo})
             if data[institute].get("courses"):
                 courses = data[institute]["courses"]
                 for course in courses:
@@ -235,6 +238,7 @@ def search(request):
         empty_courses=1
     else:
         empty_courses=0
+    results.sort(key=lambda x: x["match"])
     if auth.current_user is not None:
         user = find_user(auth.current_user["localId"])
         if user == "students":
@@ -1137,3 +1141,47 @@ def batch_timings(request):
 
     content = True
     return JsonResponse(json.dumps(content),content_type="json/application",safe=False)
+'''
+    Android APIs
+'''
+import calendar
+from datetime import datetime
+import sys
+def batches(request):
+
+    uid = request.GET.get("uid")
+    date = request.GET.get("date")
+    date = date.split("/")
+    dt = datetime(int(date[0]),int(date[1]),int(date[2]))
+    day = calendar.day_name[dt.weekday()].lower()
+    this = dict(db.child("users").child("teachers").child(uid).get().val())
+    all_institutes = dict(db.child("users").child("institutes").get().val())
+    send_batches = []
+    for institute in this["institutes"]:
+        unit = all_institutes[institute]["batches"]
+        for batch in unit:
+            for subject in unit[batch]["subjects"]:
+                timing = unit[batch]["subjects"][subject]["timings"]
+                if uid == unit[batch]["subjects"][subject]["teacher"] and timing.get(day) is not None:
+                    start = int(str(list(timing[day].keys())[0])[:2])
+                    end = int(str(timing[day][str(list(timing[day].keys())[0])])[:2])
+                    duration = end-start
+                    subject = all_institutes[institute]["subjects"][subject]["subject"] + " " + all_institutes[institute]["subjects"][subject]["standard"]
+                    if unit.get("attendance") is not None:
+                        pass
+                    else:
+                        last_class = "-"
+                    send_batches.append({"time":str(list(timing[day].keys())[0]),"subject":subject,"duration":duration,"venue":all_institutes[institute]["name"],"last":last_class,"uid":institute})
+    return JsonResponse(send_batches,safe=False)
+
+def batch_students(request):
+
+    send_students = []
+    uid = request.GET.get("uid")
+    batch_id = request.GET.get("batch")
+    this = dict(db.child("users").child("institutes").child(uid).get().val())
+    students = dict(db.child("users").child("students").get().val())
+    batch = this["batches"][batch_id]["students"]
+    for student in batch:
+        send_students.append({"id":student,"name":students[student]["name"]})
+    return JsonResponse(send_students,safe=False)

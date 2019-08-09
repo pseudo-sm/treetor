@@ -1171,7 +1171,7 @@ def batches(request):
                         pass
                     else:
                         last_class = "-"
-                    send_batches.append({"time":str(list(timing[day].keys())[0]),"subject":subject,"duration":duration,"venue":all_institutes[institute]["name"],"last":last_class,"uid":institute})
+                    send_batches.append({"time":str(list(timing[day].keys())[0]),"subject":subject,"duration":duration,"venue":all_institutes[institute]["name"],"last":last_class,"uid":institute,"batch":batch})
     return JsonResponse(send_batches,safe=False)
 
 def batch_students(request):

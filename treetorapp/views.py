@@ -12,7 +12,7 @@ import requests
 import random
 from math import sin, cos, sqrt, atan2
 import json
-
+from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
 config = {
     'apiKey': "AIzaSyDXqt9Hu_sk_ndXasZzXWdBF2bAGlQwF-g",
@@ -916,6 +916,7 @@ def add_batch(request):
 
     for student in students:
         db.child("users").child("institutes").child(uid).child("batches").child(batch_id).child("students").update({student:0})
+        db.child("users").child("students").child(student).child("institutes").child(uid).child("batches").update({batch_id:0})
     for i in range(len(subjects)):
         db.child("users").child("institutes").child(uid).child("batches").child(batch_id).child("subjects").child(subjects[i]).update({"teacher":teachers[i]})
     content = batch_id
@@ -1185,3 +1186,33 @@ def batch_students(request):
     for student in batch:
         send_students.append({"id":student,"name":students[student]["name"]})
     return JsonResponse(send_students,safe=False)
+
+@csrf_exempt
+def set_attendance(request):
+
+    body = json.loads(request.GET.get("data"))
+    institute = request.GET.get("uid")
+    batch = request.GET.get("batch")
+    print(type(body))
+    now = str(int(datetime.now().timestamp()))
+    try:
+        latest = dict(db.child("users").child("institutes").child(institute).child("batches").child(batch).child("attendance").get().val())
+        if int(now) - int(list(latest.keys())[0]) < 3000:
+            return JsonResponse([True],safe=False)
+    except TypeError:
+        pass
+    for student in body :
+        db.child("users").child("institutes").child(institute).child("batches").child(batch).child("attendance").child(now).update({student:body[student]})
+    return JsonResponse([True],safe=False)
+
+def set_rating(request):
+
+    body = json.loads(request.GET.get("data"))
+    institute = request.GET.get("uid")
+    batch = request.GET.get("batch")
+    print(type(body))
+    now = str(int(datetime.now().timestamp()))
+    for student in body :
+        db.child("users").child("s").child(institute).child("batches").child(batch).child("attendance").child(now).update({student:body[student]})
+    return JsonResponse([True],safe=False)
+

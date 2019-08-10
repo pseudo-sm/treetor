@@ -21,6 +21,7 @@ urlpatterns = [
     #mobile APIs
     url(r'^get-batches/',views.batches,name="batches"),
     url(r'^get-batch-students/',views.batch_students,name="batch_students"),
+    url(r'^set-attendance/',views.set_attendance,name="set_attendance"),
     #Mobile APis
     url(r'^edit-timings',views.batch_timings,name="batch_timings"),
     url(r'^institute/(?P<uid>[\w\-]+)',views.institution_public,name="institution_public"),

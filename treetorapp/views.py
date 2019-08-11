@@ -1196,13 +1196,13 @@ def set_attendance(request):
     print(type(body))
     now = str(int(datetime.now().timestamp()))
     try:
-        latest = dict(db.child("users").child("institutes").child(institute).child("batches").child(batch).child("attendance").get().val())
+        latest = dict(db.child("users").child("institutes").child(institute).child("batches").child(batch).child("daily").get().val())
         if int(now) - int(list(latest.keys())[0]) < 3000:
             return JsonResponse([True],safe=False)
     except TypeError:
         pass
     for student in body :
-        db.child("users").child("institutes").child(institute).child("batches").child(batch).child("attendance").child(now).update({student:body[student]})
+        db.child("users").child("institutes").child(institute).child("batches").child(batch).child("daily").child(now).child("attendance").update({student:body[student]})
     return JsonResponse([True],safe=False)
 
 def set_rating(request):
@@ -1210,9 +1210,22 @@ def set_rating(request):
     body = json.loads(request.GET.get("data"))
     institute = request.GET.get("uid")
     batch = request.GET.get("batch")
-    print(type(body))
+    teach = request.GET.get("teach")
+    next = request.GET.get("next")
+    print(institute,batch,teach,next)
     now = str(int(datetime.now().timestamp()))
+    student = list(body.keys())[0]
+    latest = dict(db.child("users").child("institutes").child(institute).child("batches").child(batch).child("daily").get().val())
+    latest = list(latest.keys())[0]
+    db.child("users").child("institutes").child(institute).child("batches").child(batch).child("daily").child(latest).update({"taught":teach,"next":next})
+    try:
+
+        latest = dict(db.child("users").child("students").child(student).child("institutes").child(institute).child(batch).child("ratings").get().val())
+        if int(now) - int(list(latest.keys())[0]) < 3000:
+            return JsonResponse([True],safe=False)
+    except TypeError:
+        pass
     for student in body :
-        db.child("users").child("s").child(institute).child("batches").child(batch).child("attendance").child(now).update({student:body[student]})
+        db.child("users").child("students").child(student).child("institutes").child(institute).child(batch).child("ratings").child(now).update({"rate":body[student]})
     return JsonResponse([True],safe=False)
 

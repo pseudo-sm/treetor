@@ -1229,3 +1229,15 @@ def set_rating(request):
         db.child("users").child("students").child(student).child("institutes").child(institute).child(batch).child("ratings").child(now).update({"rate":body[student]})
     return JsonResponse([True],safe=False)
 
+def get_students_batch(request):
+
+    uid = request.GET.get("uid")
+    date = request.GET.get("date")
+    institutes = dict(db.child("users").child("institutes").get().val())
+    student = dict(db.child("users").child("students").child(uid).get().val())
+    student_instiutes = student["institutes"]
+    for institute in student_instiutes:
+        for batch in institutes[institute]["batches"]:
+            for instance in institutes[institute]["batches"]:
+                pass
+    return JsonResponse([True],safe=False)

@@ -1162,17 +1162,18 @@ def batches(request):
         unit = all_institutes[institute]["batches"]
         for batch in unit:
             for subject in unit[batch]["subjects"]:
+                print(unit[batch]["subjects"][subject])
                 timing = unit[batch]["subjects"][subject]["timings"]
                 if uid == unit[batch]["subjects"][subject]["teacher"] and timing.get(day) is not None:
                     start = int(str(list(timing[day].keys())[0])[:2])
                     end = int(str(timing[day][str(list(timing[day].keys())[0])])[:2])
                     duration = end-start
-                    subject = all_institutes[institute]["subjects"][subject]["subject"] + " " + all_institutes[institute]["subjects"][subject]["standard"]
+                    subject_name = all_institutes[institute]["subjects"][subject]["subject"] + " " + all_institutes[institute]["subjects"][subject]["standard"]
                     if unit.get("attendance") is not None:
                         pass
                     else:
                         last_class = "-"
-                    send_batches.append({"time":str(list(timing[day].keys())[0]),"subject":subject,"duration":duration,"venue":all_institutes[institute]["name"],"last":last_class,"uid":institute,"batch":batch})
+                    send_batches.append({"time":str(list(timing[day].keys())[0]),"subject":subject_name,"subject_id":subject,"duration":duration,"venue":all_institutes[institute]["name"],"last":last_class,"uid":institute,"batch":batch})
     return JsonResponse(send_batches,safe=False)
 
 def batch_students(request):
@@ -1193,16 +1194,16 @@ def set_attendance(request):
     body = json.loads(request.GET.get("data"))
     institute = request.GET.get("uid")
     batch = request.GET.get("batch")
-    print(type(body))
+    subject_id = request.GET.get("subject_id")
     now = str(int(datetime.now().timestamp()))
     try:
-        latest = dict(db.child("users").child("institutes").child(institute).child("batches").child(batch).child("daily").get().val())
+        latest = dict(db.child("users").child("institutes").child(institute).child("batches").child(batch).child("subjects").child(subject_id).child(batch).child("daily").get().val())
         if int(now) - int(list(latest.keys())[0]) < 3000:
-            return JsonResponse([True],safe=False)
+            return JsonResponse([False],safe=False)
     except TypeError:
         pass
     for student in body :
-        db.child("users").child("institutes").child(institute).child("batches").child(batch).child("daily").child(now).child("attendance").update({student:body[student]})
+        db.child("users").child("institutes").child(institute).child("batches").child(batch).child("subjects").child(subject_id).child("daily").child(now).child("attendance").update({student:body[student]})
     return JsonResponse([True],safe=False)
 
 def set_rating(request):
@@ -1212,10 +1213,11 @@ def set_rating(request):
     batch = request.GET.get("batch")
     teach = request.GET.get("teach")
     next = request.GET.get("next")
+    subject = request.GET.get("subject")
     print(institute,batch,teach,next)
     now = str(int(datetime.now().timestamp()))
     student = list(body.keys())[0]
-    latest = dict(db.child("users").child("institutes").child(institute).child("batches").child(batch).child("daily").get().val())
+    latest = dict(db.child("users").child("institutes").child(institute).child("batches").child(batch).child("subjects").child(subject).child("daily").get().val())
     latest = list(latest.keys())[0]
     db.child("users").child("institutes").child(institute).child("batches").child(batch).child("daily").child(latest).update({"taught":teach,"next":next})
     try:
@@ -1233,11 +1235,39 @@ def get_students_batch(request):
 
     uid = request.GET.get("uid")
     date = request.GET.get("date")
+    date = date.split("/")
+    dt = datetime(int(date[0]),int(date[1]),int(date[2]))
+    day = calendar.day_name[dt.weekday()].lower()
     institutes = dict(db.child("users").child("institutes").get().val())
     student = dict(db.child("users").child("students").child(uid).get().val())
     student_instiutes = student["institutes"]
+    send_batches = []
+    teachers = db.child("users").child("teachers").get().val()
     for institute in student_instiutes:
         for batch in institutes[institute]["batches"]:
-            for instance in institutes[institute]["batches"]:
-                pass
-    return JsonResponse([True],safe=False)
+            present = 0
+            total = 0
+            unit = institutes[institute]["batches"][batch]
+            for subject in institutes[institute]["batches"][batch]["subjects"]:
+                teacher = institutes[institute]["batches"][batch]["subjects"][subject]["teacher"]
+                teacher = teachers[teacher]["name"]
+                timing = unit["subjects"][subject]["timings"]
+                if uid in unit["students"] and timing.get(day) is not None:
+                    if institutes[institute]["batches"][batch]["subjects"][subject].get("daily") is not None:
+                        for instance in institutes[institute]["batches"][batch]["subjects"][subject]["daily"]:
+                            if institutes[institute]["batches"][batch]["subjects"][subject]["daily"][instance]["attendance"][uid] == "1":
+                                present+=1
+                            total+=1
+                        percent = present*100/total
+                    start = int(str(list(timing[day].keys())[0])[:2])
+                    end = int(str(timing[day][str(list(timing[day].keys())[0])])[:2])
+                    duration = end-start
+                    subject_name = institutes[institute]["subjects"][subject]["subject"] + " " + institutes[institute]["subjects"][subject]["standard"]
+                    if unit.get("attendance") is not None:
+                        pass
+                    else:
+                        last_class = "-"
+            
+
+                    send_batches.append({"time":str(list(timing[day].keys())[0]),"subject":subject_name,"subject_id":subject,"duration":duration,"venue":institutes[institute]["name"],"last":last_class,"uid":institute,"batch":batch,"attendance":percent,"teacher":teacher})
+    return JsonResponse([send_batches],safe=False)

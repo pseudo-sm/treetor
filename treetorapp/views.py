@@ -1169,11 +1169,13 @@ def batches(request):
                     end = int(str(timing[day][str(list(timing[day].keys())[0])])[:2])
                     duration = end-start
                     subject_name = all_institutes[institute]["subjects"][subject]["subject"] + " " + all_institutes[institute]["subjects"][subject]["standard"]
-                    if unit.get("attendance") is not None:
-                        pass
+                    if unit[batch]["subjects"][subject].get("daily") is not None:
+                        daily = unit[batch]["subjects"][subject].get("daily")
+                        last_class = daily[list(daily.keys())[len(daily)-1]]["taught"]
+                        next = daily[list(daily.keys())[len(daily)-1]]["next"]
                     else:
                         last_class = "-"
-                    send_batches.append({"time":str(list(timing[day].keys())[0]),"subject":subject_name,"subject_id":subject,"duration":duration,"venue":all_institutes[institute]["name"],"last":last_class,"uid":institute,"batch":batch})
+                    send_batches.append({"time":str(list(timing[day].keys())[0]),"subject":subject_name,"subject_id":subject,"duration":duration,"venue":all_institutes[institute]["name"],"last":last_class,"next":next,"uid":institute,"batch":batch})
     return JsonResponse(send_batches,safe=False)
 
 def batch_students(request):
@@ -1197,7 +1199,7 @@ def set_attendance(request):
     subject_id = request.GET.get("subject_id")
     now = str(int(datetime.now().timestamp()))
     try:
-        latest = dict(db.child("users").child("institutes").child(institute).child("batches").child(batch).child("subjects").child(subject_id).child(batch).child("daily").get().val())
+        latest = dict(db.child("users").child("institutes").child(institute).child("batches").child(batch).child("subjects").child(subject_id).child("daily").child(now).get().val())
         if int(now) - int(list(latest.keys())[0]) < 3000:
             return JsonResponse([False],safe=False)
     except TypeError:
@@ -1219,7 +1221,7 @@ def set_rating(request):
     student = list(body.keys())[0]
     latest = dict(db.child("users").child("institutes").child(institute).child("batches").child(batch).child("subjects").child(subject).child("daily").get().val())
     latest = list(latest.keys())[0]
-    db.child("users").child("institutes").child(institute).child("batches").child(batch).child("daily").child(latest).update({"taught":teach,"next":next})
+    db.child("users").child("institutes").child(institute).child("batches").child(batch).child("subjects").child(subject).child("daily").child(latest).update({"taught":teach,"next":next})
     try:
 
         latest = dict(db.child("users").child("students").child(student).child("institutes").child(institute).child(batch).child("ratings").get().val())
@@ -1273,9 +1275,18 @@ def get_students_batch(request):
                     end = int(str(timing[day][str(list(timing[day].keys())[0])])[:2])
                     duration = end-start
                     subject_name = institutes[institute]["subjects"][subject]["subject"] + " " + institutes[institute]["subjects"][subject]["standard"]
-                    if unit.get("attendance") is not None:
-                        pass
+                    if unit["subjects"][subject].get("daily") is not None:
+                        daily = unit["subjects"][subject].get("daily")
+                        print(list(daily.keys()))
+                        last_class = daily[list(daily.keys())[len(daily)-1]]["taught"]
+                        next = daily[list(daily.keys())[len(daily)-1]]["next"]
                     else:
                         last_class = "-"
-                    send_batches.append({"time":str(list(timing[day].keys())[0]),"subject":subject_name,"subject_id":subject,"duration":duration,"venue":institutes[institute]["name"],"last":last_class,"uid":institute,"batch":batch,"attendance":percent,"teacher":teacher,"average":average_rating})
+                    send_batches.append({"time":str(list(timing[day].keys())[0]),"subject":subject_name,"subject_id":subject,"duration":duration,"venue":institutes[institute]["name"],"last":last_class,"next":next,"uid":institute,"batch":batch,"attendance":percent,"teacher":teacher,"average":average_rating})
     return JsonResponse(send_batches,safe=False)
+
+def all_students_teacher(request):
+    send = {}
+    uid = request.GET.get("uid")
+    instiutes = dict(db.child("users").child(""))
+    return JsonResponse(send,safe=False)

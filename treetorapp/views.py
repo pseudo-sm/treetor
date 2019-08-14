@@ -1239,12 +1239,22 @@ def get_students_batch(request):
     dt = datetime(int(date[0]),int(date[1]),int(date[2]))
     day = calendar.day_name[dt.weekday()].lower()
     institutes = dict(db.child("users").child("institutes").get().val())
-    student = dict(db.child("users").child("students").child(uid).get().val())
+    students = dict(db.child("users").child("students").get().val())
+    student = students[uid]
     student_instiutes = student["institutes"]
     send_batches = []
     teachers = db.child("users").child("teachers").get().val()
     for institute in student_instiutes:
         for batch in institutes[institute]["batches"]:
+            rating = 0
+            total = 0
+            if student["institutes"][institute].get(batch) is not None:
+                for instance in student["institutes"][institute][batch]["ratings"]:
+                    rating+=float(student["institutes"][institute][batch]["ratings"][instance]["rate"])
+                    total+=1
+                average_rating = rating/total
+            else:
+                average_rating = "-"
             present = 0
             total = 0
             unit = institutes[institute]["batches"][batch]
@@ -1267,7 +1277,5 @@ def get_students_batch(request):
                         pass
                     else:
                         last_class = "-"
-            
-
-                    send_batches.append({"time":str(list(timing[day].keys())[0]),"subject":subject_name,"subject_id":subject,"duration":duration,"venue":institutes[institute]["name"],"last":last_class,"uid":institute,"batch":batch,"attendance":percent,"teacher":teacher})
-    return JsonResponse([send_batches],safe=False)
+                    send_batches.append({"time":str(list(timing[day].keys())[0]),"subject":subject_name,"subject_id":subject,"duration":duration,"venue":institutes[institute]["name"],"last":last_class,"uid":institute,"batch":batch,"attendance":percent,"teacher":teacher,"average":average_rating})
+    return JsonResponse(send_batches,safe=False)

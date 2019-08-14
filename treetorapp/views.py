@@ -1286,7 +1286,38 @@ def get_students_batch(request):
     return JsonResponse(send_batches,safe=False)
 
 def all_students_teacher(request):
-    send = {}
+    '''
+    institute standard name
+    '''
+    send = []
     uid = request.GET.get("uid")
-    instiutes = dict(db.child("users").child(""))
+    institutes = dict(db.child("users").child("institutes").get().val())
+    students = dict(db.child("users").child("students").get().val())
+    this = dict(db.child("users").child("teachers").child(uid).child("institutes").get().val())
+    for institute in this:
+        for batch in institutes[institute]["batches"]:
+            students_temp = {}
+            present = 0
+            total = 0
+            attendance = {}
+            for student in institutes[institute]["batches"][batch]["students"]:
+                for subject in institutes[institute]["batches"][batch]["subjects"]:
+                    if institutes[institute]["batches"][batch]["subjects"][subject]["teacher"] == uid and institutes[institute]["batches"][batch]["subjects"][subject].get("daily") is not None:
+                        for instance in institutes[institute]["batches"][batch]["subjects"][subject]["daily"]:
+                            if institutes[institute]["batches"][batch]["subjects"][subject]["daily"][instance]["attendance"][student] == "1":
+                                present+=1
+                            total+=1
+                        attendance.update({institutes[institute]["subjects"][subject]["subject"]+"-"+institutes[institute]["subjects"][subject]["standard"] : present*100/total})
+
+                if students[student]["institutes"][institute].get(batch) is not None:
+                    rating = 0
+                    total = 0
+                    for instance in students[student]["institutes"][institute][batch]["ratings"]:
+                        rating+=float(students[student]["institutes"][institute][batch]["ratings"][instance]["rate"])
+                        total+=1
+                    average_rating = rating/total
+                else:
+                    average_rating = "-"
+                students_temp.update({"uid":student,"name":students[student]["name"],"standard":students[student]["class"],"rating":average_rating})
+            send.append({"batch":batch,"institute":institute,"institute_name":institutes[institute]["name"],"student":students_temp,"attendance":attendance})
     return JsonResponse(send,safe=False)

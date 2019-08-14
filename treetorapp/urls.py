@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^get-students-batches/',views.get_students_batch,name="batch_students"),
     url(r'^set-attendance/',views.set_attendance,name="set_attendance"),
     url(r'^set-rating/',views.set_rating,name="set_rating"),
+    url(r'^all-students-teacher/',views.all_students_teacher,name="all_students_teacher"),
     #Mobile APis
     url(r'^edit-timings',views.batch_timings,name="batch_timings"),
     url(r'^institute/(?P<uid>[\w\-]+)',views.institution_public,name="institution_public"),

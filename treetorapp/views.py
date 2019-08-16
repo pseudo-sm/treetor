@@ -1318,6 +1318,7 @@ def all_students_teacher(request):
                     average_rating = rating/total
                 else:
                     average_rating = "-"
-                students_temp.update({"uid":student,"name":students[student]["name"],"standard":students[student]["class"],"rating":average_rating})
-            send.append({"batch":batch,"institute":institute,"institute_name":institutes[institute]["name"],"student":students_temp,"attendance":attendance})
+                    print(student)
+                    students_temp.update({"uid":student,"name":students[student]["name"],"standard":students[student]["class"],"rating":average_rating})
+                send.append({"batch":batch,"institute":institute,"institute_name":institutes[institute]["name"],"student":students_temp,"attendance":attendance})
     return JsonResponse(send,safe=False)

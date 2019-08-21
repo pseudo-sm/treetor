@@ -546,7 +546,7 @@ def institution_profile(request):
 
     if institution.get("pending") is not None:
         pl = list(institution["pending"].keys())
-        pending = len(pl)
+        pending_teachers = len(pl)
         for id in pl:
             pending_list.update({id:teachers_all[id]["name"]})
     if institution.get("teachers") is not None:
@@ -559,15 +559,21 @@ def institution_profile(request):
     time = institution["signup time"]
     month = str(int(time[5:7])+6)
     time = time[:4]+"/"+month+"/"+time[8:] + " 00:00:00"
-    pending = institution["students"]
-    pending_count = 0
-    for student in pending:
-        if pending[student] == 0:
-            pending_count+=1
-    if pending_count == 0:
+    if institution.get("pending") is not None:
+        pending = institution["pending"]
+    else:
+        pending = []
+    pending_students = 0
+    this_students = []
+    if institution.get("students") is not None:
+        this_students = institution["students"]
+        for student in this_students:
+            if this_students[student] == 0:
+                pending_students+=1
+    if pending_students == 0:
         pending_students = ""
     else:
-        pending_students = "( "+str(pending_count) + " )"
+        pending_students = "( "+str(pending_students) + " )"
     batches = []
     batch_subjects = []
     students_batch = []
@@ -586,9 +592,10 @@ def institution_profile(request):
         for student in institution["students"]:
             if institution["students"][student] == 1:
                 students_context.update({student:all_students[student]["name"]})
-        return render(request,"institution_profile.html",{"pending_students":pending_students,"time":time,"image":image,"institution":institution_data,"pending":pending,"pending_list":pending_list,"all_teachers":all_teachers_inst,"subjects":courses_send,"done":done,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches_send})
+
+        return render(request,"institution_profile.html",{"pending_students":pending_students,"time":time,"image":image,"institution":institution_data,"pending":pending,"pending_list":pending_list,"all_teachers":all_teachers_inst,"subjects":courses_send,"done":done,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches_send,"pending_teachers":pending_teachers})
     else:
-        return render(request,"institution_profile.html",{"pending_students":pending_students,"time":time,"image":image,"institution":institution_data,"done":done,"subjects":courses_send,"pending":pending,"pending_list":pending_list,"also_teacher":also_teacher,"all_students":students_context,"all_course":course_names,"batches":batches_send})
+        return render(request,"institution_profile.html",{"pending_students":pending_students,"time":time,"image":image,"institution":institution_data,"done":done,"subjects":courses_send,"pending_teachers":pending_teachers,"pending_list":pending_list,"also_teacher":also_teacher,"all_students":students_context,"all_teachers":all_teachers_inst,"all_course":course_names,"batches":batches_send})
 def make_teacher(request):
 
 
@@ -680,7 +687,7 @@ def accept_students(request):
     id = request.GET.get("id")
     uid = auth.current_user["localId"]
     db.child("users").child("institutes").child(uid).child("students").update({id:1})
-    db.child("users").child("students").child(id).update({"treetor center":uid})
+    db.child("users").child("students").child(id).child("institutes").update({uid:0})
     content = True
     return JsonResponse(json.dumps(content),safe=False,content_type="json/application")
 
@@ -913,12 +920,16 @@ def add_batch(request):
    # endtimings = json.loads(endtimings)
     students = json.loads(students)
     batch_id = random.randint(100000,999999)
-
     for student in students:
+        print(student)
         db.child("users").child("institutes").child(uid).child("batches").child(batch_id).child("students").update({student:0})
         db.child("users").child("students").child(student).child("institutes").child(uid).child("batches").update({batch_id:0})
     for i in range(len(subjects)):
         db.child("users").child("institutes").child(uid).child("batches").child(batch_id).child("subjects").child(subjects[i]).update({"teacher":teachers[i]})
+        db.child("users").child("teachers").child(teachers[i]).child("institutes").child(uid).child("batches").child(batch_id).child("subjects").update({subjects[i]:0})
+        for student in students:
+            db.child("users").child("students").child(student).child("institutes").child(uid).child("batches").update({batch_id:0})
+
     content = batch_id
     return JsonResponse(json.dumps(content),content_type="application/json",safe=False)
 
@@ -1112,7 +1123,7 @@ def institution_public(request,uid):
                 students_context.update({student:all_students[student]["name"]})
         return render(request,"institution_public.html",{"time":time,"image":image,"institution":institution_data,"all_teachers":all_teachers_inst,"courses":courses_send,"all_students":students_context,"all_course":course_names,"batches":batches})
     else:
-        return render(request,"institution_public.html",{"time":time,"image":image,"institution":institution_data,"courses":courses_send,"all_students":students_context,"all_course":course_names,"batches":batches})
+        return render(request,"institution_public.html",{"time":time,"image":image,"institution":institution_data,"courses":courses_send,"all_students":students_context,"all_course":course_names,"batches":batches,"all_teachers":all_teachers_inst})
 
 
 def edit_course(request):
@@ -1294,31 +1305,55 @@ def all_students_teacher(request):
     institutes = dict(db.child("users").child("institutes").get().val())
     students = dict(db.child("users").child("students").get().val())
     this = dict(db.child("users").child("teachers").child(uid).child("institutes").get().val())
+
     for institute in this:
         for batch in institutes[institute]["batches"]:
-            students_temp = {}
-            present = 0
-            total = 0
-            attendance = {}
+            unit_student = []
             for student in institutes[institute]["batches"][batch]["students"]:
+                name = students[student]["name"]
+                institute_name = institutes[institute]["name"]
+                temp_subject = {}
                 for subject in institutes[institute]["batches"][batch]["subjects"]:
-                    if institutes[institute]["batches"][batch]["subjects"][subject]["teacher"] == uid and institutes[institute]["batches"][batch]["subjects"][subject].get("daily") is not None:
-                        for instance in institutes[institute]["batches"][batch]["subjects"][subject]["daily"]:
-                            if institutes[institute]["batches"][batch]["subjects"][subject]["daily"][instance]["attendance"][student] == "1":
-                                present+=1
-                            total+=1
-                        attendance.update({institutes[institute]["subjects"][subject]["subject"]+"-"+institutes[institute]["subjects"][subject]["standard"] : present*100/total})
-
-                if students[student]["institutes"][institute].get(batch) is not None:
-                    rating = 0
+                    #subjects
+                    if institutes[institute]["batches"][batch]["subjects"][subject]["teacher"] == uid:
+                        temp = (institutes[institute]["subjects"][subject]["subject"]+"-"+institutes[institute]["subjects"][subject]["standard"])
+                    #attendance
+                    present = 0
                     total = 0
-                    for instance in students[student]["institutes"][institute][batch]["ratings"]:
-                        rating+=float(students[student]["institutes"][institute][batch]["ratings"][instance]["rate"])
-                        total+=1
-                    average_rating = rating/total
-                else:
-                    average_rating = "-"
-                    print(student)
-                    students_temp.update({"uid":student,"name":students[student]["name"],"standard":students[student]["class"],"rating":average_rating})
-                send.append({"batch":batch,"institute":institute,"institute_name":institutes[institute]["name"],"student":students_temp,"attendance":attendance})
-    return JsonResponse(send,safe=False)
+                    if institutes[institute]["batches"][batch]["subjects"][subject].get("daily") is not None:
+                        for instance in institutes[institute]["batches"][batch]["subjects"][subject]["daily"]:
+                            for i in institutes[institute]["batches"][batch]["subjects"][subject]["daily"][instance]["attendance"]:
+                                if institutes[institute]["batches"][batch]["subjects"][subject]["daily"][instance]["attendance"][i] == "1":
+                                    present += 1
+                                total+=1
+                            percent = present*100/total
+                    else:
+                        percent = "No Attendance Yet"
+                    temp_subject.update({temp:percent})
+                unit_student.append({"batch":batch,"uid":student,"name":name,"institute_name":institute_name,"institute":institute,"subjects":temp_subject})
+    return JsonResponse(unit_student,safe=False)
+
+def all_batches(request):
+
+    uid = request.GET.get("uid")
+    all_institutes = dict(db.child("users").child("institutes").get().val())
+    institutes = dict(db.child("users").child("teachers").child(uid).child("institutes").get().val())
+    batches = []
+    for institute in institutes:
+        for batch in institutes[institute]["batches"]:
+            subjects = ""
+            for subject in institutes[institute]["batches"][batch]["subjects"]:
+                subjects +=all_institutes[institute]["subjects"][subject]["subject"]+"-"+all_institutes[institute]["subjects"][subject]["standard"]+" "
+            batches.append({"institute":institute,"batch":batch,"subjects":subjects})
+    return JsonResponse(batches,safe=False)
+
+def batch_students(request):
+
+    send_students = []
+    batch = request.GET.get("batch")
+    institute = request.GET.get("uid")
+    this = dict(db.child("users").child("institutes").child(institute).get().val())
+    students = dict(db.child("users").child("students").get().val())
+    for student in this["batches"][batch]["students"]:
+        send_students.append({"id":student,"name":students[student]["name"]})
+    return JsonResponse(send_students,safe=False)

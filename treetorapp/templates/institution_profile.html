@@ -945,8 +945,8 @@
                                                               <div class="px-3 pb-2 text-center">
                                                                     <strong>Teachers</strong>
                                                                 </div><hr/>
-                                                                {% if pending %}
-                                                              <button class="btn btn-default" id="no-request" data-toggle="modal" data-target="#requests" style="background-color:rgb(9,58,35);color:white;">  {{pending}} New Request(s)</button>
+                                                                {% if pending_teachers %}
+                                                              <a class="btn btn-default" id="no-request" data-toggle="modal" data-target="#requests" style="background-color:rgb(9,58,35);color:white;" type="button">  {{pending_teachers}} New Request(s)</a>
                                                                 {% endif %}
                                                               <table class="table">
                                                                   <thead>
@@ -1148,7 +1148,7 @@
     </footer>
 
         <!-- bataches modal-->
-        <div class="modal fade" id="abatches" role="dialog">
+        <div id="abatches" class="modal fade"  role="dialog">
             <div class="modal-dialog">
               <!-- Modal content-->
               <div class="modal-content">
@@ -1185,12 +1185,14 @@
                           </script>
                       </select>
                   Daily Hours : <input type="text" id="hours" class="form-control hours"><br>
+                      {% if all_teachers %}
                   Teacher : <select id="teacher" class="form-control teacher">
                                 <option value="unassigned">Unassigned</option>
                                 {% for id,name in all_teachers.items %}
                                 <option value={{id}}>{{name}}</option>
                                 {% endfor %}
                             </select>
+                      {% endif %}
                      <br>
                   <button id="more" class="form-control more">Add More</button><br>
                   </div>
@@ -1250,7 +1252,7 @@
                     </script>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-default" id="">Submit</button>
+                  <button type="button" class="btn btn-default">Submit</button>
                 </div>
               </div>
 

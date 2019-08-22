@@ -914,10 +914,10 @@ def add_batch(request):
     students = request.GET.get("students")
     subjects = json.loads(subjects)
     teachers = json.loads(request.GET.get("teachers"))
-    # timings = request.GET.get("timings")
+    timings = request.GET.get("timings")
     # endtimings = request.GET.get("endtimings")
-   # timings = json.loads(timings)
-   # endtimings = json.loads(endtimings)
+    # timings = json.loads(timings)
+    # endtimings = json.loads(endtimings)
     students = json.loads(students)
     batch_id = random.randint(100000,999999)
     for student in students:
@@ -1169,6 +1169,7 @@ def batches(request):
     this = dict(db.child("users").child("teachers").child(uid).get().val())
     all_institutes = dict(db.child("users").child("institutes").get().val())
     send_batches = []
+    next = "-"
     for institute in this["institutes"]:
         unit = all_institutes[institute]["batches"]
         for batch in unit:

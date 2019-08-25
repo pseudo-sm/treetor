@@ -1232,7 +1232,7 @@ def set_rating(request):
     now = str(int(datetime.now().timestamp()))
     student = list(body.keys())[0]
     latest = dict(db.child("users").child("institutes").child(institute).child("batches").child(batch).child("subjects").child(subject).child("daily").get().val())
-    latest = list(latest.keys())[0]
+    latest = list(latest.keys())[-1]
     db.child("users").child("institutes").child(institute).child("batches").child(batch).child("subjects").child(subject).child("daily").child(latest).update({"taught":teach,"next":next})
     try:
 

@@ -1136,7 +1136,7 @@ def edit_course(request):
 
 def fetch_batch(request):
 
-    
+
     content = True
     return JsonResponse(json.dumps(content),content_type="json/application",safe=False)
 
@@ -1343,9 +1343,16 @@ def all_batches(request):
     for institute in institutes:
         for batch in institutes[institute]["batches"]:
             subjects = ""
+            days = []
+            instances=0
             for subject in institutes[institute]["batches"][batch]["subjects"]:
                 subjects +=all_institutes[institute]["subjects"][subject]["subject"]+"-"+all_institutes[institute]["subjects"][subject]["standard"]+" "
-            batches.append({"institute":institute,"batch":batch,"subjects":subjects})
+                instances+=1
+            days.append(list(all_institutes[institute]["batches"][batch]["subjects"][subject]["timings"].keys()))
+            quantity = 0
+            for _ in all_institutes[institute]["batches"][batch]["students"]:
+                quantity+=1
+            batches.append({"institute":institute,"batch":batch,"subjects":subjects,"quantity":quantity,"venue":all_institutes[institute]["name"],"days":days,"instances":instances})
     return JsonResponse(batches,safe=False)
 
 def batch_students(request):
@@ -1356,5 +1363,10 @@ def batch_students(request):
     this = dict(db.child("users").child("institutes").child(institute).get().val())
     students = dict(db.child("users").child("students").get().val())
     for student in this["batches"][batch]["students"]:
-        send_students.append({"id":student,"name":students[student]["name"]})
+        rate = 0.0
+        c=0
+        for instance in students[student]["institutes"][institute][batch]["ratings"]:
+            rate+=float(students[student]["institutes"][institute][batch]["ratings"][instance]["rate"])
+            c+=1
+        send_students.append({"id":student,"name":students[student]["name"],"class":students[student]["class"],"phone":students[student]["phone"],"rating":rate/c})
     return JsonResponse(send_students,safe=False)

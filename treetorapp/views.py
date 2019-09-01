@@ -578,11 +578,12 @@ def institution_profile(request):
     batch_subjects = []
     students_batch = []
     batches_send = []
+    batches_all = dict(db.get().val()).get("batches")
     if institution.get("batches") is not None:
         for batch in institution["batches"]:
             batches.append(batch)
             subj = []
-            for subject in institution["batches"][batch]["subjects"]:
+            for subject in batches_all[batch]["subjects"]:
                 subj.append(subject)
             batch_subjects.append(subj)
         for student in institution["students"]:
@@ -905,6 +906,34 @@ def change_picture(request):
     content = True
     return HttpResponseRedirect("/institution-profile/")
 
+#@institute_login_required
+# def add_batch(request):
+#
+#     uid = auth.current_user["localId"]
+#     time = request.GET.get("time")
+#     subjects = request.GET.get("subjects")
+#     students = request.GET.get("students")
+#     subjects = json.loads(subjects)
+#     teachers = json.loads(request.GET.get("teachers"))
+#     timings = request.GET.get("timings")
+#     # endtimings = request.GET.get("endtimings")
+#     # timings = json.loads(timings)
+#     # endtimings = json.loads(endtimings)
+#     students = json.loads(students)
+#     batch_id = random.randint(100000,999999)
+#     for student in students:
+#         print(student)
+#         db.child("users").child("institutes").child(uid).child("batches").child(batch_id).child("students").update({student:0})
+#         db.child("users").child("students").child(student).child("institutes").child(uid).child("batches").update({batch_id:0})
+#     for i in range(len(subjects)):
+#         db.child("users").child("institutes").child(uid).child("batches").child(batch_id).child("subjects").child(subjects[i]).update({"teacher":teachers[i]})
+#         db.child("users").child("teachers").child(teachers[i]).child("institutes").child(uid).child("batches").child(batch_id).child("subjects").update({subjects[i]:0})
+#         for student in students:
+#             db.child("users").child("students").child(student).child("institutes").child(uid).child("batches").update({batch_id:0})
+#
+#     content = batch_id
+#     return JsonResponse(json.dumps(content),content_type="application/json",safe=False)
+
 @institute_login_required
 def add_batch(request):
 
@@ -920,16 +949,14 @@ def add_batch(request):
     # endtimings = json.loads(endtimings)
     students = json.loads(students)
     batch_id = random.randint(100000,999999)
+    db.child("users").child("institutes").child(uid).child("batches").update({batch_id:0})
+    db.child("batches").child(batch_id).update({"institute":uid})
     for student in students:
-        print(student)
-        db.child("users").child("institutes").child(uid).child("batches").child(batch_id).child("students").update({student:0})
+        db.child("batches").child(batch_id).child("students").update({student:0})
         db.child("users").child("students").child(student).child("institutes").child(uid).child("batches").update({batch_id:0})
     for i in range(len(subjects)):
-        db.child("users").child("institutes").child(uid).child("batches").child(batch_id).child("subjects").child(subjects[i]).update({"teacher":teachers[i]})
+        db.child("batches").child(batch_id).child("subjects").child(subjects[i]).update({"teacher":teachers[i]})
         db.child("users").child("teachers").child(teachers[i]).child("institutes").child(uid).child("batches").child(batch_id).child("subjects").update({subjects[i]:0})
-        for student in students:
-            db.child("users").child("students").child(student).child("institutes").child(uid).child("batches").update({batch_id:0})
-
     content = batch_id
     return JsonResponse(json.dumps(content),content_type="application/json",safe=False)
 
@@ -1149,7 +1176,7 @@ def batch_timings(request):
     endtimings = json.loads(request.GET.get("endtimings"))
     for i in (timings):
         if timings[i] is not "":
-            db.child("users").child("institutes").child(uid).child("batches").child(batch).child("subjects").child(subject).child("timings").child(i).update({timings[i]:endtimings[i]})
+            db.child("batches").child(batch).child("subjects").child(subject).child("timings").child(i).update({timings[i]:endtimings[i]})
 
     content = True
     return JsonResponse(json.dumps(content),content_type="json/application",safe=False)
@@ -1170,19 +1197,20 @@ def batches(request):
     all_institutes = dict(db.child("users").child("institutes").get().val())
     send_batches = []
     next = "-"
+    batches_all = dict(db.child("batches").get().val())
     for institute in this["institutes"]:
         unit = all_institutes[institute]["batches"]
         for batch in unit:
-            for subject in unit[batch]["subjects"]:
-                print(unit[batch]["subjects"][subject])
-                timing = unit[batch]["subjects"][subject]["timings"]
-                if uid == unit[batch]["subjects"][subject]["teacher"] and timing.get(day) is not None:
+            for subject in batches_all[batch]["subjects"]:
+                # print(unit[batch]["subjects"][subject])
+                timing = batches_all[batch]["subjects"][subject]["timings"]
+                if uid == batches_all[batch]["subjects"][subject]["teacher"] and timing.get(day) is not None:
                     start = int(str(list(timing[day].keys())[0])[:2])
                     end = int(str(timing[day][str(list(timing[day].keys())[0])])[:2])
                     duration = end-start
                     subject_name = all_institutes[institute]["subjects"][subject]["subject"] + " " + all_institutes[institute]["subjects"][subject]["standard"]
-                    if unit[batch]["subjects"][subject].get("daily") is not None:
-                        daily = unit[batch]["subjects"][subject].get("daily")
+                    if batches_all[batch]["subjects"][subject].get("daily") is not None:
+                        daily = batches_all[batch]["subjects"][subject].get("daily")
                         last_class = daily[list(daily.keys())[len(daily)-1]]["taught"]
                         next = daily[list(daily.keys())[len(daily)-1]]["next"]
                     else:
@@ -1190,17 +1218,7 @@ def batches(request):
                     send_batches.append({"time":str(list(timing[day].keys())[0]),"subject":subject_name,"subject_id":subject,"duration":duration,"venue":all_institutes[institute]["name"],"last":last_class,"next":next,"uid":institute,"batch":batch})
     return JsonResponse(send_batches,safe=False)
 
-def batch_students(request):
 
-    send_students = []
-    uid = request.GET.get("uid")
-    batch_id = request.GET.get("batch")
-    this = dict(db.child("users").child("institutes").child(uid).get().val())
-    students = dict(db.child("users").child("students").get().val())
-    batch = this["batches"][batch_id]["students"]
-    for student in batch:
-        send_students.append({"id":student,"name":students[student]["name"]})
-    return JsonResponse(send_students,safe=False)
 
 @csrf_exempt
 def set_attendance(request):
@@ -1211,13 +1229,13 @@ def set_attendance(request):
     subject_id = request.GET.get("subject_id")
     now = str(int(datetime.now().timestamp()))
     try:
-        latest = dict(db.child("users").child("institutes").child(institute).child("batches").child(batch).child("subjects").child(subject_id).child("daily").child(now).get().val())
+        latest = dict(db.child("batches").child(batch).child("subjects").child(subject_id).child("daily").child(now).get().val())
         if int(now) - int(list(latest.keys())[0]) < 3000:
             return JsonResponse([False],safe=False)
     except TypeError:
         pass
     for student in body :
-        db.child("users").child("institutes").child(institute).child("batches").child(batch).child("subjects").child(subject_id).child("daily").child(now).child("attendance").update({student:body[student]})
+        db.child("batches").child(batch).child("subjects").child(subject_id).child("daily").child(now).child("attendance").update({student:body[student]})
     return JsonResponse([True],safe=False)
 
 def set_rating(request):
@@ -1228,21 +1246,20 @@ def set_rating(request):
     teach = request.GET.get("teach")
     next = request.GET.get("next")
     subject = request.GET.get("subject")
-    print(institute,batch,teach,next)
     now = str(int(datetime.now().timestamp()))
     student = list(body.keys())[0]
-    latest = dict(db.child("users").child("institutes").child(institute).child("batches").child(batch).child("subjects").child(subject).child("daily").get().val())
+    latest = dict(db.child("batches").child(batch).child("subjects").child(subject).child("daily").get().val())
     latest = list(latest.keys())[-1]
-    db.child("users").child("institutes").child(institute).child("batches").child(batch).child("subjects").child(subject).child("daily").child(latest).update({"taught":teach,"next":next})
+    db.child("batches").child(batch).child("subjects").child(subject).child("daily").child(latest).update({"taught":teach,"next":next})
     try:
 
-        latest = dict(db.child("users").child("students").child(student).child("institutes").child(institute).child(batch).child("ratings").get().val())
+        latest = dict(db.child("batches").child(batch).child("ratings").get().val())
         if int(now) - int(list(latest.keys())[0]) < 3000:
             return JsonResponse([True],safe=False)
     except TypeError:
         pass
     for student in body :
-        db.child("users").child("students").child(student).child("institutes").child(institute).child(batch).child("ratings").child(now).update({"rate":body[student]})
+        db.child("batches").child(batch).child("ratings").child(now).update({"rate":body[student]})
     return JsonResponse([True],safe=False)
 
 def get_students_batch(request):
@@ -1256,6 +1273,7 @@ def get_students_batch(request):
     students = dict(db.child("users").child("students").get().val())
     student = students[uid]
     student_instiutes = student["institutes"]
+    batches_all = dict(db.child("batches").get().val())
     send_batches = []
     teachers = db.child("users").child("teachers").get().val()
     for institute in student_instiutes:
@@ -1263,23 +1281,23 @@ def get_students_batch(request):
             rating = 0
             total = 0
             if student["institutes"][institute].get(batch) is not None:
-                for instance in student["institutes"][institute][batch]["ratings"]:
-                    rating+=float(student["institutes"][institute][batch]["ratings"][instance]["rate"])
+                for instance in batches_all[batch]["ratings"]:
+                    rating+=float(batches_all[batch]["ratings"][instance]["rate"])
                     total+=1
                 average_rating = rating/total
             else:
                 average_rating = "-"
             present = 0
             total = 0
-            unit = institutes[institute]["batches"][batch]
-            for subject in institutes[institute]["batches"][batch]["subjects"]:
-                teacher = institutes[institute]["batches"][batch]["subjects"][subject]["teacher"]
+            unit = batches_all[batch]
+            for subject in batches_all[batch]["subjects"]:
+                teacher = batches_all[batch]["subjects"][subject]["teacher"]
                 teacher = teachers[teacher]["name"]
                 timing = unit["subjects"][subject]["timings"]
                 if uid in unit["students"] and timing.get(day) is not None:
-                    if institutes[institute]["batches"][batch]["subjects"][subject].get("daily") is not None:
-                        for instance in institutes[institute]["batches"][batch]["subjects"][subject]["daily"]:
-                            if institutes[institute]["batches"][batch]["subjects"][subject]["daily"][instance]["attendance"][uid] == "1":
+                    if batches_all[batch]["subjects"][subject].get("daily") is not None:
+                        for instance in batches_all[batch]["subjects"][subject]["daily"]:
+                            if batches_all[batch]["subjects"][subject]["daily"][instance]["attendance"][uid] == "1":
                                 present+=1
                             total+=1
                         percent = present*100/total
@@ -1306,25 +1324,25 @@ def all_students_teacher(request):
     institutes = dict(db.child("users").child("institutes").get().val())
     students = dict(db.child("users").child("students").get().val())
     this = dict(db.child("users").child("teachers").child(uid).child("institutes").get().val())
-
+    batches_all = dict(db.child("batches").get().val())
     for institute in this:
         for batch in institutes[institute]["batches"]:
             unit_student = []
-            for student in institutes[institute]["batches"][batch]["students"]:
+            for student in batches_all[batch]["students"]:
                 name = students[student]["name"]
                 institute_name = institutes[institute]["name"]
                 temp_subject = {}
-                for subject in institutes[institute]["batches"][batch]["subjects"]:
+                for subject in batches_all[batch]["subjects"]:
                     #subjects
-                    if institutes[institute]["batches"][batch]["subjects"][subject]["teacher"] == uid:
+                    if batches_all[batch]["subjects"][subject]["teacher"] == uid:
                         temp = (institutes[institute]["subjects"][subject]["subject"]+"-"+institutes[institute]["subjects"][subject]["standard"])
                     #attendance
                     present = 0
                     total = 0
-                    if institutes[institute]["batches"][batch]["subjects"][subject].get("daily") is not None:
-                        for instance in institutes[institute]["batches"][batch]["subjects"][subject]["daily"]:
-                            for i in institutes[institute]["batches"][batch]["subjects"][subject]["daily"][instance]["attendance"]:
-                                if institutes[institute]["batches"][batch]["subjects"][subject]["daily"][instance]["attendance"][i] == "1":
+                    if batches_all[batch]["subjects"][subject].get("daily") is not None:
+                        for instance in batches_all[batch]["subjects"][subject]["daily"]:
+                            for i in batches_all[batch]["subjects"][subject]["daily"][instance]["attendance"]:
+                                if batches_all[batch]["subjects"][subject]["daily"][instance]["attendance"][i] == "1":
                                     present += 1
                                 total+=1
                             percent = present*100/total
@@ -1339,18 +1357,19 @@ def all_batches(request):
     uid = request.GET.get("uid")
     all_institutes = dict(db.child("users").child("institutes").get().val())
     institutes = dict(db.child("users").child("teachers").child(uid).child("institutes").get().val())
+    batches_all = dict(db.child("batches").get().val())
     batches = []
     for institute in institutes:
         for batch in institutes[institute]["batches"]:
             subjects = ""
             days = []
             instances=0
-            for subject in institutes[institute]["batches"][batch]["subjects"]:
+            for subject in batches_all[batch]["subjects"]:
                 subjects +=all_institutes[institute]["subjects"][subject]["subject"]+"-"+all_institutes[institute]["subjects"][subject]["standard"]+" "
                 instances+=1
-            days.append(list(all_institutes[institute]["batches"][batch]["subjects"][subject]["timings"].keys()))
+            days.append(list(batches_all[batch]["subjects"][subject]["timings"].keys()))
             quantity = 0
-            for _ in all_institutes[institute]["batches"][batch]["students"]:
+            for _ in batches_all[batch]["students"]:
                 quantity+=1
             batches.append({"institute":institute,"batch":batch,"subjects":subjects,"quantity":quantity,"venue":all_institutes[institute]["name"],"days":days,"instances":instances})
     return JsonResponse(batches,safe=False)
@@ -1362,11 +1381,12 @@ def batch_students(request):
     institute = request.GET.get("uid")
     this = dict(db.child("users").child("institutes").child(institute).get().val())
     students = dict(db.child("users").child("students").get().val())
-    for student in this["batches"][batch]["students"]:
+    batches_all = dict(db.child("batches").get().val())
+    for student in batches_all[batch]["students"]:
         rate = 0.0
         c=0
-        for instance in students[student]["institutes"][institute][batch]["ratings"]:
-            rate+=float(students[student]["institutes"][institute][batch]["ratings"][instance]["rate"])
+        for instance in batches_all[batch]["ratings"]:
+            rate+=float(batches_all[batch]["ratings"][instance]["rate"])
             c+=1
         send_students.append({"id":student,"name":students[student]["name"],"class":students[student]["class"],"phone":students[student]["phone"],"rating":rate/c})
     return JsonResponse(send_students,safe=False)

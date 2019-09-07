@@ -1,6 +1,8 @@
 from django.shortcuts import render,HttpResponse,HttpResponseRedirect
 from django.http import JsonResponse
+from django.core.mail import EmailMessage
 from requests.exceptions import HTTPError
+from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 import json
 import pyrebase
@@ -106,7 +108,6 @@ def post_signup(request):
     email = request.POST.get("email")
     name = request.POST.get("name")
     password = request.POST.get("password")
-    type = request.POST.get("type")
     auth.create_user_with_email_and_password(email,password)
     auth.sign_in_with_email_and_password(email,password)
     uid = auth.current_user['localId']
@@ -497,7 +498,6 @@ def institution_list(request):
 
 @institute_login_required
 def institution_profile(request):
-
     also_teacher = False
     done = True
     uid = auth.current_user["localId"]
@@ -1180,6 +1180,96 @@ def batch_timings(request):
 
     content = True
     return JsonResponse(json.dumps(content),content_type="json/application",safe=False)
+
+
+def link_form(request, uid):
+
+    return render(request, "institute_form.html", {"uid": uid})
+
+
+def add_data(request):
+    '''
+    this function is called when the user clicks the link in the email sent to users
+    :param request:
+    :return:
+    '''
+    email_list = request.GET.get("emails")
+    type1 = request.GET.get("type")
+    uid = request.GET.get("uid")
+    email_list = json.loads(email_list)
+    for email in email_list:
+        db.child("users").child("institutes").child("temp "+type1).update({email:0})
+        name = db.child("users").child("institutes").child(uid).child("name").get().val()
+        subject = "Treetor Invitation"
+        body = "Hey,\n.You have been invited to join the treetor desk at  "+name+".\nFollow the below link to set your account up. \n Feel free to call our tech department\n 8249619206.\n" + "https://www.treetor.in/"+type1+"-form/" + uid
+        email_msg = EmailMessage(subject, body, settings.EMAIL_HOST_USER, ["mishrasaswath@gmail.com"], reply_to=[email])
+        db.child("users").child("institutes").child(uid).update({"otl": 0})
+        email_msg.send(fail_silently=True)
+    db.child("users").child("institutes").child(uid).update({"otl":1})
+    return JsonResponse(json.dumps(True), content_type="json/application" , safe=False)
+
+def student_form(request,uid):
+
+    '''
+    link sent to students when institute adds students
+    :param request:
+    :param uid:
+    :return:
+    '''
+    return render(request,"student_form.html",{"uid":uid})
+
+def teacher_form(request,uid):
+    '''
+    link sent to teachers when institue adds teachers
+    :param request:
+    :param uid:
+    :return:
+    '''
+    return render(request,"teacher_form.html",{"uid":uid})
+def student_form_submit(request,uid_inst):
+
+    '''
+    on submission from mail link (student_form)
+    :param request:
+    :param uid_inst:
+    :return:
+    '''
+    email = request.POST.get("email")
+    name = request.POST.get("name")
+    password = request.POST.get("password")
+    auth.create_user_with_email_and_password(email, password)
+    uid = auth.current_user["localId"]
+    db.child("users").child("institute").child(uid_inst).child("students").update({uid:0})
+    db.child("users").child('students').child(uid).update(
+        {'score': 'Not Updated', "name": name, "email": email, 'gender': 'Not Updated', 'dob': 'Not Updated',
+         'languages': 'Not Updated', 'phone': 'Not Updated', 'address': 'Not Updated', 'hobbies': 'Not Updated',
+         'interests': 'Not Updated', 'sports': 'Not Updated', 'guardian name': 'Not Updated',
+         'guardian email': 'Not Updated', 'guardian phone': 'Not Updated', 'guardian dob': 'Not Updated',
+         'guardian relation': 'Not Updated', 'guardian occupation': 'Not Updated',
+         'guardian qualification': 'Not Updated', 'school': 'Not Updated', 'class': 'Not Updated',
+         'treetor center': 'Not Updated', 'board': 'Not Updated', 'percentage': 'Not Updated',
+         'subjects': 'Not Updated', 'best at': 'Not Updated', 'weak at': 'Not Updated',
+         'old tuition': 'Not Updated', 'facebook': "Not Updated", "rank": "N/A"})
+
+    return JsonResponse(True,safe=False)
+
+def teacher_form_submit(request):
+    '''
+    action to submission on mail link (teacher_form)
+    :param request:
+    :return:
+    '''
+    email = request.POST.get("email")
+    name = request.POST.get("name")
+    password = request.POST.get("password")
+    auth.create_user_with_email_and_password(email, password)
+    uid = auth.current_user["localId"]
+    db.child("users").child('teachers').child(uid).update(
+        {'Experience': 'Not Updated', "name": name, "email": email, 'gender': 'Not Updated', 'dob': 'Not Updated',
+         'languages': 'Not Updated', 'phone': 'Not Updated', 'address': 'Not Updated',
+         'Qualification': 'Not Updated', 'Treetor institutes': "Not Updated", 'old tuition': 'Not Updated',
+         "facebook": "Not Updated", "rank": "N/A", "score": "N/A", "rating": "N/A"})
+    return HttpResponseRedirect('/teacher-profile/')
 '''
     Android APIs
 '''
@@ -1390,3 +1480,13 @@ def batch_students(request):
             c+=1
         send_students.append({"id":student,"name":students[student]["name"],"class":students[student]["class"],"phone":students[student]["phone"],"rating":rate/c})
     return JsonResponse(send_students,safe=False)
+
+def send_mail_institute(request,uid):
+    # from app to email of registering users (institutes)
+    email = db.child("users").child(uid).child("email").get().val()
+    subject = "Setup Your Institute"
+    body = "Thank you for choosing treetor to enable more efficient learning.\nPlease follow the below link on a desktop or laptop to add data into the institute. Carefully add , teachers and students to the institute. \n Feel free to call our tech department\n 8249619206.\n"+"https://www.treetor.in/institute-form/"+uid
+    email_msg = EmailMessage(subject, body, settings.EMAIL_HOST_USER, [email], reply_to=[email])
+    db.child("users").child("institutes").child(uid).update({"otl":0})
+    email_msg.send(fail_silently=False)
+    return JsonResponse(True,safe=False)

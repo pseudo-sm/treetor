@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.conf.urls import include
+from django.urls import path
 from django.conf.urls import url
 from . import views
 urlpatterns = [
@@ -29,6 +30,10 @@ urlpatterns = [
     url(r'^batch-students/',views.batch_students,name="batch_students"),
     #Mobile APis
     url(r'^edit-timings',views.batch_timings,name="batch_timings"),
+    path('institute-form/<slug:uid>',views.link_form,name="link_form"),
+    path('add-data/',views.add_data,name="add_data"),
+    path('student-form/<slug:uid>',views.student_form,name="student_form"),
+    path('teacher-form/<slug:uid>',views.teacher_form,name="teacher_form"),
     url(r'^institute/(?P<uid>[\w\-]+)',views.institution_public,name="institution_public"),
     url(r'^quiz-response/',views.quiz_response,name="quiz_response"),
     url(r'^geolocation/',views.geolocation,name="geolocation"),
@@ -57,7 +62,8 @@ urlpatterns = [
     url(r'^student-report/',views.student_report,name="student_report"),
     url(r'^edit-course/',views.edit_course,name="edit_course"),
     url(r'^institution-courses/',views.institution_courses,name="institution_courses"),
-    url(r'^institution-form/',views.institution_form,name="institution_form"),
+    url(r'^institution-form/',views.link_form,name="institution_form"),
+    path('send-mail-institute/<slug:uid>',views.send_mail_institute,name="send_mail_institute"),
     url(r'^institution-submit/',views.institution_submit,name="institution_submit"),
     url(r'^institution-list/',views.institution_list,name="institution_list"),
     url(r'^accept-request/',views.accept_request,name="accept_request"),

@@ -1,0 +1,148 @@
+<html>
+<head>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+	<style type="text/css">
+.login-button-container {
+  margin: 32px -15px;
+}
+
+.sign-in {
+  padding-left: 0;
+}
+
+.register {
+  padding-right: 0;
+}
+
+.sign-in__button,
+.register__button {
+  background-color: white;
+  border: 1px solid black;
+  display: block;
+  min-height: 60px;
+  width: 100%;
+}
+.sign-in__button:hover,
+.register__button:hover {
+  background: none;
+  border: 1px solid #ccc;
+  color: green;
+}
+.sign-in__button:focus, .sign-in__button.focus,
+.register__button:focus,
+.register__button.focus {
+  outline: 3px solid orange !important;
+}
+.sign-in__button:active, .sign-in__button.active,
+.register__button:active,
+.register__button.active {
+  background-color: #ccc;
+  border: 1px solid pink;
+  box-shadow: none;
+}
+
+.hidden_clip {
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  position: absolute;
+}
+
+.text-input__field {
+  border: 0;
+  display: block;
+  font-size: 16px;
+  height: 60px;
+  outline: 1px solid #ccc;
+  padding: 18px;
+  width: 100%;
+}
+.text-input__field:focus, .text-input__field.focus {
+  outline: 3px solid orange;
+}
+.text-input__field:active, .text-input__field.active {
+  outline: 1px solid black;
+}
+
+	</style>
+	
+</head>
+<body>
+		<div class="container">
+
+
+  <div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3">
+
+    <div class="row login__form" style="display: block;">
+      <form>
+        <div>
+            <div class="more">
+          <fieldset class="form__fieldset required form__login">
+            <legend class="form__legend--subtitle">Signup</legend>
+
+            <div class="form__field__wrapper form-item"> <label for="name" class="text-input__label">Name<span class="form-required" aria-hidden="true" title="This field is required.">*</span><span class="hidden_clip">a required field.</span></label>
+              <input class="form-control form-text required text-input__field teacher-email" type="text" id="name" name="name" value="" size="60" maxlength="128" aria-required="true" aria-describedby="edit-email-descriptor">
+            </div>
+              <div class="form__field__wrapper form-item"> <label for="email" class="text-input__label">Email address <span class="form-required" aria-hidden="true" title="This field is required.">*</span><span class="hidden_clip">a required field.</span></label>
+              <input class="form-control form-text required text-input__field teacher-email" type="text" id="email" name="email" value="" size="60" maxlength="128" aria-required="true" aria-describedby="edit-email-descriptor">
+            </div>
+              <div class="form__field__wrapper form-item"> <label for="password" class="text-input__label">Password <span class="form-required" aria-hidden="true" title="This field is required.">*</span><span class="hidden_clip">a required field.</span></label>
+              <input class="form-control form-text required text-input__field teacher-email" type="text" id="password" name="password" value="" size="60" maxlength="128" aria-required="true" aria-describedby="edit-email-descriptor">
+            </div>
+              <div class="form__field__wrapper form-item"> <label for="confirm-password" class="text-input__label">Password<span class="form-required" aria-hidden="true" title="This field is required.">*</span><span class="hidden_clip">a required field.</span></label>
+              <input class="form-control form-text required text-input__field teacher-email" type="text" id="confirm-password" name="confirm-password" value="" size="60" maxlength="128" aria-required="true" aria-describedby="edit-email-descriptor">
+            </div>
+
+          </fieldset>
+            <br>
+           </div>
+        </div>
+      </form>
+          <button class="inpt-btn btn btn-primary form-submit js-registerSubmit" type="submit" id="submit" value="Register" style="width:100%">Submit</button>
+        <script>
+                $("#submit").click(function() {
+                    name = $("#name").val();
+                    email = $("#email").val();
+                    password = $("#password").val();
+                    $.ajax({
+                       url: '/student-form-submit/',
+                     data: {
+                    'email':email,
+                    'password':password,
+                    'name':name
+                    'uid':'{{uid}}'
+                  },
+                  dataType: 'json',
+                  success: function (content) {
+                        alert("Successfully Signed Up");
+                     }
+                });
+            </script>
+    </div>
+
+  </div>
+
+</div>
+	<script type="text/javascript">
+		 $('.register__form').hide();
+
+ $('.sign-in__button').click(function(e) {
+   e.preventDefault();
+   $(this).addClass('active');
+   $('.register__button').removeClass('active');
+   $('.login__form').show();
+   $('.register__form').hide();
+   $('#edit-email').focus(); //Should appear after $('.login__form').show(); because if it's before that, the register form doesn't exist in the DOM
+ });
+
+ $('.register__button').click(function(e) {
+   e.preventDefault();
+   $(this).addClass('active');
+   $('.sign-in__button').removeClass('active');
+   $('.register__form').show();
+   $('.login__form').hide();
+   $('#edit-firstname').focus(); //Should appear after $('.register__form').show(); because if it's before that, the register form doesn't exist in the DOM
+ });
+	</script>
+</body>
+</html>

@@ -1405,6 +1405,7 @@ def get_students_batch(request):
                     send_batches.append({"time":str(list(timing[day].keys())[0]),"subject":subject_name,"subject_id":subject,"duration":duration,"venue":institutes[institute]["name"],"last":last_class,"next":next,"uid":institute,"batch":batch,"attendance":percent,"teacher":teacher,"average":average_rating})
     return JsonResponse(send_batches,safe=False)
 
+
 def all_students_teacher(request):
     '''
     institute standard name
@@ -1490,3 +1491,17 @@ def send_mail_institute(request,uid):
     db.child("users").child("institutes").child(uid).update({"otl":0})
     email_msg.send(fail_silently=False)
     return JsonResponse(True,safe=False)
+import ast
+
+def diary_input(request):
+
+    subject = request.GET.get("subject")
+    message = request.GET.get("message")
+    to = request.GET.get("to")
+    recipients = to[2:len(to)-2].split(",")
+    unique = int(datetime.now().timestamp())
+    notice_id = random.randint(111111,999999)
+    db.child("notices").child(notice_id).update({"subject":subject,"message":message,"timestamp":unique})
+    for recipient in recipients:
+        db.child("users").child("students").child(recipient).child("notices").child(unique).update({notice_id:0})
+    return JsonResponse([True],safe=False)

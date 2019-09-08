@@ -1504,5 +1504,6 @@ def diary_input(request):
     db.child("users").child("teachers").child(tid).child("notices").update({notice_id: 0})
     db.child("notices").child(notice_id).update({"subject":subject,"message":message,"timestamp":unique,"sender":tid})
     for recipient in recipients:
+        db.child("notices").child(notice_id).child("receiver").update({recipient:0})
         db.child("users").child("students").child(recipient).child("notices").update({notice_id:0})
     return JsonResponse([True],safe=False)

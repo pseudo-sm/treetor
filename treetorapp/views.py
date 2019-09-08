@@ -1498,10 +1498,10 @@ def diary_input(request):
     subject = request.GET.get("subject")
     message = request.GET.get("message")
     to = request.GET.get("to")
-    recipients = to[2:len(to)-2].split(",")
+    recipients = to.split(",")
     unique = int(datetime.now().timestamp())
     notice_id = random.randint(111111,999999)
-    db.child("users").child("teacheers").child(tid).child("notices").update({notice_id: 0})
+    db.child("users").child("teachers").child(tid).child("notices").update({notice_id: 0})
     db.child("notices").child(notice_id).update({"subject":subject,"message":message,"timestamp":unique,"sender":tid})
     for recipient in recipients:
         db.child("users").child("students").child(recipient).child("notices").update({notice_id:0})

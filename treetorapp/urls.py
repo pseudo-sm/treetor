@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'^batch-students/',views.batch_students,name="batch_students"),
     #Mobile APis
     path("diary-input/",views.diary_input,name="diary_input"),
+    path("diary-output/",views.diary_output,name="diary_output"),
     url(r'^edit-timings',views.batch_timings,name="batch_timings"),
     path('institute-form/<slug:uid>',views.link_form,name="link_form"),
     path('add-data/',views.add_data,name="add_data"),

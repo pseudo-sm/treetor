@@ -1506,3 +1506,13 @@ def diary_input(request):
         db.child("notices").child(unique).child("receiver").update({recipient:0})
         db.child("users").child("students").child(recipient).child("notices").update({unique:0})
     return JsonResponse([True],safe=False)
+def diary_output(request):
+
+    uid = request.GET.get("uid")
+    user = dict(db.child("users").child("students").child(uid).get().val())
+    notices = dict(db.child("notices").get().val())
+    teachers = dict(db.child("users").child("teachers").get().val())
+    notice_array = []
+    for notice_id in user["notices"]:
+        notice_array.append({"subject":notices[notice_id]["subject"],"message":notices[notice_id]["message"],"sender":teachers[notices[notice_id]["sender"]]["name"],"contact":teachers[notices[notice_id]["sender"]]["phone"]})
+    return JsonResponse(notice_array,safe=False)

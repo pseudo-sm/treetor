@@ -543,7 +543,7 @@ def institution_profile(request):
             standards.append(subjects[subject]["standard"])
 
     courses_send = (zip(subject_id,subject_name,standards))
-
+    pending_teachers = 0
     if institution.get("pending") is not None:
         pl = list(institution["pending"].keys())
         pending_teachers = len(pl)

@@ -1487,7 +1487,7 @@ def batch_students(request):
 
 def send_mail_institute(request,uid):
     # from app to email of registering users (institutes)
-    email = db.child("users").child(uid).child("email").get().val()
+    email = db.child("users").child("institutes").child(uid).child("email").get().val()
     subject = "Setup Your Institute"
     body = "Thank you for choosing treetor to enable more efficient learning.\nPlease follow the below link on a desktop or laptop to add data into the institute. Carefully add , teachers and students to the institute. \n Feel free to call our tech department\n 8249619206.\n"+"https://www.treetor.in/institute-form/"+uid
     email_msg = EmailMessage(subject, body, settings.EMAIL_HOST_USER, [email], reply_to=[email])

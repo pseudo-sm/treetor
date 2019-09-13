@@ -1476,10 +1476,13 @@ def batch_students(request):
     for student in batches_all[batch]["students"]:
         rate = 0.0
         c=0
-        for instance in batches_all[batch]["ratings"]:
-            rate+=float(batches_all[batch]["ratings"][instance]["rate"])
-            c+=1
-        send_students.append({"id":student,"name":students[student]["name"],"class":students[student]["class"],"phone":students[student]["phone"],"rating":rate/c})
+        rating_unit_student = 0
+        if batches_all[batch].get("ratings") is not None:
+            for instance in batches_all[batch]["ratings"]:
+                rate+=float(batches_all[batch]["ratings"][instance]["rate"])
+                c+=1
+            rating_unit_student = rate/c
+        send_students.append({"id":student,"name":students[student]["name"],"class":students[student]["class"],"phone":students[student]["phone"],"rating":rating_unit_student})
     return JsonResponse(send_students,safe=False)
 
 def send_mail_institute(request,uid):

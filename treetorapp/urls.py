@@ -28,9 +28,9 @@ urlpatterns = [
     url(r'^all-students-teacher/',views.all_students_teacher,name="all_students_teacher"),
     url(r'^all-batches/',views.all_batches,name="all_batches"),
     url(r'^batch-students/',views.batch_students,name="batch_students"),
+    path("diary-input/", views.diary_input, name="diary_input"),
+    path("diary-output/", views.diary_output, name="diary_output"),
     #Mobile APis
-    path("diary-input/",views.diary_input,name="diary_input"),
-    path("diary-output/",views.diary_output,name="diary_output"),
     url(r'^edit-timings',views.batch_timings,name="batch_timings"),
     path('institute-form/<slug:uid>',views.link_form,name="link_form"),
     path('add-data/',views.add_data,name="add_data"),

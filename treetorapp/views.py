@@ -1513,6 +1513,15 @@ def diary_output(request):
     notices = dict(db.child("notices").get().val())
     teachers = dict(db.child("users").child("teachers").get().val())
     notice_array = []
+
     for notice_id in user["notices"]:
+        timestamp = datetime.fromtimestamp(int(notice_id))
         notice_array.append({"subject":notices[notice_id]["subject"],"message":notices[notice_id]["message"],"sender":teachers[notices[notice_id]["sender"]]["name"],"contact":teachers[notices[notice_id]["sender"]]["phone"]})
     return JsonResponse(notice_array,safe=False)
+
+def mail_viewed(request):
+
+    uid = request.GET.get("uid")
+    notice_id = request.GET.get("notice_id")
+    db.child("users").child("students").child(uid).child("notices").update({notice_id:1})
+    return JsonResponse(True,safe=False)

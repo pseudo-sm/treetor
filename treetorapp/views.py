@@ -1198,13 +1198,13 @@ def add_data(request):
     uid = request.GET.get("uid")
     email_list = json.loads(email_list)
     for email in email_list:
-        db.child("users").child("institutes").child("temp "+type1).update({email:0})
-        name = db.child("users").child("institutes").child(uid).child("name").get().val()
-        subject = "Treetor Invitation"
-        body = "Hey,\n.You have been invited to join the treetor desk at  "+name+".\nFollow the below link to set your account up. \n Feel free to call our tech department\n 8249619206.\n" + "https://www.treetor.in/"+type1+"-form/" + uid
-        email_msg = EmailMessage(subject, body, settings.EMAIL_HOST_USER, ["mishrasaswath@gmail.com"], reply_to=[email])
-        db.child("users").child("institutes").child(uid).update({"otl": 0})
-        email_msg.send(fail_silently=True)
+        db.child("users").child("institutes").child(uid).child("temp "+type1).update({email.replace(".",","):0})
+    name = db.child("users").child("institutes").child(uid).child("adminname").get().val()
+    subject = "Treetor Invitation"
+    body = "Hey,\n.You have been invited to join the treetor desk at  "+name+".\nFollow the below link to set your account up. \n Feel free to call our tech department\n 8249619206.\n" + "https://www.treetor.in/"+type1+"-form/" + uid
+    email_msg = EmailMessage(subject, body, settings.EMAIL_HOST_USER,email_list, reply_to=["care@treetor.in"])
+    db.child("users").child("institutes").child(uid).update({"otl": 0})
+    email_msg.send(fail_silently=True)
     db.child("users").child("institutes").child(uid).update({"otl":1})
     return JsonResponse(json.dumps(True), content_type="json/application" , safe=False)
 
@@ -1234,10 +1234,11 @@ def student_form_submit(request,uid_inst):
     :param uid_inst:
     :return:
     '''
-    email = request.POST.get("email")
-    name = request.POST.get("name")
-    password = request.POST.get("password")
+    email = request.GET.get("email")
+    name = request.GET.get("name")
+    password = request.GET.get("password")
     auth.create_user_with_email_and_password(email, password)
+    auth.sign_in_with_email_and_password(email, password)
     uid = auth.current_user["localId"]
     db.child("users").child("institute").child(uid_inst).child("students").update({uid:0})
     db.child("users").child('students').child(uid).update(
@@ -1253,17 +1254,19 @@ def student_form_submit(request,uid_inst):
 
     return JsonResponse(True,safe=False)
 
-def teacher_form_submit(request):
+def teacher_form_submit(request,uid_inst):
     '''
     action to submission on mail link (teacher_form)
     :param request:
     :return:
     '''
-    email = request.POST.get("email")
-    name = request.POST.get("name")
-    password = request.POST.get("password")
+    email = request.GET.get("email")
+    name = request.GET.get("name")
+    password = request.GET.get("password")
     auth.create_user_with_email_and_password(email, password)
+    auth.sign_in_with_email_and_password(email, password)
     uid = auth.current_user["localId"]
+    db.child("users").child("institutes").child(uid_inst).child("teachers").update({uid:0})
     db.child("users").child('teachers').child(uid).update(
         {'Experience': 'Not Updated', "name": name, "email": email, 'gender': 'Not Updated', 'dob': 'Not Updated',
          'languages': 'Not Updated', 'phone': 'Not Updated', 'address': 'Not Updated',

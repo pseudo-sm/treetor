@@ -105,17 +105,18 @@
                     email = $("#email").val();
                     password = $("#password").val();
                     $.ajax({
-                       url: '/student-form-submit/',
+                       url: '/student-form-submit/'+'{{uid}}',
                      data: {
                     'email':email,
                     'password':password,
-                    'name':name
-                    'uid':'{{uid}}'
+                    'name':name,
+                    'uid':'{{uid}}',
                   },
                   dataType: 'json',
                   success: function (content) {
                         alert("Successfully Signed Up");
                      }
+                  });
                 });
             </script>
     </div>

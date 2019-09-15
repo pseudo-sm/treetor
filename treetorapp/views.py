@@ -1523,10 +1523,10 @@ def diary_output(request):
     notices = dict(db.child("notices").get().val())
     teachers = dict(db.child("users").child("teachers").get().val())
     notice_array = []
-
-    for notice_id in user["notices"]:
-        timestamp = datetime.fromtimestamp(int(notice_id))
-        notice_array.append({"id":notice_id,"subject":notices[notice_id]["subject"],"message":notices[notice_id]["message"],"sender":teachers[notices[notice_id]["sender"]]["name"],"contact":teachers[notices[notice_id]["sender"]]["phone"],"viewed":user["notices"][notice_id]})
+    if user.get("notices") is not None:
+        for notice_id in user["notices"]:
+            timestamp = datetime.fromtimestamp(int(notice_id))
+            notice_array.append({"id":notice_id,"subject":notices[notice_id]["subject"],"message":notices[notice_id]["message"],"sender":teachers[notices[notice_id]["sender"]]["name"],"contact":teachers[notices[notice_id]["sender"]]["phone"],"viewed":user["notices"][notice_id]})
     return JsonResponse(notice_array,safe=False)
 
 def mail_viewed(request):

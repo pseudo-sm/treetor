@@ -1526,7 +1526,14 @@ def diary_output(request):
     if user.get("notices") is not None:
         for notice_id in user["notices"]:
             timestamp = datetime.fromtimestamp(int(notice_id))
-            notice_array.append({"id":notice_id,"subject":notices[notice_id]["subject"],"message":notices[notice_id]["message"],"sender":teachers[notices[notice_id]["sender"]]["name"],"contact":teachers[notices[notice_id]["sender"]]["phone"],"viewed":user["notices"][notice_id]})
+            date = datetime.date(timestamp)
+            d = str(date)[:2]
+            month = str(date.strftime("%B"))[:3]
+            year = date.year
+            h12 = timestamp.strftime("%I:%M %p")
+            h24 = timestamp.strftime("%H:%M")
+            print(d,month,year,h12,h24)
+            notice_array.append({"id":notice_id,"subject":notices[notice_id]["subject"],"message":notices[notice_id]["message"],"sender":teachers[notices[notice_id]["sender"]]["name"],"contact":teachers[notices[notice_id]["sender"]]["phone"],"viewed":user["notices"][notice_id],"date":d,"month":month,"year":year,"h12":h12,"h24":h24})
     return JsonResponse(notice_array,safe=False)
 
 def mail_viewed(request):

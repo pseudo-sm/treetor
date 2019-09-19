@@ -1299,7 +1299,6 @@ def admin_submit(request):
 
     emails = json.loads(request.GET.get("emails"))
     batch = request.GET.get("batch")
-    this_batch = dict(db.child("batches").child(batch).get().val())
     uid_inst = request.GET.get("institute")
     password="Treetor2019"
 
@@ -1309,6 +1308,7 @@ def admin_submit(request):
         uid = auth.current_user["localId"]
         if batch is not None:
             db.child("batches").child(batch).child("students").update({uid:0})
+            db.child("users").child("students").child(uid).child("institutes").child(uid_inst).child("batches").update({batch:0})
         db.child("users").child("institutes").child(uid_inst).child("students").update({uid: 0})
         db.child("users").child('students').child(uid).update(
             {'score': 'Not Updated', "name": "Not Updated", "email": email, 'gender': 'Not Updated', 'dob': 'Not Updated',

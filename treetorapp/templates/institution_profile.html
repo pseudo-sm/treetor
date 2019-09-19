@@ -914,6 +914,9 @@
                                                                         <th align="center">Students</th>
                                                                     </tr>
                                                                         {% for id,subjects,students in batches %}
+                                                                        <script>
+                                                                            console.log('{{id}}');
+                                                                        </script>
                                                                          <tr class="edit-batch-row" id="{{id}}">
                                                                             <td>{{id}}</td>
                                                                             {% for subject in subjects %}
@@ -1163,6 +1166,7 @@
                     <div>
 
 
+                  Batch Name : <input type="text" class="form-control" id="batch_name"><br>
                   Course Duration : <input type="text" class="form-control" id="duration"><br>
                   Weekly Off : <input type="text" id="off" class="form-control"><br>
 
@@ -1225,6 +1229,7 @@
                  <button type="button" class="fas fa-times" data-dismiss="modal"></button>
                 </div>
                 <div  class="modal-body">
+
                     {% for i,j in pending_list.items %}
                     <div class="request" > {{j}} <button id="{{i}}" class="req-btn">Accept</button> </div>
                     {% endfor %}
@@ -1335,6 +1340,7 @@
                           'teachers':JSON.stringify(teachers),
                           'subjects':JSON.stringify(subjects),
                           'students':JSON.stringify(students),
+                          'batch_name':$("#batch_name").val(),
                           //'timings' : JSON.stringify(timings)
                           //'endtimings' : JSON.stringify(endtimings)
 

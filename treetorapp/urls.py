@@ -32,6 +32,11 @@ urlpatterns = [
     path("diary-output/", views.diary_output, name="diary_output"),
     path("mail-viewed/", views.mail_viewed, name="mail_viewed"),
     #Mobile APis
+    #admin apis
+    url(r'^admin-add/',views.admin_add,name="admin_add"),
+    url(r'^admin-submit/',views.admin_submit,name="admin_submit"),
+    path('get-admin-batches/',views.get_admin_batches,name="get_admin_batches"),
+    #admin apis
     url(r'^edit-timings',views.batch_timings,name="batch_timings"),
     path('institute-form/<slug:uid>',views.link_form,name="link_form"),
     path('add-data/',views.add_data,name="add_data"),

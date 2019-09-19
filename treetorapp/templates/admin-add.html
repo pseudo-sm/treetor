@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Admin</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<center>
+<div style="width:50%;">
+    <div class="dropdown">
+  <select class="btn btn-default dropdown-toggle"  id="menu1" data-toggle="dropdown" style="width:100%"><span class="caret"></span>
+      <option role="presentation"><a role="menuitem"  class="institute">--</a></option>
+      {% for item in send %}
+    <option id="{{item.id}}" role="presentation"><a role="menuitem" class="institute">{{item.name}}</a></option>
+      {% endfor %}
+     </select><button  id="get-batches">Get Batches</button>
+
+</div>
+    <br>
+  <div class="dropdown">
+  <select class="btn btn-default dropdown-toggle"  id="menu2" data-toggle="dropdown" style="width:100%"><span class="caret"></span>
+
+      </select>
+      <script>
+            $("#get-batches").click(function() {
+
+                institute = $("#menu1 option:selected").attr('id');
+                console.log(institute);
+                $.ajax({
+                           url: '/get-admin-batches/',
+                           data: {
+                          'institute':institute,
+                        },
+                        dataType: 'json',
+                        success: function (content) {
+                            for(i=0;i<content.length;i++){
+                                $("#menu2").append("<option id = "+content[i]["id"]+">"+content[i]["name"]+"</option>");
+                            }
+                        }
+
+
+                        });
+            });
+        </script>
+</div>
+    <br>
+  <div class="form-group" id="email-group">
+     Emails <input class="form-control emails" type="text"><br>
+  </div>
+    <button class="btn btn-default" id="addmore">Add More</button><br><br>
+    <button type="submit" id="submit" class="btn btn-default">Submit</button>
+    </div>
+    <script>
+        $("#addmore").click(function() {
+            $("#email-group").append("<input class='form-control emails' type='text'><br>");
+        });
+
+        $("#submit").click(function() {
+            emails = []
+            batch_id = $("#menu2 option:selected").attr('id');
+            institute = $("#menu1 option:selected").attr('id');
+            $(".emails").each(function() {
+                emails.push($(this).val());
+            });
+            console.log(batch_id);
+            $.ajax({
+               url: '/admin-submit/',
+               data: {
+              'emails':JSON.stringify(emails),
+              'institute':institute,
+              'batch':batch_id,
+            },
+            dataType: 'json',
+            success: function (content) {
+                alert("Added !!");
+            }
+
+
+            });
+        });
+    </script>
+</center>
+</body>
+</html>

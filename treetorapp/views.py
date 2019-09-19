@@ -586,9 +586,9 @@ def institution_profile(request):
             for subject in batches_all[batch]["subjects"]:
                 subj.append(subject)
             batch_subjects.append(subj)
-        for student in institution["students"]:
-            students_batch.append(student)
-        batches_send = zip(batches,batch_subjects,students_batch)
+            for student in institution["students"]:
+                students_batch.append(student)
+            batches_send = zip(batches,batch_subjects,students_batch)
     if institution.get("students") is not None:
         for student in institution["students"]:
             if institution["students"][student] == 1:
@@ -940,6 +940,7 @@ def add_batch(request):
     uid = auth.current_user["localId"]
     time = request.GET.get("time")
     subjects = request.GET.get("subjects")
+    batch_name = request.GET.get("batch_name")
     students = request.GET.get("students")
     subjects = json.loads(subjects)
     teachers = json.loads(request.GET.get("teachers"))
@@ -950,7 +951,7 @@ def add_batch(request):
     students = json.loads(students)
     batch_id = random.randint(100000,999999)
     db.child("users").child("institutes").child(uid).child("batches").update({batch_id:0})
-    db.child("batches").child(batch_id).update({"institute":uid})
+    db.child("batches").child(batch_id).update({"institute":uid,"batch_name":batch_name})
     for student in students:
         db.child("batches").child(batch_id).child("students").update({student:0})
         db.child("users").child("students").child(student).child("institutes").child(uid).child("batches").update({batch_id:0})
@@ -1240,7 +1241,7 @@ def student_form_submit(request,uid_inst):
     auth.create_user_with_email_and_password(email, password)
     auth.sign_in_with_email_and_password(email, password)
     uid = auth.current_user["localId"]
-    db.child("users").child("institute").child(uid_inst).child("students").update({uid:0})
+    db.child("users").child("institutes").child(uid_inst).child("students").update({uid:0})
     db.child("users").child('students').child(uid).update(
         {'score': 'Not Updated', "name": name, "email": email, 'gender': 'Not Updated', 'dob': 'Not Updated',
          'languages': 'Not Updated', 'phone': 'Not Updated', 'address': 'Not Updated', 'hobbies': 'Not Updated',
@@ -1273,6 +1274,54 @@ def teacher_form_submit(request,uid_inst):
          'Qualification': 'Not Updated', 'Treetor institutes': "Not Updated", 'old tuition': 'Not Updated',
          "facebook": "Not Updated", "rank": "N/A", "score": "N/A", "rating": "N/A"})
     return HttpResponseRedirect('/teacher-profile/')
+
+# admin apis
+def get_admin_batches(request):
+    institute = request.GET.get("institute")
+
+    batches = dict(db.child("users").child("institutes").child(institute).child("batches").get().val())
+    all_batche = dict(db.child("batches").get().val())
+    batch_list = []
+    for i in batches:
+        batch_list.append({"id":i,"name":all_batche[i]["batch_name"]})
+    return JsonResponse(batch_list,safe=False)
+def admin_add(request):
+
+    institutes = dict(db.child("users").child("institutes").get().val())
+    send = []
+    for institute in institutes :
+        batch_unit = []
+        send.append({"id":institute,"name":institutes[institute]["name"]})
+
+    return render(request,"admin-add.html",{"send":send})
+
+def admin_submit(request):
+
+    emails = json.loads(request.GET.get("emails"))
+    batch = request.GET.get("batch")
+    this_batch = dict(db.child("batches").child(batch).get().val())
+    uid_inst = request.GET.get("institute")
+    password="Treetor2019"
+
+    for email in emails:
+        auth.create_user_with_email_and_password(email, password)
+        auth.sign_in_with_email_and_password(email, password)
+        uid = auth.current_user["localId"]
+        if batch is not None:
+            db.child("batches").child(batch).child("students").update({uid:0})
+        db.child("users").child("institutes").child(uid_inst).child("students").update({uid: 0})
+        db.child("users").child('students').child(uid).update(
+            {'score': 'Not Updated', "name": "Not Updated", "email": email, 'gender': 'Not Updated', 'dob': 'Not Updated',
+             'languages': 'Not Updated', 'phone': 'Not Updated', 'address': 'Not Updated', 'hobbies': 'Not Updated',
+             'interests': 'Not Updated', 'sports': 'Not Updated', 'guardian name': 'Not Updated',
+             'guardian email': 'Not Updated', 'guardian phone': 'Not Updated', 'guardian dob': 'Not Updated',
+             'guardian relation': 'Not Updated', 'guardian occupation': 'Not Updated',
+             'guardian qualification': 'Not Updated', 'school': 'Not Updated', 'class': 'Not Updated',
+             'treetor center': 'Not Updated', 'board': 'Not Updated', 'percentage': 'Not Updated',
+             'subjects': 'Not Updated', 'best at': 'Not Updated', 'weak at': 'Not Updated',
+             'old tuition': 'Not Updated', 'facebook': "Not Updated", "rank": "N/A"})
+    return JsonResponse(True,safe=False)
+#admin apis
 '''
     Android APIs
 '''

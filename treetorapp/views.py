@@ -1309,7 +1309,7 @@ def admin_submit(request):
         if batch is not None:
             db.child("batches").child(batch).child("students").update({uid:0})
             db.child("users").child("students").child(uid).child("institutes").child(uid_inst).child("batches").update({batch:0})
-        db.child("users").child("institutes").child(uid_inst).child("students").update({uid: 0})
+        db.child("users").child("institutes").child(uid_inst).child("students").update({uid: 1})
         db.child("users").child('students').child(uid).update(
             {'score': 'Not Updated', "name": "Not Updated", "email": email, 'gender': 'Not Updated', 'dob': 'Not Updated',
              'languages': 'Not Updated', 'phone': 'Not Updated', 'address': 'Not Updated', 'hobbies': 'Not Updated',

@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <style>
+        .student-data{
+        padding : 5px;
+        border-style: solid;
+        border-width: 1px;
+        }
+    </style>
 </head>
 <body>
 
@@ -50,28 +57,38 @@
 </div>
     <br>
   <div class="form-group" id="email-group">
-     Emails <input class="form-control emails" type="text"><br>
-  </div>
+     Students
+      <div class="form-group student-data">
+          <input class="form-control names" placeholder="name" type="text"><br>
+      <input class="form-control emails" placeholder="email" type="email">
+      </div>
+
+      </div>
     <button class="btn btn-default" id="addmore">Add More</button><br><br>
     <button type="submit" id="submit" class="btn btn-default">Submit</button>
     </div>
     <script>
         $("#addmore").click(function() {
-            $("#email-group").append("<input class='form-control emails' type='text'><br>");
+            $("#email-group").append("<div class='form-group student-data'><input class='form-control names' placeholder='email' type='text'><br><input class='form-control emails' placeholder='email' type='email'></div><br>");
         });
 
         $("#submit").click(function() {
             emails = []
+            names = []
             batch_id = $("#menu2 option:selected").attr('id');
             institute = $("#menu1 option:selected").attr('id');
             $(".emails").each(function() {
                 emails.push($(this).val());
+            });
+            $(".names").each(function() {
+                names.push($(this).val());
             });
             console.log(batch_id);
             $.ajax({
                url: '/admin-submit/',
                data: {
               'emails':JSON.stringify(emails),
+              'names':JSON.stringify(names),
               'institute':institute,
               'batch':batch_id,
             },

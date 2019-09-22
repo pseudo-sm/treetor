@@ -1298,20 +1298,21 @@ def admin_add(request):
 def admin_submit(request):
 
     emails = json.loads(request.GET.get("emails"))
+    names = json.loads(request.GET.get("names"))
     batch = request.GET.get("batch")
     uid_inst = request.GET.get("institute")
     password="Treetor2019"
 
-    for email in emails:
-        auth.create_user_with_email_and_password(email, password)
-        auth.sign_in_with_email_and_password(email, password)
+    for i in range(len(emails)):
+        auth.create_user_with_email_and_password(emails[i], password)
+        auth.sign_in_with_email_and_password(emails[i], password)
         uid = auth.current_user["localId"]
         if batch is not None:
             db.child("batches").child(batch).child("students").update({uid:0})
             db.child("users").child("students").child(uid).child("institutes").child(uid_inst).child("batches").update({batch:0})
         db.child("users").child("institutes").child(uid_inst).child("students").update({uid: 1})
         db.child("users").child('students').child(uid).update(
-            {'score': 'Not Updated', "name": "Not Updated", "email": email, 'gender': 'Not Updated', 'dob': 'Not Updated',
+            {'score': 'Not Updated', "name": names[i], "email": emails[i], 'gender': 'Not Updated', 'dob': 'Not Updated',
              'languages': 'Not Updated', 'phone': 'Not Updated', 'address': 'Not Updated', 'hobbies': 'Not Updated',
              'interests': 'Not Updated', 'sports': 'Not Updated', 'guardian name': 'Not Updated',
              'guardian email': 'Not Updated', 'guardian phone': 'Not Updated', 'guardian dob': 'Not Updated',

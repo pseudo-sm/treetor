@@ -1297,30 +1297,52 @@ def admin_add(request):
 
 def admin_submit(request):
 
-    emails = json.loads(request.GET.get("emails"))
+    emails = request.GET.get("emails")
     names = json.loads(request.GET.get("names"))
     batch = request.GET.get("batch")
     uid_inst = request.GET.get("institute")
     password="Treetor2019"
-
-    for i in range(len(emails)):
-        auth.create_user_with_email_and_password(emails[i], password)
-        auth.sign_in_with_email_and_password(emails[i], password)
-        uid = auth.current_user["localId"]
-        if batch is not None:
-            db.child("batches").child(batch).child("students").update({uid:0})
-            db.child("users").child("students").child(uid).child("institutes").child(uid_inst).child("batches").update({batch:0})
-        db.child("users").child("institutes").child(uid_inst).child("students").update({uid: 1})
-        db.child("users").child('students').child(uid).update(
-            {'score': 'Not Updated', "name": names[i], "email": emails[i], 'gender': 'Not Updated', 'dob': 'Not Updated',
-             'languages': 'Not Updated', 'phone': 'Not Updated', 'address': 'Not Updated', 'hobbies': 'Not Updated',
-             'interests': 'Not Updated', 'sports': 'Not Updated', 'guardian name': 'Not Updated',
-             'guardian email': 'Not Updated', 'guardian phone': 'Not Updated', 'guardian dob': 'Not Updated',
-             'guardian relation': 'Not Updated', 'guardian occupation': 'Not Updated',
-             'guardian qualification': 'Not Updated', 'school': 'Not Updated', 'class': 'Not Updated',
-             'treetor center': 'Not Updated', 'board': 'Not Updated', 'percentage': 'Not Updated',
-             'subjects': 'Not Updated', 'best at': 'Not Updated', 'weak at': 'Not Updated',
-             'old tuition': 'Not Updated', 'facebook': "Not Updated", "rank": "N/A"})
+    if emails is not None:
+        emails = json.loads(emails)
+        for i in range(len(emails)):
+            auth.create_user_with_email_and_password(emails[i], password)
+            auth.sign_in_with_email_and_password(emails[i], password)
+            uid = auth.current_user["localId"]
+            if batch is not None:
+                db.child("batches").child(batch).child("students").update({uid: 0})
+                db.child("users").child("students").child(uid).child("institutes").child(uid_inst).child(
+                    "batches").update({batch: 0})
+            db.child("users").child("institutes").child(uid_inst).child("students").update({uid: 1})
+            db.child("users").child('students').child(uid).update(
+                {'score': 'Not Updated', "name": names[i], "email": emails[i], 'gender': 'Not Updated',
+                 'dob': 'Not Updated',
+                 'languages': 'Not Updated', 'phone': 'Not Updated', 'address': 'Not Updated', 'hobbies': 'Not Updated',
+                 'interests': 'Not Updated', 'sports': 'Not Updated', 'guardian name': 'Not Updated',
+                 'guardian email': 'Not Updated', 'guardian phone': 'Not Updated', 'guardian dob': 'Not Updated',
+                 'guardian relation': 'Not Updated', 'guardian occupation': 'Not Updated',
+                 'guardian qualification': 'Not Updated', 'school': 'Not Updated', 'class': 'Not Updated',
+                 'treetor center': 'Not Updated', 'board': 'Not Updated', 'percentage': 'Not Updated',
+                 'subjects': 'Not Updated', 'best at': 'Not Updated', 'weak at': 'Not Updated',
+                 'old tuition': 'Not Updated', 'facebook': "Not Updated", "rank": "N/A"})
+    else:
+        phones = json.loads(request.GET.get("phones"))
+        for i in range(len(phones)):
+            db.child("users").child("students").child(phones[i]).update({"name":names[i],"temp":1})
+            db.child("users").child("students").child(phones[i]).child("institutes").child(uid_inst).update({batch:0})
+            db.child("users").child("institutes").child(uid_inst).child("students").child(phones[i]).update({"temp":1})
+            db.child("users").child('students').child(phones[i]).update(
+                {'score': 'Not Updated', "name": names[i], "email": 'Not Updated', 'gender': 'Not Updated',
+                 'dob': 'Not Updated',
+                 'languages': 'Not Updated', 'phone': phones[i], 'address': 'Not Updated', 'hobbies': 'Not Updated',
+                 'interests': 'Not Updated', 'sports': 'Not Updated', 'guardian name': 'Not Updated',
+                 'guardian email': 'Not Updated', 'guardian phone': 'Not Updated', 'guardian dob': 'Not Updated',
+                 'guardian relation': 'Not Updated', 'guardian occupation': 'Not Updated',
+                 'guardian qualification': 'Not Updated', 'school': 'Not Updated', 'class': 'Not Updated',
+                 'treetor center': 'Not Updated', 'board': 'Not Updated', 'percentage': 'Not Updated',
+                 'subjects': 'Not Updated', 'best at': 'Not Updated', 'weak at': 'Not Updated',
+                 'old tuition': 'Not Updated', 'facebook': "Not Updated", "rank": "N/A"})
+            if batch is not None:
+                db.child("batches").child(batch).child("students").child(phones[i]).update({"temp":1})
     return JsonResponse(True,safe=False)
 #admin apis
 '''

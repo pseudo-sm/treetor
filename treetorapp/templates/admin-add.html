@@ -57,21 +57,33 @@
 </div>
     <br>
   <div class="form-group" id="email-group">
-     Students
+     Students From Email
       <div class="form-group student-data">
           <input class="form-control names" placeholder="name" type="text"><br>
       <input class="form-control emails" placeholder="email" type="email">
       </div>
-
-      </div>
     <button class="btn btn-default" id="addmore">Add More</button><br><br>
     <button type="submit" id="submit" class="btn btn-default">Submit</button>
     </div>
+
+    <div class="form-group" id="phone-group">
+     Students From Phone
+      <div class="form-group student-data">
+          <input class="form-control names-phone" placeholder="name" type="text"><br>
+      <input class="form-control phones" placeholder="phone" type="number">
+      </div>
+      </div>
+    <button class="btn btn-default" id="addmorephone">Add More</button><br><br>
+    <button type="submit" id="submitphone" class="btn btn-default">Submit</button>
+    </div>
+
     <script>
         $("#addmore").click(function() {
-            $("#email-group").append("<div class='form-group student-data'><input class='form-control names' placeholder='email' type='text'><br><input class='form-control emails' placeholder='email' type='email'></div><br>");
+            $("#email-group").append("<div class='form-group student-data'><input class='form-control names' placeholder='name' type='text'><br><input class='form-control emails' placeholder='email' type='email'></div><br>");
         });
-
+        $("#addmorephone").click(function() {
+            $("#phone-group").append("<div class='form-group student-data'><input class='form-control names-phone' placeholder='name' type='text'><br><input class='form-control phones' placeholder='phone' type='number'></div><br>");
+        });
         $("#submit").click(function() {
             emails = []
             names = []
@@ -99,8 +111,41 @@
 
 
             });
-        });
+              });
+
+
+            $("#submitphone").click(function() {
+            phones = []
+            names = []
+            batch_id = $("#menu2 option:selected").attr('id');
+            institute = $("#menu1 option:selected").attr('id');
+            $(".phones").each(function() {
+                phones.push($(this).val());
+            });
+            $(".names-phone").each(function() {
+                names.push($(this).val());
+            });
+            console.log(phones);
+            console.log(names);
+            $.ajax({
+               url: '/admin-submit/',
+               data: {
+              'phones':JSON.stringify(phones),
+              'names':JSON.stringify(names),
+              'institute':institute,
+              'batch':batch_id,
+            },
+            dataType: 'json',
+            success: function (content) {
+                alert("Added !!");
+            }
+
+
+            });
+          });
+
     </script>
+
 </center>
 </body>
 </html>

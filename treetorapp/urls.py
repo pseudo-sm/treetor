@@ -31,6 +31,9 @@ urlpatterns = [
     path("diary-input/", views.diary_input, name="diary_input"),
     path("diary-output/", views.diary_output, name="diary_output"),
     path("mail-viewed/", views.mail_viewed, name="mail_viewed"),
+    path("student-auth/", views.student_auth, name="student_auth"),
+    path('student-profile/<slug:uid>', views.student_profile, name="student_profile"),
+
     #Mobile APis
     #admin apis
     url(r'^admin-add/',views.admin_add,name="admin_add"),
@@ -51,7 +54,6 @@ urlpatterns = [
     url(r'^admin2/',views.admin,name="admin"),
     url(r'^apply/',views.apply,name="apply"),
     url(r'^show-marks/',views.show_response,name="show_response"),
-    url(r'^student-profile/',views.student_profile,name="student_profile"),
     url(r'^search/',views.search,name="search"),
     url(r'^change-picture/',views.change_picture,name="change_picture"),
     url(r'^student-dashboard/',views.student_dashboard,name="student_dashboard"),

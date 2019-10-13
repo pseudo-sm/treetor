@@ -312,43 +312,43 @@ def post_schedule(request):
     sunday = request.POST.getlist("sunday[]")
     return HttpResponseRedirect("/institution-dashboard/")
 
-@student_login_required
-def student_profile(request):
-    count = 0
-    uid = auth.current_user["localId"]
-    data=dict(db.child("users").child("students").child(uid).get().val())
-    name = data["name"]
-    gender = data['gender']
-    dob = data['dob']
-    languages = data['languages']
-    phone = data['phone']
-    email = data['email']
-    address = data['address']
-    facebook = data['facebook']
-    hobbies = data['hobbies']
-    interests = data['interests']
-    sports = data['sports']
-    g_name = data['guardian name']
-    g_mail = data['guardian email']
-    g_phone = data['guardian phone']
-    g_dob = data['guardian dob']
-    g_relation = data['guardian relation']
-    school = data['school']
-    percentage = data['percentage']
-    std = data['class']
-    treetor_center = data['treetor center']
-    board = data['board']
-    subjects = data['subjects']
-    best_at = data['best at']
-    weak_at = data['weak at']
-    older_tuitions = data['old tuition']
-    for i in data:
-        if data[i] != "Not Updated":
-            count+=1
-    count = int(count*100/28)
-    data = {"name":name,"email":email,'gender':gender,'dob':dob,'languages':languages,'phone':phone,'address':address,'facebook':facebook,'hobbies':hobbies,'interests':interests,'sports':sports,'g_name':g_name,'g_mail':g_mail,'g_phone':g_phone,'g_dob':g_dob,'school':school,'relation':g_relation,'std':std,'percentage':percentage,'treetor_center':treetor_center,'subjects':subjects,'best_at':best_at,'weak_at':weak_at,'old':older_tuitions,'board':board,"count":count}
-
-    return render(request,"student_profile.html",data)
+# @student_login_required
+# def student_profile(request):
+#     count = 0
+#     uid = auth.current_user["localId"]
+#     data=dict(db.child("users").child("students").child(uid).get().val())
+#     name = data["name"]
+#     gender = data['gender']
+#     dob = data['dob']
+#     languages = data['languages']
+#     phone = data['phone']
+#     email = data['email']
+#     address = data['address']
+#     facebook = data['facebook']
+#     hobbies = data['hobbies']
+#     interests = data['interests']
+#     sports = data['sports']
+#     g_name = data['guardian name']
+#     g_mail = data['guardian email']
+#     g_phone = data['guardian phone']
+#     g_dob = data['guardian dob']
+#     g_relation = data['guardian relation']
+#     school = data['school']
+#     percentage = data['percentage']
+#     std = data['class']
+#     treetor_center = data['treetor center']
+#     board = data['board']
+#     subjects = data['subjects']
+#     best_at = data['best at']
+#     weak_at = data['weak at']
+#     older_tuitions = data['old tuition']
+#     for i in data:
+#         if data[i] != "Not Updated":
+#             count+=1
+#     count = int(count*100/28)
+#     data = {"name":name,"email":email,'gender':gender,'dob':dob,'languages':languages,'phone':phone,'address':address,'facebook':facebook,'hobbies':hobbies,'interests':interests,'sports':sports,'g_name':g_name,'g_mail':g_mail,'g_phone':g_phone,'g_dob':g_dob,'school':school,'relation':g_relation,'std':std,'percentage':percentage,'treetor_center':treetor_center,'subjects':subjects,'best_at':best_at,'weak_at':weak_at,'old':older_tuitions,'board':board,"count":count}
+#
+#     return render(request,"student_profile.html",data)
 
 @student_login_required
 def student_dashboard(request):
@@ -1614,3 +1614,18 @@ def mail_viewed(request):
     notice_id = request.GET.get("notice_id")
     db.child("users").child("students").child(uid).child("notices").update({notice_id:1})
     return JsonResponse(True,safe=False)
+
+def student_auth(request):
+
+    uid = request.GET.get("uid")
+    phone = request.GET.get("phone")
+    this = dict(db.child("users").child("students").child(phone).get().val())
+    db.child("users").child("students").child(uid).update(this)
+    db.child("users").child("students").child(uid).child("temp").remove()
+    db.child("users").child("students").child(phone).remove()
+    return JsonResponse(True,safe=False)
+
+def student_profile(request,uid):
+
+    this = dict(db.child("users").child("students").child(uid).get().val())
+    return JsonResponse(this,safe=False)

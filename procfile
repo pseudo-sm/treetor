@@ -1,0 +1,1 @@
+web: gunicorn treetor.wsgi --log-file -

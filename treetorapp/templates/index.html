@@ -207,7 +207,7 @@
                                         &nbsp;&nbsp;
                                         <li class="nav-item mr-1">
                                         {% if xyz %}
-                                            <a href="{% url 'student_profile' %}" class="nav-link d-lg-none">Profile</a>
+                                            <a href="{% url 'student_profile' uid=id%}" class="nav-link d-lg-none">Profile</a>
                                             <a href="{% url 'logout' %}" class="nav-link d-lg-none"><i class="fa fa-sign-out"></i>Logout</a>
                                         {% endif %}
                                         {% if yuo %}

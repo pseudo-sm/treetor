@@ -94,7 +94,7 @@ def home(request):
     if auth.current_user is not None:
         user = find_user(auth.current_user["localId"])
         if user == "students":
-            return render(request,"index.html",{"xyz":True,"profile":"student-profile/"})
+            return render(request,"index.html",{"xyz":True,"profile":"student-profile/","id": auth.current_user["localId"]})
         elif user == "teachers":
             return render(request,"index.html",{"xyz":True,"profile":"teacher-profile/","dashboard":"teacher-dashboard/"})
         else:

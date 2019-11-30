@@ -98,7 +98,7 @@ def home(request):
         elif user == "teachers":
             return render(request,"index.html",{"xyz":True,"profile":"teacher-profile/","dashboard":"teacher-dashboard/"})
         else:
-            return render(request,"index.html",{"xyz":True,"profile":"institution-profile/"})
+            return render(request,"index.html",{"xyz":False,"profile":"institution-profile/"})
     else:
         return render(request,"index.html",{"yuo":True})
 def signup(request):
@@ -384,6 +384,7 @@ def teacher_dashboard(request):
     this = db.child("users").child("teachers").child(uid).get().val()
     teacher_name = this["name"]
     for inst in institutes:
+        print(inst)
         names.update({inst:institutes[inst]["name"]})
     return render(request,"teacher_dashboard.html",{"names":names,"teacher_name":teacher_name,"also_inst":True})
 
@@ -1241,7 +1242,7 @@ def student_form_submit(request,uid_inst):
     auth.create_user_with_email_and_password(email, password)
     auth.sign_in_with_email_and_password(email, password)
     uid = auth.current_user["localId"]
-    db.child("users").child("institutes").child(uid_inst).child("students").update({uid:0})
+    db.child("users").child("institutes").child(uid_inst).child("students").update({uid:1})
     db.child("users").child('students').child(uid).update(
         {'score': 'Not Updated', "name": name, "email": email, 'gender': 'Not Updated', 'dob': 'Not Updated',
          'languages': 'Not Updated', 'phone': 'Not Updated', 'address': 'Not Updated', 'hobbies': 'Not Updated',

@@ -1375,15 +1375,15 @@ def batches(request):
                     end = int(str(timing[day][str(list(timing[day].keys())[0])])[:2])
                     duration = end-start
                     subject_name = all_institutes[institute]["subjects"][subject]["subject"] + " " + all_institutes[institute]["subjects"][subject]["standard"]
+                    last_class = "-"
+                    next = "-"
 
-                    try:
-                        if batches_all[batch]["subjects"][subject].get("daily") is not None:
-                            daily = batches_all[batch]["subjects"][subject].get("daily")
-                            last_class = daily[list(daily.keys())[len(daily)-1]]["taught"]
-                            next = daily[list(daily.keys())[len(daily)-1]]["next"]
-                    except KeyError:
-                        last_class = "-"
-                        next = "-"
+                    if batches_all[batch]["subjects"][subject].get("daily") is not None:
+                        daily = batches_all[batch]["subjects"][subject].get("daily")
+                        last_class = daily[list(daily.keys())[len(daily)-1]]["taught"]
+                        next = daily[list(daily.keys())[len(daily)-1]]["next"]
+
+
 
                     send_batches.append({"time":str(list(timing[day].keys())[0]),"subject":subject_name,"subject_id":subject,"duration":duration,"venue":all_institutes[institute]["name"],"last":last_class,"next":next,"uid":institute,"batch":batch})
     return JsonResponse(send_batches,safe=False)

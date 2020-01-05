@@ -103,6 +103,7 @@ urlpatterns = [
     url(r'^profile_submit/',views.profile_submit,name="profile_submit"),
     url(r'^logout',views.logout,name="logout"),
     url(r'^demo',views.demo_request,name="demo_request"),
+    url(r'^apply-now',views.apply_course,name="apply_course"),
     url(r'',views.home,name="home"),
 
 

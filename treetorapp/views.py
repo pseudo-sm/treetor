@@ -1565,6 +1565,7 @@ def batch_students(request):
         send_students.append({"id":student,"name":students[student]["name"],"class":students[student]["class"],"phone":students[student]["phone"],"rating":rating_unit_student})
     return JsonResponse(send_students,safe=False)
 
+
 def send_mail_institute(request,uid):
     # from app to email of registering users (institutes)
     email = db.child("users").child("institutes").child(uid).child("email").get().val()
@@ -1611,6 +1612,7 @@ def diary_output(request):
 
 def mail_viewed(request):
 
+
     uid = request.GET.get("uid")
     notice_id = request.GET.get("notice_id")
     db.child("users").child("students").child(uid).child("notices").update({notice_id:1})
@@ -1630,3 +1632,9 @@ def student_profile(request,uid):
 
     this = dict(db.child("users").child("students").child(uid).get().val())
     return JsonResponse(this,safe=False)
+
+
+def apply_course(request):
+
+    return render(request,"user_form.html")
+
